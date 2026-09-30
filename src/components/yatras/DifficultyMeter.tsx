@@ -1,14 +1,14 @@
 import type { Difficulty } from '../../data/yatras'
 
-/** Three rising bars, like steps up a mountain. */
+/** Three rising bars, like signal strength, but for the climb. */
 export default function DifficultyMeter({ level }: { level: Difficulty }) {
   return (
-    <span className="flex items-end gap-[3px]" aria-hidden>
+    <span className="inline-flex items-end gap-[2px]" aria-hidden>
       {[1, 2, 3].map((n) => (
         <span
           key={n}
-          className={`w-[4px] rounded-[1px] ${n <= level ? 'bg-sindoor' : 'bg-line'}`}
-          style={{ height: 5 + n * 3 }}
+          className={`w-[3px] rounded-full ${n <= level ? 'bg-saffron' : 'bg-line'}`}
+          style={{ height: 4 + n * 3 }}
         />
       ))}
     </span>

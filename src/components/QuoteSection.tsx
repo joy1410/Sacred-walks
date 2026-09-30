@@ -1,144 +1,66 @@
-import { useRef, type ReactNode } from 'react'
-import { motion, type MotionValue, useScroll, useTransform } from 'motion/react'
+import { motion } from 'motion/react'
 
-type Token = { text: string; kind?: 'strike' | 'beyond' }
-
-const line1: Token[] = [
-  { text: 'A' },
-  { text: 'pilgrimage' },
-  { text: 'is' },
-  { text: 'not' },
-  { text: 'an' },
-  { text: 'achievement.', kind: 'strike' },
-]
-const line2: Token[] = [
-  { text: 'It' },
-  { text: 'is' },
-  { text: 'an' },
-  { text: 'opportunity' },
-  { text: 'to' },
-  { text: 'access' },
-  { text: 'the' },
-  { text: 'beyond.', kind: 'beyond' },
-]
-
-const total = line1.length + line2.length
-const REVEAL_END = 0.62
+const ease = [0.16, 1, 0.3, 1] as const
+const inView = { once: true, margin: '-20% 0px' } as const
 
 /**
- * Words brighten as you read down the page.
- *  • "achievement" is struck through with a sindoor line: the quote refuses it.
- *  • "beyond" is gilded, and a line leaves it and runs off the edge of the page.
+ * Static, compact quote. Only the ornaments move: the quote marks settle
+ * in, then the signature writes itself underneath.
  */
 export default function QuoteSection() {
-  const ref = useRef<HTMLElement>(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.75', 'end 0.55'] })
-
-  const strike = useTransform(scrollYProgress, [0.3, 0.42], [0, 1])
-  const beyondLine = useTransform(scrollYProgress, [REVEAL_END, 0.92], [0, 1])
-  const attribution = useTransform(scrollYProgress, [0.7, 0.9], [0, 1])
-  const glyphY = useTransform(scrollYProgress, [0, 1], [40, -40])
-  const attributionY = useTransform(attribution, [0, 1], [16, 0])
-
-  let i = 0
-  const renderLine = (tokens: Token[]) =>
-    tokens.map((t) => {
-      const idx = i++
-      const start = (idx / total) * REVEAL_END
-      const end = start + REVEAL_END / total + 0.04
-      return (
-        <Word key={idx} progress={scrollYProgress} range={[start, end]}>
-          {t.kind === 'strike' ? (
-            <span className="relative inline-block">
-              achievement.
-              <svg
-                viewBox="0 0 300 20"
-                preserveAspectRatio="none"
-                className="pointer-events-none absolute left-[-3%] top-[46%] h-[0.28em] w-[104%] overflow-visible"
-                aria-hidden
-              >
-                <motion.path
-                  d="M2 12 C 60 6, 140 14, 200 8 C 240 5, 275 9, 298 7"
-                  fill="none"
-                  stroke="var(--color-sindoor)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  vectorEffect="non-scaling-stroke"
-                  style={{ pathLength: strike }}
-                />
-              </svg>
-            </span>
-          ) : t.kind === 'beyond' ? (
-            <span className="relative inline-block">
-              <em className="gilded pr-[0.08em] font-normal">beyond</em>
-              <span className="text-gold">.</span>
-              <motion.span
-                aria-hidden
-                className="absolute left-[calc(100%+0.3em)] top-[58%] h-px w-[60vw] origin-left bg-gradient-to-r from-gold via-gold/60 to-transparent"
-                style={{ scaleX: beyondLine }}
-              />
-              <motion.span
-                aria-hidden
-                className="absolute left-[calc(100%+0.3em)] top-[58%] h-[5px] w-[5px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sindoor"
-                style={{ opacity: beyondLine }}
-              />
-            </span>
-          ) : (
-            t.text
-          )}
-        </Word>
-      )
-    })
-
   return (
-    <section ref={ref} className="relative overflow-x-clip bg-paper px-5 py-[22vh] md:px-10">
-      <div className="relative mx-auto max-w-6xl">
-        <motion.span
-          aria-hidden
-          className="pointer-events-none absolute -left-2 -top-24 select-none font-display text-[16rem] leading-none text-gold/15 md:-left-16"
-          style={{ y: glyphY }}
-        >
-          &ldquo;
-        </motion.span>
+    <section className="bg-white px-5 py-24 md:py-32">
+      <figure className="relative mx-auto max-w-[820px] text-center">
+        <QuoteMark className="mx-auto mb-6 h-8 w-10 md:absolute md:-top-2 md:-left-20 md:mb-0 md:h-10 md:w-12" delay={0.1} />
 
-        <p className="eyebrow mb-12 flex items-center gap-3">
-          <span className="h-1.5 w-1.5 rounded-full bg-sindoor" />
-          On pilgrimage
-        </p>
-
-        <blockquote className="font-display text-[clamp(2.1rem,5.2vw,5rem)] font-light leading-[1.12] tracking-[-0.015em] text-ink">
-          <span className="block">{renderLine(line1)}</span>
-          <span className="block md:pl-[12%]">{renderLine(line2)}</span>
+        <blockquote className="font-display text-[clamp(1.8rem,3.4vw,2.85rem)] leading-[1.14] font-medium text-ink-2">
+          A pilgrimage is not an achievement but an opportunity to subdue the sense of who you are and to access
+          the <span className="text-saffron">beyond</span>.
         </blockquote>
 
-        <motion.footer
-          className="mt-16 flex items-center gap-5 md:pl-[12%]"
-          style={{ opacity: attribution, y: attributionY }}
-        >
-          <span className="h-px w-14 bg-ink/30" />
-          <span className="font-display text-2xl italic text-ink-2">Sadhguru</span>
-        </motion.footer>
-      </div>
+        <figcaption className="mt-10 flex justify-center">
+          <Signature />
+        </figcaption>
+      </figure>
     </section>
   )
 }
 
-function Word({
-  children,
-  progress,
-  range,
-}: {
-  children: ReactNode
-  progress: MotionValue<number>
-  range: [number, number]
-}) {
-  const opacity = useTransform(progress, range, [0.13, 1])
-  const blur = useTransform(progress, range, ['blur(6px)', 'blur(0px)'])
+function QuoteMark({ className = '', delay = 0 }: { className?: string; delay?: number }) {
   return (
-    <>
-      <motion.span className="inline-block" style={{ opacity, filter: blur }}>
-        {children}
-      </motion.span>{' '}
-    </>
+    <motion.svg
+      viewBox="0 0 50 40"
+      className={`block text-saffron ${className}`}
+      aria-hidden
+      initial={{ opacity: 0, y: 10 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={inView}
+      transition={{ duration: 1, ease, delay }}
+    >
+      <path
+        fill="currentColor"
+        d="M0 40V23.6C0 10.4 6.6 2.4 19.2 0l2 4.6C14.4 7 11 11.6 10.6 18.4H20V40H0Zm28 0V23.6C28 10.4 34.6 2.4 47.2 0l2 4.6C42.4 7 39 11.6 38.6 18.4H48V40H28Z"
+      />
+    </motion.svg>
+  )
+}
+
+/**
+ * Signature that writes itself left → right once in view.
+ * Placeholder lettering: replace with the official Sadhguru signature SVG.
+ */
+function Signature() {
+  return (
+    <motion.span
+      role="img"
+      aria-label="Sadhguru"
+      className="block font-[family-name:var(--font-signature)] text-[3.6rem] leading-[1.1] text-ink"
+      initial={{ clipPath: 'inset(0 100% 0 0)' }}
+      whileInView={{ clipPath: 'inset(0 0% 0 0)' }}
+      viewport={inView}
+      transition={{ duration: 1.8, ease: [0.45, 0, 0.25, 1], delay: 0.5 }}
+    >
+      Sadhguru
+    </motion.span>
   )
 }

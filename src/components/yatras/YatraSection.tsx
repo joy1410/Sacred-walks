@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { yatras } from '../../data/yatras'
 import YatraCard from './YatraCard'
 
-const ease = [0.22, 1, 0.36, 1] as const
+const ease = [0.16, 1, 0.3, 1] as const
 
 export default function YatraSection() {
   const [[active, dir], setActive] = useState<[number, number]>([0, 0])
@@ -22,42 +22,20 @@ export default function YatraSection() {
   const y = yatras[active]
 
   return (
-    <section id="yatras" className="relative scroll-mt-24 bg-paper px-5 pb-40 md:px-10">
-      <div className="mx-auto max-w-6xl">
-        {/* heading */}
-        <div className="mb-14 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-15% 0px' }}
-            transition={{ duration: 1, ease }}
-          >
-            <p className="eyebrow mb-4 flex items-center gap-3">
-              <span className="h-1.5 w-1.5 rounded-full bg-sindoor" />
-              Yatras
-            </p>
-            <h2 className="font-display text-[clamp(2.4rem,4.6vw,4rem)] leading-[1] font-medium tracking-[-0.015em]">
-              Choose your <em className="font-normal text-gold">path</em>
-            </h2>
-          </motion.div>
-          <motion.p
-            className="max-w-sm text-[14.5px] leading-relaxed text-ink-soft"
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-15% 0px' }}
-            transition={{ duration: 1, ease, delay: 0.1 }}
-          >
-            Each yatra is held with sadhana, care and the guidance of Isha volunteers who have walked the path
-            before you.
-          </motion.p>
-        </div>
+    // heading + full-width segmented control + card fill exactly one screen on desktop
+    // (top padding clears the 48px nav)
+    <section id="yatras" className="bg-mist px-5 pt-[72px] pb-6 lg:h-svh lg:min-h-[680px]">
+      <div className="mx-auto flex h-full max-w-[1180px] flex-col">
+        <h2 className="mb-4 font-display text-[26px] leading-none font-medium text-ink-2 md:text-[30px]">
+          Choose your yatra
+        </h2>
 
-        {/* tabs */}
+        {/* segmented control, full width */}
         <div
           role="tablist"
           aria-label="Yatra destinations"
           onKeyDown={onKey}
-          className="relative mb-8 flex overflow-x-auto border-b border-line [scrollbar-width:none]"
+          className="mb-3 grid w-full shrink-0 grid-cols-4 overflow-x-auto rounded-full bg-black/[0.06] p-1 [scrollbar-width:none]"
         >
           {yatras.map((t, i) => {
             const isActive = i === active
@@ -73,68 +51,44 @@ export default function YatraSection() {
                 aria-controls={`panel-${t.slug}`}
                 tabIndex={isActive ? 0 : -1}
                 onClick={() => select(i)}
-                className="group relative isolate flex min-w-[9.5rem] flex-1 items-baseline justify-center gap-2 px-4 pt-3 pb-4 outline-none md:justify-start"
+                className="relative rounded-full px-3 py-2.5 text-[14px] font-medium whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-saffron md:text-[15px]"
               >
-                <span
-                  className={`font-display text-sm tabular-nums transition-colors duration-500 ${
-                    isActive ? 'text-gold' : 'text-ink-mute'
-                  }`}
-                >
-                  0{i + 1}
-                </span>
-                <span
-                  className={`text-[15px] font-medium whitespace-nowrap transition-colors duration-500 ${
-                    isActive ? 'text-ink' : 'text-ink-soft group-hover:text-ink'
-                  }`}
-                >
-                  {t.tab}
-                </span>
-                <span className="ml-auto hidden text-[11px] text-ink-mute md:inline">{t.days}d</span>
-
                 {isActive && (
                   <motion.span
-                    layoutId="yatra-tab-indicator"
-                    className="absolute inset-x-0 -bottom-px h-[2px] bg-ink"
-                    transition={{ type: 'spring', stiffness: 380, damping: 36 }}
-                  >
-                    <span className="absolute -top-[3px] left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 bg-ink md:left-4" />
-                  </motion.span>
-                )}
-                {isActive && (
-                  <motion.span
-                    layoutId="yatra-tab-glow"
-                    className="absolute inset-0 -z-10 rounded-t-2xl bg-gradient-to-t from-gold/10 to-transparent"
-                    transition={{ type: 'spring', stiffness: 380, damping: 36 }}
+                    layoutId="yatra-segment"
+                    className="absolute inset-0 rounded-full bg-white shadow-[0_1px_2px_rgba(0,0,0,0.06),0_3px_10px_rgba(0,0,0,0.08)]"
+                    transition={{ type: 'spring', stiffness: 420, damping: 38 }}
                   />
                 )}
+                <span className={`relative transition-colors duration-300 ${isActive ? 'text-ink' : 'text-ink-soft hover:text-ink'}`}>
+                  {t.tab}
+                </span>
               </button>
             )
           })}
         </div>
 
-        {/* card */}
-        <div className="relative">
-          <AnimatePresence mode="wait" custom={dir} initial={false}>
-            <motion.div
-              key={y.slug}
-              id={`panel-${y.slug}`}
-              role="tabpanel"
-              aria-labelledby={`tab-${y.slug}`}
-              custom={dir}
-              variants={{
-                enter: (d: number) => ({ opacity: 0, x: d * 48, filter: 'blur(6px)' }),
-                center: { opacity: 1, x: 0, filter: 'blur(0px)' },
-                exit: (d: number) => ({ opacity: 0, x: d * -48, filter: 'blur(6px)' }),
-              }}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.55, ease }}
-            >
-              <YatraCard yatra={y} />
-            </motion.div>
-          </AnimatePresence>
-        </div>
+        <AnimatePresence mode="wait" custom={dir} initial={false}>
+          <motion.div
+            key={y.slug}
+            id={`panel-${y.slug}`}
+            role="tabpanel"
+            aria-labelledby={`tab-${y.slug}`}
+            custom={dir}
+            variants={{
+              enter: (d: number) => ({ opacity: 0, x: d * 40, scale: 0.985 }),
+              center: { opacity: 1, x: 0, scale: 1 },
+              exit: (d: number) => ({ opacity: 0, x: d * -40, scale: 0.985 }),
+            }}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.5, ease }}
+            className="min-h-0 flex-1"
+          >
+            <YatraCard yatra={y} />
+          </motion.div>
+        </AnimatePresence>
       </div>
     </section>
   )

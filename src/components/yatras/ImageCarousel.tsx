@@ -1,20 +1,21 @@
 import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, animate, motion, useMotionValue, useTransform } from 'motion/react'
 import type { Yatra } from '../../data/yatras'
-import { IconArrowLeft, IconArrowRight, IconPin } from '../icons'
+import { IconChevronLeft, IconChevronRight, IconPause, IconPlay } from '../icons'
 
-const DURATION = 6.5 // seconds per slide
-const ease = [0.22, 1, 0.36, 1] as const
+const DURATION = 6 // seconds per slide
+const ease = [0.16, 1, 0.3, 1] as const
 
 /**
- * Carousel with a wipe transition (clip-path) in the direction of travel,
- * slow Ken Burns drift, the Sadhguru quote on the image, and a segmented
- * indicator where the active segment fills over time like a timer.
+ * Airbnb gestures (hover arrows, glass badges) + Apple's carousel capsule
+ * (dots where the active one stretches into a timer, with play/pause).
+ * The Sadhguru quote sits on the image.
  */
 export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
-  const { images, quote, region } = yatra
+  const { images, quote } = yatra
   const [[index, dir], setState] = useState<[number, number]>([0, 1])
-  const [paused, setPaused] = useState(false)
+  const [playing, setPlaying] = useState(true)
+  const [hovered, setHovered] = useState(false)
 
   const go = useCallback(
     (next: number, d?: number) => {
@@ -24,107 +25,95 @@ export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
     [images.length],
   )
 
-  // timer as a motion value so hovering freezes the fill where it is
+  // timer as a motion value, so pausing freezes the fill where it is
   const fill = useMotionValue(0)
   const fillWidth = useTransform(fill, (v) => `${v * 100}%`)
+  const running = playing && !hovered
   useEffect(() => fill.set(0), [index, fill])
   useEffect(() => {
-    if (paused) return
+    if (!running) return
     const controls = animate(fill, 1, {
       duration: (1 - fill.get()) * DURATION,
       ease: 'linear',
       onComplete: () => go(index + 1, 1),
     })
     return () => controls.stop()
-  }, [index, paused, go, fill])
+  }, [index, running, go, fill])
 
   const img = images[index]
 
   return (
     <div
-      className="group/carousel relative h-full min-h-[420px] overflow-hidden bg-dusk"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={() => setPaused(false)}
+      className="group relative z-10 h-full min-h-[440px] overflow-hidden rounded-[24px] bg-night lg:min-h-0"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       role="region"
       aria-roledescription="carousel"
       aria-label={`${yatra.title} photographs`}
     >
-      <AnimatePresence initial={false} custom={dir}>
-        <motion.div
+      <AnimatePresence initial={false} custom={dir} mode="popLayout">
+        <motion.img
           key={img.src}
+          src={img.src}
+          alt={img.caption}
           custom={dir}
-          className="absolute inset-0"
+          draggable={false}
+          className="absolute inset-0 h-full w-full object-cover"
           variants={{
-            enter: (d: number) => ({ zIndex: 1, clipPath: d > 0 ? 'inset(0 0 0 100%)' : 'inset(0 100% 0 0)' }),
-            center: { zIndex: 1, clipPath: 'inset(0 0 0 0%)' },
-            exit: { zIndex: 0, clipPath: 'inset(0 0 0 0%)', transition: { duration: 1.1 } },
+            enter: (d: number) => ({ x: `${d * 100}%`, scale: 1.08 }),
+            center: { x: '0%', scale: 1 },
+            exit: (d: number) => ({ x: `${d * -28}%`, scale: 1, opacity: 0.4 }),
           }}
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 1.1, ease }}
-        >
-          <motion.img
-            src={img.src}
-            alt={img.caption}
-            className="h-full w-full object-cover"
-            initial={{ scale: 1.16, x: dir > 0 ? '4%' : '-4%' }}
-            animate={{ scale: 1.03, x: '0%' }}
-            transition={{ scale: { duration: DURATION + 2, ease: 'linear' }, x: { duration: 1.4, ease } }}
-            draggable={false}
-          />
-        </motion.div>
+          transition={{ duration: 0.9, ease }}
+        />
       </AnimatePresence>
 
-      {/* washes for legibility */}
-      <div className="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-t from-dusk/90 via-dusk/15 to-transparent" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-32 bg-gradient-to-b from-dusk/45 to-transparent" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-black/0 via-45% to-black/15" />
 
-      {/* top row: location + caption */}
-      <div className="absolute inset-x-0 top-0 z-[3] flex items-start justify-between gap-4 p-5 text-paper md:p-6">
-        <span className="flex items-center gap-1.5 rounded-full bg-paper/15 px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase backdrop-blur-md">
-          <IconPin className="h-3.5 w-3.5" />
-          {region}
+      {/* The carousel sits above the card-wide link (so it receives hover and
+          its controls work); this layer carries the card's click through the photo. */}
+      <a href={`/yatras/${yatra.slug}`} tabIndex={-1} aria-hidden className="absolute inset-0" />
+
+      {/* top: glass badges */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-4">
+        <span className="rounded-full bg-white px-3 py-1.5 text-[12px] font-semibold text-ink shadow-[0_2px_8px_rgba(0,0,0,0.12)]">
+          {yatra.region}
         </span>
-        <div className="text-right">
-          <p className="font-display text-sm tabular-nums tracking-wider text-paper/90">
-            <span className="text-paper">{String(index + 1).padStart(2, '0')}</span>
-            <span className="text-paper/50"> / {String(images.length).padStart(2, '0')}</span>
-          </p>
-          <div className="relative mt-0.5 h-4 overflow-hidden">
-            <AnimatePresence mode="popLayout" initial={false}>
-              <motion.p
-                key={img.caption}
-                className="text-[11px] text-paper/70"
-                initial={{ y: '100%', opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: '-100%', opacity: 0 }}
-                transition={{ duration: 0.6, ease }}
-              >
-                {img.caption}
-              </motion.p>
-            </AnimatePresence>
-          </div>
-        </div>
+        <AnimatePresence mode="popLayout" initial={false}>
+          <motion.span
+            key={img.caption}
+            className="rounded-full bg-black/30 px-3 py-1.5 text-[12px] font-medium text-white backdrop-blur-xl"
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+            transition={{ duration: 0.4, ease }}
+          >
+            {img.caption}
+          </motion.span>
+        </AnimatePresence>
       </div>
 
-      {/* bottom: quote + controls */}
-      <div className="absolute inset-x-0 bottom-0 z-[3] flex flex-col gap-6 p-5 text-paper md:flex-row md:items-end md:justify-between md:gap-10 md:p-7">
-        <figure className="max-w-md">
-          <span className="block h-4 font-display text-4xl leading-none text-gold-light">&ldquo;</span>
-          <blockquote className="font-display text-[1.2rem] leading-snug font-normal italic text-paper md:text-[1.35rem]">
-            {quote.text}
+      {/* Airbnb hover arrows */}
+      <ArrowButton side="left" label="Previous photo" onClick={() => go(index - 1, -1)} />
+      <ArrowButton side="right" label="Next photo" onClick={() => go(index + 1, 1)} />
+
+      {/* bottom: quote + capsule */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col gap-5 p-5 text-white md:flex-row md:items-end md:justify-between md:gap-8 md:p-6">
+        <figure className="max-w-[26rem]">
+          <blockquote className="text-[16px] leading-[1.4] font-medium tracking-[-0.01em] md:text-[17px]">
+            &ldquo;{quote.text}&rdquo;
           </blockquote>
-          <figcaption className="mt-3 flex items-center gap-2.5 text-[11px] font-semibold tracking-[0.2em] uppercase text-paper/70">
-            <span className="h-px w-6 bg-gold-light" />
+          <figcaption className="mt-2.5 flex items-center gap-2 text-[13px] text-white/70">
+            <span className="h-px w-4 bg-saffron" />
             {quote.by}
           </figcaption>
         </figure>
 
-        <div className="flex shrink-0 items-center gap-5">
-          <div className="flex items-center gap-1.5" role="tablist" aria-label="Choose photograph">
+        <div className="pointer-events-auto flex shrink-0 items-center gap-2">
+          <div className="flex h-9 items-center gap-2 rounded-full bg-white/15 px-3.5 backdrop-blur-xl" role="tablist" aria-label="Choose photograph">
             {images.map((im, i) => {
               const active = i === index
               return (
@@ -135,47 +124,44 @@ export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
                   aria-selected={active}
                   aria-label={`Photo ${i + 1}: ${im.caption}`}
                   onClick={() => go(i)}
-                  className="group/dot relative flex h-6 items-center"
+                  className="flex h-6 items-center"
                 >
                   <motion.span
-                    layout
-                    className="relative block h-[3px] overflow-hidden rounded-full bg-paper/35 group-hover/dot:bg-paper/60"
-                    animate={{ width: active ? 40 : 6 }}
-                    transition={{ duration: 0.6, ease }}
+                    className="relative block h-[7px] overflow-hidden rounded-full bg-white/45 hover:bg-white/70"
+                    animate={{ width: active ? 36 : 7 }}
+                    transition={{ duration: 0.5, ease }}
                   >
-                    {active && (
-                      <motion.span className="absolute inset-y-0 left-0 bg-paper" style={{ width: fillWidth }} />
-                    )}
+                    {active && <motion.span className="absolute inset-y-0 left-0 rounded-full bg-white" style={{ width: fillWidth }} />}
                   </motion.span>
                 </button>
               )
             })}
           </div>
-
-          <div className="flex items-center gap-2">
-            <CarouselButton label="Previous photo" onClick={() => go(index - 1, -1)}>
-              <IconArrowLeft className="h-4 w-4" />
-            </CarouselButton>
-            <CarouselButton label="Next photo" onClick={() => go(index + 1, 1)}>
-              <IconArrowRight className="h-4 w-4" />
-            </CarouselButton>
-          </div>
+          <button
+            type="button"
+            onClick={() => setPlaying((p) => !p)}
+            aria-label={playing ? 'Pause slideshow' : 'Play slideshow'}
+            className="grid h-9 w-9 place-items-center rounded-full bg-white/15 text-white backdrop-blur-xl transition-colors hover:bg-white/25"
+          >
+            {playing ? <IconPause className="h-3.5 w-3.5" /> : <IconPlay className="h-3.5 w-3.5" />}
+          </button>
         </div>
       </div>
     </div>
   )
 }
 
-function CarouselButton({ label, onClick, children }: { label: string; onClick: () => void; children: React.ReactNode }) {
+function ArrowButton({ side, label, onClick }: { side: 'left' | 'right'; label: string; onClick: () => void }) {
+  const Icon = side === 'left' ? IconChevronLeft : IconChevronRight
   return (
     <motion.button
       type="button"
       aria-label={label}
       onClick={onClick}
-      whileTap={{ scale: 0.9 }}
-      className="grid h-10 w-10 place-items-center rounded-full border border-paper/40 text-paper backdrop-blur-sm transition-colors duration-300 hover:border-paper hover:bg-paper hover:text-ink"
+      whileTap={{ scale: 0.92 }}
+      className={`absolute top-1/2 ${side === 'left' ? 'left-4' : 'right-4'} grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-ink shadow-[0_2px_10px_rgba(0,0,0,0.18)] transition-[opacity,transform,background-color] duration-300 hover:scale-105 hover:bg-white focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100`}
     >
-      {children}
+      <Icon className="h-3.5 w-3.5" />
     </motion.button>
   )
 }

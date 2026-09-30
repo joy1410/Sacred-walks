@@ -8,6 +8,15 @@ export type YatraImage = {
   caption: string
 }
 
+/**
+ * Where registration stands right now. Every state has a way forward:
+ * a closed yatra points at next season's waitlist, never a dead end.
+ */
+export type YatraStatus =
+  | { state: 'open'; departure: string; seatsLeft?: number }
+  | { state: 'soon'; opens: string; season: string }
+  | { state: 'closed'; completed: string; next: string; opens?: string }
+
 export type Yatra = {
   slug: string
   tab: string
@@ -19,9 +28,9 @@ export type Yatra = {
   difficulty: Difficulty
   difficultyLabel: string
   season: string
-  maxAltitude?: string
-  groupSize: string
-  nextDeparture: string
+  /** short form for the facts row */
+  seasonShort: string
+  status: YatraStatus
   quote: { text: string; by: string }
   highlights: string[]
   images: YatraImage[]
@@ -31,6 +40,7 @@ export type Yatra = {
  * NOTE: only the Kailash quote comes from the design draft.
  * The other quotes are editorial placeholders attributed to the programme,
  * so swap in verified Sadhguru quotes before shipping.
+ * Open/closed status is confirmed; departure dates are placeholders until registration data is wired in.
  */
 export const yatras: Yatra[] = [
   {
@@ -45,9 +55,8 @@ export const yatras: Yatra[] = [
     difficulty: 3,
     difficultyLabel: 'Challenging',
     season: 'June – September',
-    maxAltitude: '5,630 m',
-    groupSize: '30–40 seekers',
-    nextDeparture: 'Jun 2027',
+    seasonShort: 'Jun – Sep',
+    status: { state: 'closed', completed: '2026', next: '2027' },
     quote: {
       text: 'Kailash is the greatest mystical library on the planet. Anything that one wishes to know about creation has been stored there.',
       by: 'Sadhguru',
@@ -72,13 +81,12 @@ export const yatras: Yatra[] = [
     tagline: 'Into the lap of the mountains',
     summary:
       'From the banks of the Ganga at Rishikesh to the high shrine of Kedarnath, a journey through the land where yogis have sat for millennia.',
-    days: 10,
+    days: 11,
     difficulty: 2,
     difficultyLabel: 'Moderate',
     season: 'May – June, Sept – Oct',
-    maxAltitude: '3,583 m',
-    groupSize: '40–60 seekers',
-    nextDeparture: 'May 2027',
+    seasonShort: 'May · Sep',
+    status: { state: 'closed', completed: '2026', next: '2027' },
     quote: {
       text: 'The mountains do not ask you to climb them. They ask you to become still enough to receive them.',
       by: 'Isha Sacred Walks',
@@ -99,7 +107,7 @@ export const yatras: Yatra[] = [
     slug: 'kashi-yatra',
     tab: 'Kashi',
     region: 'Varanasi',
-    title: 'Kashi Yatra',
+    title: 'Kashi Krama',
     tagline: 'The city of light',
     summary:
       'Immerse in the oldest living city on earth: its ghats, its temples, and the fire-lit aarti on the Ganga where life and death meet.',
@@ -107,8 +115,8 @@ export const yatras: Yatra[] = [
     difficulty: 1,
     difficultyLabel: 'Gentle',
     season: 'October – March',
-    groupSize: '60–80 seekers',
-    nextDeparture: 'Nov 2026',
+    seasonShort: 'Oct – Mar',
+    status: { state: 'open', departure: '12 – 16 Nov 2026' },
     quote: {
       text: 'Kashi is not just a city on the river. It is a doorway that has stood open for thousands of years.',
       by: 'Isha Sacred Walks',
@@ -133,12 +141,12 @@ export const yatras: Yatra[] = [
     tagline: 'Temples of the Dravidian south',
     summary:
       'A journey through the great temple towns of the south, ending in the Velliangiri foothills in the presence of Adiyogi.',
-    days: 8,
+    days: 6,
     difficulty: 1,
     difficultyLabel: 'Gentle',
     season: 'November – February',
-    groupSize: '40–60 seekers',
-    nextDeparture: 'Dec 2026',
+    seasonShort: 'Nov – Feb',
+    status: { state: 'open', departure: '6 – 13 Dec 2026' },
     quote: {
       text: 'These temples were not built for worship alone. They were built as instruments to lift a human being.',
       by: 'Isha Sacred Walks',
