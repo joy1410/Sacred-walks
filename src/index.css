@@ -80,6 +80,36 @@ html.lenis body { height: auto; }
   }
 }
 
+/*
+ * Hero film geometry. The final card is inset by --fx/--ft/--fb with radius
+ * --fr; --H is its final height and --T its final top. --gh is the clock the
+ * height runs on and --ride scales how far the words follow the film's edges.
+ * Desktop: full-bleed card, height on its own faster clock, words ride.
+ * Mobile: a 2:3 card centred in the screen, height and width on one clock
+ * (so it never becomes a tall sliver), words simply fade under the film.
+ */
+.hero-stage {
+  --fx: 16px;
+  --fb: 16px;
+  --ft: 64px;
+  --fr: 24px;
+  --H: min(calc(100svh - var(--ft) - var(--fb)), calc((100vw - 2 * var(--fx)) * 1.5));
+  --T: max(var(--ft), calc((100svh - var(--H)) / 2));
+  --gh: var(--mw);
+  --ride: 0;
+}
+@media (min-width: 768px) {
+  .hero-stage {
+    --fx: max(16px, 2.5vw);
+    --fb: max(16px, 2.5vw);
+    --fr: 28px;
+    --H: calc(100svh - var(--ft) - var(--fb));
+    --T: var(--ft);
+    --gh: var(--mh);
+    --ride: 1;
+  }
+}
+
 @keyframes glow-pan {
   from { background-position: 100% 50%; }
   to   { background-position: 0% 50%; }

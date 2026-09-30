@@ -1,6 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
 import { motion, useScroll, cubicBezier } from 'motion/react'
-import HeroBackdrop from './HeroBackdrop'
 import DivineWord from './DivineWord'
 import { BlurText, after } from './BlurIn'
 import { useScrollRange } from '../../lib/useScrollRange'
@@ -46,7 +45,6 @@ export default function Hero() {
   const line1Opacity = useScrollRange(scrollYProgress, [0.12, 0.34], [1, 0], { clamp: true })
   // words stay solid while they part, and fade only as the growing card reaches them
   const wordsOpacity = useScrollRange(scrollYProgress, [0.4, 0.64], [1, 0], { clamp: true })
-  const metaOpacity = useScrollRange(scrollYProgress, [0.1, 0.3], [1, 0])
 
 
   useLayoutEffect(() => {
@@ -72,26 +70,13 @@ export default function Hero() {
     <section ref={sectionRef} className="relative h-[190vh] bg-white" aria-label="Introduction">
       <motion.div
         ref={stageRef}
-        className="sticky top-0 h-svh w-full overflow-hidden [--fb:max(16px,2.5vw)] [--fr:28px] [--ft:64px] [--fx:max(16px,2.5vw)]"
+        className="hero-stage sticky top-0 h-svh w-full overflow-hidden"
         style={{ '--mw': mw, '--mh': mh } as never}
       >
-        <HeroBackdrop progress={scrollYProgress} />
-
         {/* copy sits in the bottom 30%, on the same 1080 grid as the nav */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex h-[30%] min-h-[220px] flex-col justify-end px-5 pb-[6vh]">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex h-[30%] min-h-[220px] flex-col justify-end px-5 pb-[18vh] md:pb-[6vh]">
           <div className="mx-auto w-full max-w-[1080px]">
-            <motion.div style={{ opacity: metaOpacity }}>
-              <motion.p
-                className="mb-3 text-[14px] font-semibold tracking-[-0.01em] text-saffron"
-                initial={{ opacity: 0, filter: 'blur(8px)' }}
-                animate={{ opacity: 1, filter: 'blur(0px)' }}
-                transition={{ duration: 1.2, ease }}
-              >
-                Sacred Walks · 2026–27 season
-              </motion.p>
-            </motion.div>
-
-            <h1 className="font-display text-[clamp(2.25rem,4.9vw,4.4rem)] leading-[1] font-semibold tracking-[-0.005em] text-ink-2">
+            <h1 className="font-display text-[11vw] leading-[1] md:text-[clamp(2.25rem,4.9vw,4.4rem)] font-semibold tracking-[-0.005em] text-ink-2">
               {/* scroll choreography lives on the wrappers; the load-in blur lives on the letters */}
               <motion.span className="block" style={{ y: line1Y, opacity: line1Opacity }}>
                 <BlurText text={LINE1} delay={T_LINE1} />
@@ -100,7 +85,7 @@ export default function Hero() {
               <span className="mt-[0.04em] block md:whitespace-nowrap">
                 {/* the words ride the film's edges: each side moves exactly as far as that
                     edge of the film has travelled (same --m), so the film pushes them apart */}
-                <span className="inline-block" style={{ transform: 'translateX(calc((var(--fx) - var(--sx, 0px)) * var(--mw)))' }}>
+                <span className="inline-block" style={{ transform: 'translateX(calc((var(--fx) - var(--sx, 0px)) * var(--mw) * var(--ride)))' }}>
                   <motion.span style={{ opacity: wordsOpacity }} className="inline-block">
                     <BlurText text="places" delay={T_PLACES} />
                   </motion.span>
@@ -111,8 +96,8 @@ export default function Hero() {
                 <span ref={slotRef} className="mx-[0.2em] inline-block h-[1.3cap] w-[1.3cap] align-[-0.15cap]" aria-hidden />
 
                 <span
-                  className="inline-block"
-                  style={{ transform: 'translateX(calc((100vw - var(--fx) - var(--sx, 0px) - var(--sw, 0px)) * var(--mw)))' }}
+                  className="block md:inline-block"
+                  style={{ transform: 'translateX(calc((100vw - var(--fx) - var(--sx, 0px) - var(--sw, 0px)) * var(--mw) * var(--ride)))' }}
                 >
                   <motion.span style={{ opacity: wordsOpacity }} className="inline-block">
                     <BlurText text="of" delay={T_OF} /> <DivineWord delay={T_DIVINE} />{' '}
@@ -132,16 +117,16 @@ export default function Hero() {
           transition={{ duration: 1.3, ease, delay: T_OF }}
           className="absolute z-20 overflow-hidden bg-night"
           style={{
-            // circle (slot rect) → rounded card inset from the edges (--fx/--ft/--fb)
+            // circle (slot rect) → rounded card; final size/placement per breakpoint in .hero-stage
             left: 'calc(var(--sx, 50%) * (1 - var(--mw)) + var(--fx) * var(--mw))',
-            top: 'calc(var(--sy, 50%) * (1 - var(--mh)) + var(--ft) * var(--mh))',
+            top: 'calc(var(--sy, 50%) * (1 - var(--gh)) + var(--T) * var(--gh))',
             width: 'calc(var(--sw, 0px) + (100% - 2 * var(--fx) - var(--sw, 0px)) * var(--mw))',
-            height: 'calc(var(--sh, 0px) + (100% - var(--ft) - var(--fb) - var(--sh, 0px)) * var(--mh))',
+            height: 'calc(var(--sh, 0px) + (var(--H) - var(--sh, 0px)) * var(--gh))',
             // px radius (always circular corners, never an ellipse): starts at half the
             // circle's height, shrinks with (1 - m)² relative to the current height,
             // and settles on the card radius --fr
             borderRadius:
-              'calc((var(--sh, 0px) + (100svh - var(--ft) - var(--fb) - var(--sh, 0px)) * var(--mh)) / 2 * (1 - var(--mh)) * (1 - var(--mh)) + var(--fr) * var(--mh))',
+              'calc((var(--sh, 0px) + (var(--H) - var(--sh, 0px)) * var(--gh)) / 2 * (1 - var(--gh)) * (1 - var(--gh)) + var(--fr) * var(--gh))',
           }}
         >
           <motion.video

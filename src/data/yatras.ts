@@ -20,6 +20,8 @@ export type YatraStatus =
 export type Yatra = {
   slug: string
   tab: string
+  /** shorter tab label for phones, where four segments share ~340px */
+  tabShort?: string
   region: string
   title: string
   tagline: string
@@ -45,7 +47,7 @@ export type Yatra = {
 export const yatras: Yatra[] = [
   {
     slug: 'kailash-manasarovar',
-    tab: 'Kailash',
+    tab: 'Kailash Manasarovar',
     region: 'Tibet',
     title: 'Kailash Manasarovar',
     tagline: 'Journey of a lifetime',
@@ -75,7 +77,7 @@ export const yatras: Yatra[] = [
   },
   {
     slug: 'himalayan-yatra',
-    tab: 'Himalayas',
+    tab: 'Himalayan Yatra',
     region: 'Uttarakhand',
     title: 'Himalayan Yatra',
     tagline: 'Into the lap of the mountains',
@@ -105,7 +107,7 @@ export const yatras: Yatra[] = [
   },
   {
     slug: 'kashi-yatra',
-    tab: 'Kashi',
+    tab: 'Kashi Krama',
     region: 'Varanasi',
     title: 'Kashi Krama',
     tagline: 'The city of light',
@@ -135,7 +137,8 @@ export const yatras: Yatra[] = [
   },
   {
     slug: 'southern-sojourn',
-    tab: 'Southern sojourn',
+    tab: 'Southern Sojourn',
+    tabShort: 'South',
     region: 'Tamil Nadu',
     title: 'Southern Sojourn',
     tagline: 'Temples of the Dravidian south',

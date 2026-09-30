@@ -1,4 +1,4 @@
-import { useRef, useState, type KeyboardEvent } from 'react'
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { yatras } from '../../data/yatras'
 import YatraCard from './YatraCard'
@@ -8,6 +8,23 @@ const ease = [0.16, 1, 0.3, 1] as const
 export default function YatraSection() {
   const [[active, dir], setActive] = useState<[number, number]>([0, 0])
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
+
+  // warm every yatra's photos once the page is idle, so switching tabs never
+  // waits on a download or decode mid-transition
+  useEffect(() => {
+    const warm = () =>
+      yatras.forEach((t) =>
+        t.images.forEach(({ src }) => {
+          const im = new Image()
+          im.decoding = 'async'
+          im.src = src
+        }),
+      )
+    // Safari has no requestIdleCallback; a short timeout does the same job there
+    const idle = typeof window.requestIdleCallback === 'function'
+    const id = idle ? window.requestIdleCallback(warm) : setTimeout(warm, 1200)
+    return () => (idle ? window.cancelIdleCallback(id as number) : clearTimeout(id))
+  }, [])
 
   const select = (i: number) => setActive(([cur]) => [i, i > cur ? 1 : -1])
 
@@ -24,18 +41,22 @@ export default function YatraSection() {
   return (
     // heading + full-width segmented control + card fill exactly one screen on desktop
     // (top padding clears the 48px nav)
-    <section id="yatras" className="bg-mist px-5 pt-[72px] pb-6 lg:h-svh lg:min-h-[680px]">
+    <section id="yatras" className="bg-mist px-4 pt-16 pb-6 md:px-5 md:pt-[72px] lg:h-svh lg:min-h-[680px]">
       <div className="mx-auto flex h-full max-w-[1180px] flex-col">
-        <h2 className="mb-4 font-display text-[26px] leading-none font-medium text-ink-2 md:text-[30px]">
+        <h2 className="mb-3 font-display text-[24px] leading-none font-medium text-ink-2 md:mb-4 md:text-[30px]">
           Choose your yatra
         </h2>
 
         {/* segmented control, full width */}
+        {/* on mobile the scroller bleeds to the screen edges (cancels the section padding), so the
+            pill scrolls off-screen instead of being clipped inside the gutter; py leaves room for the
+            active tab's shadow, which an overflow container would otherwise cut */}
+        <div className="-mx-4 -mt-2 mb-1 shrink-0 scroll-px-4 overflow-x-auto px-4 py-2 [scrollbar-width:none] md:mx-0 md:px-0">
         <div
           role="tablist"
           aria-label="Yatra destinations"
           onKeyDown={onKey}
-          className="mb-3 grid w-full shrink-0 grid-cols-4 overflow-x-auto rounded-full bg-black/[0.06] p-1 [scrollbar-width:none]"
+          className="flex w-max min-w-full rounded-full bg-black/[0.06] p-1 md:grid md:w-full md:grid-cols-4"
         >
           {yatras.map((t, i) => {
             const isActive = i === active
@@ -50,8 +71,11 @@ export default function YatraSection() {
                 aria-selected={isActive}
                 aria-controls={`panel-${t.slug}`}
                 tabIndex={isActive ? 0 : -1}
-                onClick={() => select(i)}
-                className="relative rounded-full px-3 py-2.5 text-[14px] font-medium whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-saffron md:text-[15px]"
+                onClick={(e) => {
+                  select(i)
+                  e.currentTarget.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
+                }}
+                className="relative grow shrink-0 rounded-full px-4 py-2.5 text-[14px] font-medium whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-saffron md:px-3 md:text-[15px]"
               >
                 {isActive && (
                   <motion.span
@@ -66,6 +90,7 @@ export default function YatraSection() {
               </button>
             )
           })}
+        </div>
         </div>
 
         <AnimatePresence mode="wait" custom={dir} initial={false}>

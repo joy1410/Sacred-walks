@@ -32,12 +32,12 @@ export default function YatraCard({ yatra }: { yatra: Yatra }) {
     <article className="group/card relative grid cursor-pointer gap-2 rounded-[32px] bg-white p-2 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_30px_60px_-30px_rgba(0,0,0,0.18)] transition-shadow duration-500 hover:shadow-[0_1px_2px_rgba(0,0,0,0.04),0_40px_80px_-30px_rgba(0,0,0,0.28)] has-[.card-link:focus-visible]:ring-2 has-[.card-link:focus-visible]:ring-saffron lg:h-full lg:grid-cols-[1.55fr_1fr]">
       <ImageCarousel yatra={yatra} />
 
-      <motion.div className="flex min-h-0 flex-col px-5 *:shrink-0 pt-5 pb-4 md:px-7 md:pt-7" variants={panel} initial="hidden" animate="show">
+      <motion.div className="flex min-h-0 flex-col px-3 pt-3 pb-2 *:shrink-0 md:px-7 md:pt-7 md:pb-4" variants={panel} initial="hidden" animate="show">
         <motion.div variants={item}>
           <StatusPill status={s} />
         </motion.div>
 
-        <motion.h3 variants={item} className="mt-4 font-display text-[36px] leading-[1] font-semibold text-ink md:text-[40px]">
+        <motion.h3 variants={item} className="mt-3 font-display text-[30px] leading-[1] font-semibold text-ink md:mt-4 md:text-[40px]">
           <a
             href={`/yatras/${yatra.slug}`}
             className="card-link inline-flex items-center gap-2 outline-none after:absolute after:inset-0 after:rounded-[32px]"
@@ -47,7 +47,7 @@ export default function YatraCard({ yatra }: { yatra: Yatra }) {
             <IconArrowRight className="h-5 w-5 -translate-x-1 text-ink-mute opacity-0 transition-all duration-300 group-hover/card:translate-x-0 group-hover/card:text-saffron group-hover/card:opacity-100" />
           </a>
         </motion.h3>
-        <motion.p variants={item} className="mt-1.5 text-[16px] tracking-[-0.015em] text-ink-soft">
+        <motion.p variants={item} className="mt-1 text-[15px] tracking-[-0.015em] text-ink-soft md:mt-1.5 md:text-[16px]">
           {yatra.tagline}
         </motion.p>
 
@@ -55,7 +55,7 @@ export default function YatraCard({ yatra }: { yatra: Yatra }) {
             sits centred in its gap */}
         <motion.div
           variants={item}
-          className="mt-5 flex items-center justify-between border-y border-line-soft px-3 py-3 text-[15px] font-semibold whitespace-nowrap text-ink tabular-nums"
+          className="mt-4 flex items-center justify-between border-y border-line-soft px-1 py-2.5 text-[14px] md:mt-5 md:px-3 md:py-3 md:text-[15px] font-semibold whitespace-nowrap text-ink tabular-nums"
         >
           <span>{yatra.days} days</span>
           <span className="h-4 w-px bg-line-soft" aria-hidden />
@@ -67,19 +67,19 @@ export default function YatraCard({ yatra }: { yatra: Yatra }) {
           <span>{yatra.seasonShort}</span>
         </motion.div>
 
-        <motion.ul variants={item} className="mt-6 space-y-3.5">
+        <motion.ul variants={item} className="mt-4 space-y-2.5 md:mt-6 md:space-y-3.5">
           {yatra.highlights.map((h, i) => {
             const Icon = highlightIcons[i % highlightIcons.length]
             return (
               <li key={h} className="flex items-center gap-3.5">
                 <Icon className="h-5 w-5 shrink-0 text-ink" />
-                <span className="text-[15px] leading-snug text-ink-2">{h}</span>
+                <span className="text-[14px] leading-snug text-ink-2 md:text-[15px]">{h}</span>
               </li>
             )
           })}
         </motion.ul>
 
-        <motion.div variants={item} className="mt-auto pt-6">
+        <motion.div variants={item} className="mt-auto pt-4 md:pt-6">
           <StatusNote status={s} />
           <StatusAction status={s} slug={yatra.slug} />
         </motion.div>
@@ -112,7 +112,7 @@ function StatusPill({ status }: { status: YatraStatus }) {
 
 function StatusNote({ status }: { status: YatraStatus }) {
   return (
-    <div className="rounded-2xl bg-mist px-4 py-3 text-[14px] leading-snug text-ink-2">
+    <div className="rounded-2xl bg-mist px-3.5 py-2.5 text-[13.5px] leading-snug text-ink-2 md:px-4 md:py-3 md:text-[14px]">
       {status.state === 'open' && (
         <>
           <span className="block text-[12px] text-ink-mute">Next departure</span>
@@ -146,11 +146,11 @@ function StatusAction({ status, slug }: { status: YatraStatus; slug: string }) {
   const label = status.state === 'open' ? 'Enquire' : status.state === 'soon' ? 'Notify me' : `Join ${status.next} waitlist`
 
   return (
-    <div className="relative z-10 mt-3 flex gap-2.5">
+    <div className="relative z-10 mt-2.5 flex gap-2 md:mt-3 md:gap-2.5">
       <a
         href={`/yatras/${slug}`}
         tabIndex={-1}
-        className="group/view flex flex-1 items-center justify-center gap-1.5 rounded-full border border-ink/15 bg-white px-4 py-3.5 text-[15px] font-medium whitespace-nowrap text-ink transition-colors hover:border-ink/40 hover:bg-mist"
+        className="group/view flex flex-1 items-center justify-center gap-1.5 rounded-full border border-ink/15 bg-white px-2.5 py-3 text-[14px] md:px-4 md:py-3.5 md:text-[15px] font-medium whitespace-nowrap text-ink transition-colors hover:border-ink/40 hover:bg-mist"
       >
         View yatra
         <IconArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/view:translate-x-0.5" />
@@ -158,7 +158,7 @@ function StatusAction({ status, slug }: { status: YatraStatus; slug: string }) {
       <motion.a
         href="#"
         whileTap={{ scale: 0.98 }}
-        className={`flex flex-1 items-center justify-center rounded-full px-4 py-3.5 text-[15px] font-medium whitespace-nowrap transition-colors ${
+        className={`flex flex-1 items-center justify-center rounded-full px-2.5 py-3 text-[14px] md:px-4 md:py-3.5 md:text-[15px] font-medium whitespace-nowrap transition-colors ${
           // filled saffron only when you can act now; otherwise saffron outline
           status.state === 'open'
             ? 'bg-saffron text-white hover:bg-[#b93c1b]'

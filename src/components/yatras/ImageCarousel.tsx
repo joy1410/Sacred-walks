@@ -1,81 +1,166 @@
-import { useCallback, useEffect, useState } from 'react'
-import { AnimatePresence, animate, motion, useMotionValue, useTransform } from 'motion/react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { AnimatePresence, animate, motion, useMotionValue, useTransform, type PanInfo } from 'motion/react'
 import type { Yatra } from '../../data/yatras'
 import { IconChevronLeft, IconChevronRight, IconPause, IconPlay } from '../icons'
 
 const DURATION = 6 // seconds per slide
 const ease = [0.16, 1, 0.3, 1] as const
+// one spring for autoplay, dots, arrows and swipe release: settles fast, no bounce
+const slide = { type: 'spring', stiffness: 260, damping: 34, mass: 0.9 } as const
 
 /**
  * Airbnb gestures (hover arrows, glass badges) + Apple's carousel capsule
  * (dots where the active one stretches into a timer, with play/pause).
- * The Sadhguru quote sits on the image.
+ *
+ * Photos sit side by side on one track that is translated as a whole: every
+ * image stays mounted (no remount, no decode on change), and the same track
+ * is dragged for swipe, so a gesture hands off to the spring with its velocity.
  */
 export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
   const { images, quote } = yatra
-  const [[index, dir], setState] = useState<[number, number]>([0, 1])
+  const navigate = useNavigate()
+  const n = images.length
+  // pos can sit one step past either end, on a clone of the far image; once the
+  // spring lands there it jumps (invisibly) to the real one, so the strip loops
+  // forever instead of rewinding. The dots only ever see index.
+  const [pos, setPos] = useState(0)
+  const index = ((pos % n) + n) % n
   const [playing, setPlaying] = useState(true)
   const [hovered, setHovered] = useState(false)
+  const [dragging, setDragging] = useState(false)
 
-  const go = useCallback(
-    (next: number, d?: number) => {
-      const n = (next + images.length) % images.length
-      setState(([cur]) => [n, d ?? (next > cur ? 1 : -1)])
-    },
-    [images.length],
+  const frameRef = useRef<HTMLDivElement>(null)
+  const [width, setWidth] = useState(0)
+  const widthRef = useRef(0)
+  useLayoutEffect(() => {
+    const el = frameRef.current
+    if (!el) return
+    const measure = () => {
+      widthRef.current = el.clientWidth
+      setWidth(el.clientWidth)
+    }
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    measure()
+    return () => ro.disconnect()
+  }, [])
+
+  // track slot for a position: slot 0 is the leading clone
+  const x = useMotionValue(0)
+  const at = (p: number) => -(p + 1) * widthRef.current
+  const wrap = useCallback((p: number) => (p >= n ? p - n : p < 0 ? p + n : p), [n])
+
+  // from a clone, hop to its real twin (same pixels) before moving on
+  const moveTo = useCallback(
+    (next: (p: number) => number) =>
+      setPos((p) => {
+        const q = wrap(p)
+        if (q !== p) x.set(-(q + 1) * widthRef.current)
+        return next(q)
+      }),
+    [wrap, x],
   )
+  const step = useCallback((d: number) => moveTo((p) => p + d), [moveTo])
+  const goTo = (i: number) => moveTo(() => i)
+
+  const jumped = useRef(false)
+  const lastWidth = useRef(0)
+  const settle = useCallback(
+    (p: number, velocity = 0) =>
+      animate(x, -(p + 1) * widthRef.current, {
+        ...slide,
+        velocity,
+        onComplete: () => {
+          const q = wrap(p)
+          if (q === p) return
+          jumped.current = true
+          x.set(-(q + 1) * widthRef.current)
+          setPos(q)
+        },
+      }),
+    [wrap, x],
+  )
+
+  useEffect(() => {
+    if (!width) return
+    if (lastWidth.current !== width) {
+      lastWidth.current = width
+      x.set(at(pos))
+      return
+    }
+    if (jumped.current) {
+      jumped.current = false
+      return
+    }
+    const controls = settle(pos)
+    return () => controls.stop()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pos, width])
+
+  const onDragEnd = (_: unknown, info: PanInfo) => {
+    setDragging(false)
+    const swipe = info.offset.x + info.velocity.x * 0.2
+    const threshold = width * 0.18
+    if (swipe < -threshold) step(1)
+    else if (swipe > threshold) step(-1)
+    else settle(pos, info.velocity.x) // not far enough: spring back
+  }
 
   // timer as a motion value, so pausing freezes the fill where it is
   const fill = useMotionValue(0)
   const fillWidth = useTransform(fill, (v) => `${v * 100}%`)
-  const running = playing && !hovered
+  const running = playing && !hovered && !dragging
   useEffect(() => fill.set(0), [index, fill])
   useEffect(() => {
     if (!running) return
     const controls = animate(fill, 1, {
       duration: (1 - fill.get()) * DURATION,
       ease: 'linear',
-      onComplete: () => go(index + 1, 1),
+      onComplete: () => step(1),
     })
     return () => controls.stop()
-  }, [index, running, go, fill])
+  }, [index, running, step, fill])
 
   const img = images[index]
 
   return (
     <div
-      className="group relative z-10 h-full min-h-[440px] overflow-hidden rounded-[24px] bg-night lg:min-h-0"
+      ref={frameRef}
+      className="group relative z-10 h-48 overflow-hidden rounded-[24px] bg-night md:h-full md:min-h-[440px] lg:min-h-0"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       role="region"
       aria-roledescription="carousel"
       aria-label={`${yatra.title} photographs`}
     >
-      <AnimatePresence initial={false} custom={dir} mode="popLayout">
-        <motion.img
-          key={img.src}
-          src={img.src}
-          alt={img.caption}
-          custom={dir}
-          draggable={false}
-          className="absolute inset-0 h-full w-full object-cover"
-          variants={{
-            enter: (d: number) => ({ x: `${d * 100}%`, scale: 1.08 }),
-            center: { x: '0%', scale: 1 },
-            exit: (d: number) => ({ x: `${d * -28}%`, scale: 1, opacity: 0.4 }),
-          }}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{ duration: 0.9, ease }}
-        />
-      </AnimatePresence>
+      {/* the track: swipe or drag it; a plain tap opens the yatra (the card's click) */}
+      <motion.div
+        className="absolute inset-y-0 left-0 flex cursor-grab touch-pan-y active:cursor-grabbing"
+        style={{ x, width: width * (n + 2) || '100%' }}
+        drag="x"
+        dragConstraints={{ left: -(n + 1) * width, right: 0 }}
+        dragElastic={0.12}
+        dragMomentum={false}
+        onDragStart={() => setDragging(true)}
+        onDragEnd={onDragEnd}
+        onTap={() => navigate(`/yatras/${yatra.slug}`)}
+      >
+        {[images[n - 1], ...images, images[0]].map((im, slot) => (
+          <img
+            key={slot}
+            src={im.src}
+            alt={slot - 1 === index ? im.caption : ''}
+            aria-hidden={slot - 1 !== index}
+            draggable={false}
+            decoding="async"
+            className="h-full shrink-0 object-cover select-none"
+            style={{ width: width || '100%' }}
+          />
+        ))}
+      </motion.div>
 
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-black/0 via-45% to-black/15" />
-
-      {/* The carousel sits above the card-wide link (so it receives hover and
-          its controls work); this layer carries the card's click through the photo. */}
-      <a href={`/yatras/${yatra.slug}`} tabIndex={-1} aria-hidden className="absolute inset-0" />
 
       {/* top: glass badges */}
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-4">
@@ -97,12 +182,13 @@ export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
       </div>
 
       {/* Airbnb hover arrows */}
-      <ArrowButton side="left" label="Previous photo" onClick={() => go(index - 1, -1)} />
-      <ArrowButton side="right" label="Next photo" onClick={() => go(index + 1, 1)} />
+      <ArrowButton side="left" label="Previous photo" onClick={() => step(-1)} />
+      <ArrowButton side="right" label="Next photo" onClick={() => step(1)} />
 
       {/* bottom: quote + capsule */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col gap-5 p-5 text-white md:flex-row md:items-end md:justify-between md:gap-8 md:p-6">
-        <figure className="max-w-[26rem]">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-end gap-8 p-3 text-white md:justify-between md:p-6">
+        {/* quote is desktop-only: on phones the photo stays a compact header */}
+        <figure className="hidden max-w-[26rem] md:block">
           <blockquote className="text-[16px] leading-[1.4] font-medium tracking-[-0.01em] md:text-[17px]">
             &ldquo;{quote.text}&rdquo;
           </blockquote>
@@ -123,7 +209,7 @@ export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
                   role="tab"
                   aria-selected={active}
                   aria-label={`Photo ${i + 1}: ${im.caption}`}
-                  onClick={() => go(i)}
+                  onClick={() => goTo(i)}
                   className="flex h-6 items-center"
                 >
                   <motion.span
@@ -159,7 +245,7 @@ function ArrowButton({ side, label, onClick }: { side: 'left' | 'right'; label: 
       aria-label={label}
       onClick={onClick}
       whileTap={{ scale: 0.92 }}
-      className={`absolute top-1/2 ${side === 'left' ? 'left-4' : 'right-4'} grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-ink shadow-[0_2px_10px_rgba(0,0,0,0.18)] transition-[opacity,transform,background-color] duration-300 hover:scale-105 hover:bg-white focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100`}
+      className={`absolute top-1/2 hidden md:grid ${side === 'left' ? 'left-4' : 'right-4'} h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-ink shadow-[0_2px_10px_rgba(0,0,0,0.18)] transition-[opacity,transform,background-color] duration-300 hover:scale-105 hover:bg-white focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100`}
     >
       <Icon className="h-3.5 w-3.5" />
     </motion.button>
