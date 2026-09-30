@@ -7,6 +7,8 @@ import { useScrollRange } from '../../lib/useScrollRange'
 
 const ease = [0.16, 1, 0.3, 1] as const
 const inOut = cubicBezier(0.65, 0, 0.35, 1)
+// width's curve starts sooner than height's, so the frame widens while it rises
+const widen = cubicBezier(0.4, 0, 0.35, 1)
 
 // one continuous focus front across the whole headline
 const LINE1 = 'Make a life-transforming journey to'
@@ -32,14 +34,18 @@ export default function Hero() {
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] })
 
   // the morph uses nearly the whole pinned distance, so every scroll tick
-  // visibly changes something; no dead hold at the end
-  const m = useScrollRange(scrollYProgress, [0.02, 0.92], [0, 1], { ease: inOut })
+  // visibly changes something; no dead hold at the end.
+  // Width and height grow together from the first tick, but height runs on a
+  // shorter clock: it tops out halfway while width keeps going, so the frame
+  // stays squarer (~1.6:1 at full height) before opening out to the wide card.
+  const mh = useScrollRange(scrollYProgress, [0.02, 0.5], [0, 1], { ease: inOut })
+  const mw = useScrollRange(scrollYProgress, [0.02, 0.92], [0, 1], { ease: widen })
   const videoScale = useScrollRange(scrollYProgress, [0, 1], [1.45, 1])
 
   const line1Y = useScrollRange(scrollYProgress, [0.05, 0.5], ['0%', '-60%'])
-  const line1Opacity = useScrollRange(scrollYProgress, [0.22, 0.46], [1, 0], { clamp: true })
+  const line1Opacity = useScrollRange(scrollYProgress, [0.12, 0.34], [1, 0], { clamp: true })
   // words stay solid while they part, and fade only as the growing card reaches them
-  const wordsOpacity = useScrollRange(scrollYProgress, [0.28, 0.52], [1, 0], { clamp: true })
+  const wordsOpacity = useScrollRange(scrollYProgress, [0.4, 0.64], [1, 0], { clamp: true })
   const metaOpacity = useScrollRange(scrollYProgress, [0.1, 0.3], [1, 0])
 
 
@@ -67,7 +73,7 @@ export default function Hero() {
       <motion.div
         ref={stageRef}
         className="sticky top-0 h-svh w-full overflow-hidden [--fb:max(16px,2.5vw)] [--fr:28px] [--ft:64px] [--fx:max(16px,2.5vw)]"
-        style={{ '--m': m } as never}
+        style={{ '--mw': mw, '--mh': mh } as never}
       >
         <HeroBackdrop progress={scrollYProgress} />
 
@@ -94,7 +100,7 @@ export default function Hero() {
               <span className="mt-[0.04em] block md:whitespace-nowrap">
                 {/* the words ride the film's edges: each side moves exactly as far as that
                     edge of the film has travelled (same --m), so the film pushes them apart */}
-                <span className="inline-block" style={{ transform: 'translateX(calc((var(--fx) - var(--sx, 0px)) * var(--m)))' }}>
+                <span className="inline-block" style={{ transform: 'translateX(calc((var(--fx) - var(--sx, 0px)) * var(--mw)))' }}>
                   <motion.span style={{ opacity: wordsOpacity }} className="inline-block">
                     <BlurText text="places" delay={T_PLACES} />
                   </motion.span>
@@ -106,7 +112,7 @@ export default function Hero() {
 
                 <span
                   className="inline-block"
-                  style={{ transform: 'translateX(calc((100vw - var(--fx) - var(--sx, 0px) - var(--sw, 0px)) * var(--m)))' }}
+                  style={{ transform: 'translateX(calc((100vw - var(--fx) - var(--sx, 0px) - var(--sw, 0px)) * var(--mw)))' }}
                 >
                   <motion.span style={{ opacity: wordsOpacity }} className="inline-block">
                     <BlurText text="of" delay={T_OF} /> <DivineWord delay={T_DIVINE} />{' '}
@@ -127,15 +133,15 @@ export default function Hero() {
           className="absolute z-20 overflow-hidden bg-night"
           style={{
             // circle (slot rect) → rounded card inset from the edges (--fx/--ft/--fb)
-            left: 'calc(var(--sx, 50%) * (1 - var(--m)) + var(--fx) * var(--m))',
-            top: 'calc(var(--sy, 50%) * (1 - var(--m)) + var(--ft) * var(--m))',
-            width: 'calc(var(--sw, 0px) + (100% - 2 * var(--fx) - var(--sw, 0px)) * var(--m))',
-            height: 'calc(var(--sh, 0px) + (100% - var(--ft) - var(--fb) - var(--sh, 0px)) * var(--m))',
+            left: 'calc(var(--sx, 50%) * (1 - var(--mw)) + var(--fx) * var(--mw))',
+            top: 'calc(var(--sy, 50%) * (1 - var(--mh)) + var(--ft) * var(--mh))',
+            width: 'calc(var(--sw, 0px) + (100% - 2 * var(--fx) - var(--sw, 0px)) * var(--mw))',
+            height: 'calc(var(--sh, 0px) + (100% - var(--ft) - var(--fb) - var(--sh, 0px)) * var(--mh))',
             // px radius (always circular corners, never an ellipse): starts at half the
             // circle's height, shrinks with (1 - m)² relative to the current height,
             // and settles on the card radius --fr
             borderRadius:
-              'calc((var(--sh, 0px) + (100svh - var(--ft) - var(--fb) - var(--sh, 0px)) * var(--m)) / 2 * (1 - var(--m)) * (1 - var(--m)) + var(--fr) * var(--m))',
+              'calc((var(--sh, 0px) + (100svh - var(--ft) - var(--fb) - var(--sh, 0px)) * var(--mh)) / 2 * (1 - var(--mh)) * (1 - var(--mh)) + var(--fr) * var(--mh))',
           }}
         >
           <motion.video
