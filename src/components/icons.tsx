@@ -56,3 +56,31 @@ export const IconInstagram = (p: P) => (
 export const IconChevronDown = (p: P) => (
   <svg {...base} strokeWidth={2.2} {...p}><path d="m5 9 7 7 7-7" /></svg>
 )
+export const IconCheck = (p: P) => (
+  <svg {...base} strokeWidth={2.2} {...p}><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>
+)
+export const IconPlus = (p: P) => (
+  <svg {...base} strokeWidth={2} {...p}><path d="M12 5v14M5 12h14" /></svg>
+)
+export const IconArrowUpRight = (p: P) => (
+  <svg {...base} strokeWidth={2} {...p}><path d="M7 17 17 7M8 7h9v9" /></svg>
+)
+export const IconHotel = (p: P) => (
+  <svg {...base} {...p}><path d="M3 19V7M3 15h18v4M21 15v-3a3 3 0 0 0-3-3h-7v6" /><circle cx="7" cy="11.5" r="1.8" /></svg>
+)
+/** a bowl with rising steam */
+export const IconMeal = (p: P) => (
+  <svg {...base} {...p}><path d="M3.5 12h17a8.5 8.5 0 0 1-17 0ZM9 4.5c-.8.9-.8 2 0 3M13 3.5c-.8.9-.8 2 0 3M17 4.5c-.8.9-.8 2 0 3" /></svg>
+)
+export const IconBus = (p: P) => (
+  <svg {...base} {...p}><rect x="4" y="3.5" width="16" height="14" rx="3" /><path d="M4 11h16M8 17.5V20M16 17.5V20" /><circle cx="8" cy="14.3" r=".6" fill="currentColor" /><circle cx="16" cy="14.3" r=".6" fill="currentColor" /></svg>
+)
+export const IconBoat = (p: P) => (
+  <svg {...base} {...p}><path d="M2.5 14h19l-2.5 4.5H5zM12 14V4l6 7.5h-6M2.5 21c1.5 0 1.5-.8 3-.8s1.5.8 3 .8 1.5-.8 3-.8 1.5.8 3 .8 1.5-.8 3-.8 1.5.8 3 .8" /></svg>
+)
+export const IconDoctor = (p: P) => (
+  <svg {...base} {...p}><rect x="3.5" y="6.5" width="17" height="13" rx="3" /><path d="M9 6.5V5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5v1.5M12 10v6M9 13h6" /></svg>
+)
+export const IconTeam = (p: P) => (
+  <svg {...base} {...p}><circle cx="9" cy="8" r="3" /><path d="M3.5 19a5.5 5.5 0 0 1 11 0M16 5.2a3 3 0 0 1 0 5.6M17.5 14.2A5.5 5.5 0 0 1 20.5 19" /></svg>
+)

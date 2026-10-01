@@ -1,5 +1,6 @@
 import { motion, type Variants } from 'motion/react'
-import type { Yatra, YatraStatus } from '../../data/yatras'
+import { yatraHref, type Yatra, type YatraStatus } from '../../data/yatras'
+import SiteLink, { MotionSiteLink } from '../SiteLink'
 import ImageCarousel from './ImageCarousel'
 import DifficultyMeter from './DifficultyMeter'
 import { IconArrowRight, IconRoute, IconSadhana, IconSunrise } from '../icons'
@@ -38,14 +39,14 @@ export default function YatraCard({ yatra }: { yatra: Yatra }) {
         </motion.div>
 
         <motion.h3 variants={item} className="mt-3 font-display text-[30px] leading-[1] font-semibold text-ink md:mt-4 md:text-[40px]">
-          <a
-            href={`/yatras/${yatra.slug}`}
+          <SiteLink
+            href={yatraHref(yatra.slug)}
             className="card-link inline-flex items-center gap-2 outline-none after:absolute after:inset-0 after:rounded-[32px]"
           >
             {yatra.title}
             {/* the only visible hint that the card opens: an arrow that answers hover */}
             <IconArrowRight className="h-5 w-5 -translate-x-1 text-ink-mute opacity-0 transition-all duration-300 group-hover/card:translate-x-0 group-hover/card:text-saffron group-hover/card:opacity-100" />
-          </a>
+          </SiteLink>
         </motion.h3>
         <motion.p variants={item} className="mt-1 text-[15px] tracking-[-0.015em] text-ink-soft md:mt-1.5 md:text-[16px]">
           {yatra.tagline}
@@ -88,7 +89,7 @@ export default function YatraCard({ yatra }: { yatra: Yatra }) {
   )
 }
 
-function StatusPill({ status }: { status: YatraStatus }) {
+export function StatusPill({ status }: { status: YatraStatus }) {
   if (status.state === 'open') {
     const few = status.seatsLeft !== undefined && status.seatsLeft <= 20
     return (
@@ -147,16 +148,17 @@ function StatusAction({ status, slug }: { status: YatraStatus; slug: string }) {
 
   return (
     <div className="relative z-10 mt-2.5 flex gap-2 md:mt-3 md:gap-2.5">
-      <a
-        href={`/yatras/${slug}`}
+      <SiteLink
+        href={yatraHref(slug)}
         tabIndex={-1}
         className="group/view flex flex-1 items-center justify-center gap-1.5 rounded-full border border-ink/15 bg-white px-2.5 py-3 text-[14px] md:px-4 md:py-3.5 md:text-[15px] font-medium whitespace-nowrap text-ink transition-colors hover:border-ink/40 hover:bg-mist"
       >
         View yatra
         <IconArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/view:translate-x-0.5" />
-      </a>
-      <motion.a
-        href="#"
+      </SiteLink>
+      <MotionSiteLink
+        // a yatra with its own page takes you to its registration section
+        href={yatraHref(slug).startsWith('/yatras/') ? `${yatraHref(slug)}#register` : '#'}
         whileTap={{ scale: 0.98 }}
         className={`flex flex-1 items-center justify-center rounded-full px-2.5 py-3 text-[14px] md:px-4 md:py-3.5 md:text-[15px] font-medium whitespace-nowrap transition-colors ${
           // filled saffron only when you can act now; otherwise saffron outline
@@ -166,7 +168,7 @@ function StatusAction({ status, slug }: { status: YatraStatus; slug: string }) {
         }`}
       >
         {label}
-      </motion.a>
+      </MotionSiteLink>
     </div>
   )
 }

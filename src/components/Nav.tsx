@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react'
 import { useLenis } from 'lenis/react'
-import { yatras } from '../data/yatras'
+import { yatraHref, yatras } from '../data/yatras'
+import SiteLink from './SiteLink'
 import { IconChevronDown } from './icons'
 
 const pill =
-  'rounded-full px-3 py-1.5 text-[12.5px] font-medium text-ink-2 transition-colors hover:bg-black/[0.06] hover:text-ink'
+  'rounded-full px-3.5 py-1.5 text-[14px] font-medium text-ink-2 transition-colors hover:bg-black/[0.06] hover:text-ink'
 
 /** Yatras link with a hover / focus menu listing every yatra. */
 function YatrasMenu() {
@@ -36,14 +37,14 @@ function YatrasMenu() {
       }}
     >
       <a
-        href="#yatras"
+        href="/#yatras"
         aria-haspopup="true"
         aria-expanded={open}
         className={`${pill} flex items-center gap-1 ${open ? 'bg-black/[0.06] text-ink' : ''}`}
       >
         Yatras
         <IconChevronDown
-          className={`h-3 w-3 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
         />
       </a>
 
@@ -59,8 +60,8 @@ function YatrasMenu() {
             <ul className="w-[300px] rounded-2xl border border-black/[0.06] bg-white/95 p-1.5 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.25)] backdrop-blur-xl">
               {yatras.map((y) => (
                 <li key={y.slug}>
-                  <a
-                    href="#yatras"
+                  <SiteLink
+                    href={yatraHref(y.slug)}
                     onClick={() => setOpen(false)}
                     className="flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-mist focus-visible:bg-mist"
                   >
@@ -75,7 +76,7 @@ function YatrasMenu() {
                         {y.region} · {y.days} days
                       </span>
                     </span>
-                  </a>
+                  </SiteLink>
                 </li>
               ))}
             </ul>
@@ -114,69 +115,92 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
     }
   }, [bloomed, lenis])
 
-  // bloom out of the burger (top-right) far enough to cover the farthest corner
+  // Bloom out of the burger (top-right) far enough to cover the farthest corner. The bloom
+  // is a saffron disc grown with transform, which the GPU animates on its own. (An animated
+  // clip-path repaints the whole sheet every frame on the main thread; on phones it stalled
+  // midway as the links began to rise, then jumped to full screen.) The disc is drawn at
+  // half its final size, so the scaled layer stays small.
   const [reach] = useState(() => Math.hypot(window.innerWidth, window.innerHeight))
-  const circle = (r: number) => `circle(${r}px at calc(100% - 28px) 24px)`
+  const bloom = 'scale(2)'
 
+  // every link starts rising only once the disc has covered it, on any phone or small tablet
   const rise = (i: number) => ({
     initial: { opacity: 0, y: 24 },
-    animate: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.35 + i * 0.06, ease: [0.22, 1, 0.36, 1] as const } },
+    animate: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.4 + i * 0.06, ease: [0.22, 1, 0.36, 1] as const } },
     exit: { opacity: 0, transition: { duration: 0.15 } },
   })
 
   return (
-    <motion.div
+    <div
       id="mobile-menu"
       role="dialog"
       aria-modal="true"
       aria-label="Menu"
-      initial={{ clipPath: circle(0) }}
-      animate={{ clipPath: circle(reach), transition: { duration: 0.75, ease: [0.7, 0, 0.2, 1] } }}
-      exit={{ clipPath: circle(0), transition: { duration: 0.55, ease: [0.7, 0, 0.3, 1], delay: 0.05 } }}
-      onAnimationComplete={(def) => {
-        // fires for the exit too; only the open bloom should lock the page
-        if (typeof def === 'object' && def !== null && 'clipPath' in def && def.clipPath === circle(reach)) setBloomed(true)
-      }}
-      className="fixed inset-0 z-[60] flex flex-col overflow-y-auto overscroll-contain bg-saffron px-4 text-white will-change-[clip-path] md:hidden"
+      className="fixed inset-0 z-[60] overflow-hidden text-white md:hidden"
     >
-      <div className="flex h-12 shrink-0 items-center justify-between">
-        <Link to="/" onClick={onClose} aria-label="Isha Sacred Walks home">
-          <img src="/images/logo-nav.webp" alt="Isha Sacred Walks" width={220} height={111} className="h-9 w-auto brightness-0 invert" />
-        </Link>
-        {/* the header's burger, morphed into a cross, sits above this spot */}
+      <motion.div
+        aria-hidden
+        initial={{ transform: 'scale(0)' }}
+        animate={{ transform: bloom, transition: { duration: 0.75, ease: [0.7, 0, 0.2, 1] } }}
+        exit={{ transform: 'scale(0)', transition: { duration: 0.55, ease: [0.7, 0, 0.3, 1], delay: 0.05 } }}
+        onAnimationComplete={(def) => {
+          // fires for the exit too; only the open bloom should lock the page
+          if (typeof def === 'object' && def !== null && 'transform' in def && def.transform === bloom) setBloomed(true)
+        }}
+        className="absolute rounded-full bg-saffron will-change-transform"
+        style={{ width: reach, height: reach, left: `calc(100% - 28px - ${reach / 2}px)`, top: 24 - reach / 2 }}
+      />
+
+      <div className="relative flex h-full flex-col overflow-y-auto overscroll-contain px-4">
+        <div className="flex h-12 shrink-0 items-center justify-between">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.35 } }}
+            exit={{ opacity: 0, transition: { duration: 0.15 } }}
+          >
+            <Link to="/" onClick={onClose} aria-label="Isha Sacred Walks home">
+              <img src="/images/logo-nav.webp" alt="Isha Sacred Walks" width={220} height={111} className="h-9 w-auto brightness-0 invert" />
+            </Link>
+          </motion.div>
+          {/* the header's burger, morphed into a cross, sits above this spot */}
+        </div>
+
+        <nav className="flex flex-1 flex-col pt-10 pb-10">
+          <motion.a {...rise(0)} href="/#yatras" onClick={onClose} className="font-display text-[44px] leading-none">
+            Yatras
+          </motion.a>
+          <ul className="mt-5 space-y-1 border-l border-white/30 pl-4">
+            {yatras.map((y, i) => (
+              <motion.li key={y.slug} {...rise(i + 1)}>
+                <SiteLink href={yatraHref(y.slug)} onClick={onClose} className="flex items-baseline justify-between gap-3 py-2">
+                  <span className="text-[17px] font-medium">{y.title}</span>
+                  <span className="shrink-0 text-[12.5px] text-white/70">
+                    {y.region} · {y.days}d
+                  </span>
+                </SiteLink>
+              </motion.li>
+            ))}
+          </ul>
+
+          <motion.a {...rise(yatras.length + 1)} href="/#journey" onClick={onClose} className="mt-10 font-display text-[44px] leading-none">
+            Why pilgrimage
+          </motion.a>
+
+          <motion.a {...rise(yatras.length + 2)} href="/#about" onClick={onClose} className="mt-6 font-display text-[44px] leading-none">
+            About
+          </motion.a>
+
+          <motion.a
+            {...rise(yatras.length + 3)}
+            href="/#yatras"
+            onClick={onClose}
+            className="mt-auto self-start rounded-full bg-white px-5 py-2.5 text-[14px] font-medium text-saffron-ink"
+          >
+            Enquire
+          </motion.a>
+        </nav>
       </div>
-
-      <nav className="flex flex-1 flex-col pt-10 pb-10">
-        <motion.a {...rise(0)} href="#yatras" onClick={onClose} className="font-display text-[44px] leading-none">
-          Yatras
-        </motion.a>
-        <ul className="mt-5 space-y-1 border-l border-white/30 pl-4">
-          {yatras.map((y, i) => (
-            <motion.li key={y.slug} {...rise(i + 1)}>
-              <a href="#yatras" onClick={onClose} className="flex items-baseline justify-between gap-3 py-2">
-                <span className="text-[17px] font-medium">{y.title}</span>
-                <span className="shrink-0 text-[12.5px] text-white/70">
-                  {y.region} · {y.days}d
-                </span>
-              </a>
-            </motion.li>
-          ))}
-        </ul>
-
-        <motion.a {...rise(yatras.length + 1)} href="#about" onClick={onClose} className="mt-10 font-display text-[44px] leading-none">
-          About
-        </motion.a>
-
-        <motion.a
-          {...rise(yatras.length + 2)}
-          href="#yatras"
-          onClick={onClose}
-          className="mt-auto self-start rounded-full bg-white px-5 py-2.5 text-[14px] font-medium text-saffron-ink"
-        >
-          Enquire
-        </motion.a>
-      </nav>
-    </motion.div>
+    </div>
   )
 }
 
@@ -230,7 +254,12 @@ export default function Nav() {
           <ul className="hidden items-center gap-2 md:flex">
             <YatrasMenu />
             <li>
-              <a href="#about" className={`${pill} block`}>
+              <a href="/#journey" className={`${pill} block`}>
+                Why pilgrimage
+              </a>
+            </li>
+            <li>
+              <a href="/#about" className={`${pill} block`}>
                 About
               </a>
             </li>
@@ -238,8 +267,8 @@ export default function Nav() {
 
           <div className="flex items-center gap-1.5">
             <a
-              href="#yatras"
-              className={`rounded-full bg-saffron px-3.5 py-1.5 text-[12.5px] font-medium text-white transition-[background-color,opacity] duration-200 hover:bg-saffron-ink ${menuOpen ? 'pointer-events-none opacity-0' : ''}`}
+              href="/#yatras"
+              className={`rounded-full bg-saffron px-4 py-1.5 text-[14px] font-medium text-white transition-[background-color,opacity] duration-200 hover:bg-saffron-ink ${menuOpen ? 'pointer-events-none opacity-0' : ''}`}
             >
               Enquire
             </a>

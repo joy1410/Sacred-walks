@@ -44,6 +44,9 @@ export type Yatra = {
  * so swap in verified Sadhguru quotes before shipping.
  * Open/closed status is confirmed; departure dates are placeholders until registration data is wired in.
  */
+/** yatras that have their own page so far; the rest point at the homepage list */
+export const yatraHref = (slug: string) => (slug === 'kashi-krama' ? `/yatras/${slug}` : '/#yatras')
+
 export const yatras: Yatra[] = [
   {
     slug: 'kailash-manasarovar',
@@ -106,7 +109,7 @@ export const yatras: Yatra[] = [
     ],
   },
   {
-    slug: 'kashi-yatra',
+    slug: 'kashi-krama',
     tab: 'Kashi Krama',
     region: 'Varanasi',
     title: 'Kashi Krama',
@@ -118,7 +121,7 @@ export const yatras: Yatra[] = [
     difficultyLabel: 'Gentle',
     season: 'October – March',
     seasonShort: 'Oct – Mar',
-    status: { state: 'open', departure: '12 – 16 Nov 2026' },
+    status: { state: 'open', departure: '3 – 7 Dec 2026' },
     quote: {
       text: 'Kashi is not just a city on the river. It is a doorway that has stood open for thousands of years.',
       by: 'Isha Sacred Walks',

@@ -1,15 +1,16 @@
 import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
+import SiteLink from './SiteLink'
 import { IconFacebook, IconInstagram, IconX } from './icons'
 
 const offerings = [
-  { label: 'Kailash Manasarovar', href: '#yatras' },
-  { label: 'Himalayas', href: '#yatras' },
-  { label: 'Kashi Krama', href: '#yatras' },
-  { label: 'Southern Sojourn', href: '#yatras' },
+  { label: 'Kailash Manasarovar', href: '/#yatras' },
+  { label: 'Himalayas', href: '/#yatras' },
+  { label: 'Kashi Krama', href: '/yatras/kashi-krama' },
+  { label: 'Southern Sojourn', href: '/#yatras' },
 ]
 const quickLinks = [
-  { label: 'Why Pilgrimage', href: '#' },
+  { label: 'Why Pilgrimage', href: '/#journey' },
   { label: 'About Us', href: '#' },
   { label: 'Register', href: '#' },
   { label: 'Contact Us', href: '#' },
@@ -61,9 +62,9 @@ export default function Footer() {
       <div className="relative mx-auto max-w-[1180px]">
         <div className="grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-[1.35fr_1fr_1fr_1.3fr] lg:gap-10">
           <div className="col-span-2 lg:col-span-1">
-            <a href="/" aria-label="Isha Sacred Walks home" className="block w-fit">
+            <SiteLink href="/" aria-label="Isha Sacred Walks home" className="block w-fit">
               <img src="/images/footer/logo.webp" alt="Isha Sacred Walks" width={218} height={109} className="h-20 w-auto md:h-24 lg:h-[128px]" loading="lazy" />
-            </a>
+            </SiteLink>
             <p className="mt-6 max-w-[560px] text-[15px] lg:max-w-[380px] leading-[1.6] text-ink-soft">
               Isha Sacred Walks are journeys to places of divine connection, where the veil between the physical and
               spiritual is thin. Such sacred spaces revitalize and energize us, and give us an experience of our
@@ -88,7 +89,7 @@ export default function Footer() {
             <ul className="space-y-3">
               {offerings.map((l) => (
                 <li key={l.label}>
-                  <a href={l.href} className={link}>{l.label}</a>
+                  <SiteLink href={l.href} className={link}>{l.label}</SiteLink>
                 </li>
               ))}
             </ul>
