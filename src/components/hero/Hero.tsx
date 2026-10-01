@@ -10,7 +10,7 @@ const inOut = cubicBezier(0.65, 0, 0.35, 1)
 const widen = cubicBezier(0.4, 0, 0.35, 1)
 
 // one continuous focus front across the whole headline
-const LINE1 = 'Make a life-transforming journey to'
+const LINE1 = 'Make a spiritual journey to'
 const T_LINE1 = 0.15
 const T_PLACES = after(T_LINE1, LINE1)
 const T_OF = after(T_PLACES, 'places')
@@ -73,9 +73,17 @@ export default function Hero() {
         className="hero-stage sticky top-0 h-svh w-full overflow-hidden"
         style={{ '--mw': mw, '--mh': mh } as never}
       >
-        {/* copy sits in the bottom 30%, on the same 1080 grid as the nav */}
+        <img
+          src="/images/hero.png"
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-14 z-0 w-full object-contain object-bottom"
+          style={{ height: 'calc(100% - max(30%, 220px) - 3.5rem)', transform: 'translate(-3vw, 3vh)' }}
+        />
+
+        {/* copy sits in the bottom 30%, on the same 1180 grid as the nav */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex h-[30%] min-h-[220px] flex-col justify-end px-5 pb-[18vh] md:pb-[6vh]">
-          <div className="mx-auto w-full max-w-[1080px]">
+          <div className="mx-auto w-full max-w-[1180px]">
             <h1 className="font-display text-[11vw] leading-[1] md:text-[clamp(2.25rem,4.9vw,4.4rem)] font-semibold tracking-[-0.005em] text-ink-2">
               {/* scroll choreography lives on the wrappers; the load-in blur lives on the letters */}
               <motion.span className="block" style={{ y: line1Y, opacity: line1Opacity }}>

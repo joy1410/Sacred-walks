@@ -12,11 +12,11 @@ export default function Nav() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 border-b backdrop-blur-xl backdrop-saturate-[1.8] transition-colors duration-300 ${
+      className={`fixed inset-x-0 top-0 z-50 border-b px-4 md:px-5 backdrop-blur-xl backdrop-saturate-[1.8] transition-colors duration-300 ${
         scrolled ? 'border-black/[0.08] bg-white/75' : 'border-transparent bg-white/0'
       }`}
     >
-      <nav className="mx-auto flex h-12 max-w-[1080px] items-center justify-between px-5">
+      <nav className="mx-auto flex h-12 max-w-[1180px] items-center justify-between">
         <Link to="/" className="flex items-center gap-2 text-[15px] tracking-[-0.02em] text-ink" aria-label="Isha Sacred Walks home">
           <span className="h-2 w-2 rounded-full bg-saffron" aria-hidden />
           <span className="font-semibold">Isha</span>
