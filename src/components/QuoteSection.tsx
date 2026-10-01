@@ -49,7 +49,7 @@ function QuoteMark({ className = '', delay = 0 }: { className?: string; delay?: 
 function Signature() {
   return (
     <motion.img
-      src="/images/sadhguru-signature.png"
+      src="/images/sadhguru-signature.webp"
       alt="Sadhguru"
       width={358}
       height={169}

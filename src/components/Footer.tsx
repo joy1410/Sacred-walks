@@ -77,7 +77,7 @@ export default function Footer() {
             className="col-span-2 lg:col-span-1"
           >
             <a href="/" aria-label="Isha Sacred Walks home" className="block w-fit">
-              <img src="/images/footer/logo.png" alt="Isha Sacred Walks" width={218} height={109} className="h-20 w-auto md:h-24 lg:h-[128px]" loading="lazy" />
+              <img src="/images/footer/logo.webp" alt="Isha Sacred Walks" width={218} height={109} className="h-20 w-auto md:h-24 lg:h-[128px]" loading="lazy" />
             </a>
             <p className="mt-6 max-w-[560px] text-[15px] lg:max-w-[380px] leading-[1.6] text-ink-soft">
               Isha Sacred Walks are journeys to places of divine connection, where the veil between the physical and

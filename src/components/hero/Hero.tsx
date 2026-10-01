@@ -85,7 +85,7 @@ export default function Hero() {
           <div className="@container relative flex w-full flex-col md:block md:aspect-[2/1] md:w-[min(100vw,170svh)]">
             {/* portrait art on phones, the wide panorama from md up */}
             <picture className="contents">
-              <source media="(min-width: 768px)" srcSet="/images/hero.png" />
+              <source media="(min-width: 768px)" srcSet="/images/hero.webp" />
               <motion.img
                 src="/images/hero_mobile.webp"
                 alt=""
@@ -160,7 +160,7 @@ export default function Hero() {
             style={{ scale: videoScale }}
             // 720p cut on phones: a quarter of the bytes and far cheaper to decode
             src={lite ? '/media/hero-mobile.mp4' : '/media/hero.mp4'}
-            poster="/media/hero-poster.jpg"
+            poster="/media/hero-poster.webp"
             autoPlay
             muted
             loop

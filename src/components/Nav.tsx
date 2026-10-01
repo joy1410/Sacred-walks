@@ -123,7 +123,7 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
     >
       <div className="flex h-12 shrink-0 items-center justify-between">
         <Link to="/" onClick={onClose} aria-label="Isha Sacred Walks home">
-          <img src="/images/logo-nav.png" alt="Isha Sacred Walks" width={220} height={111} className="h-9 w-auto brightness-0 invert" />
+          <img src="/images/logo-nav.webp" alt="Isha Sacred Walks" width={220} height={111} className="h-9 w-auto brightness-0 invert" />
         </Link>
         {/* the header's burger, morphed into a cross, sits above this spot */}
       </div>
@@ -206,7 +206,7 @@ export default function Nav() {
             className={`flex items-center transition-opacity duration-200 ${menuOpen ? 'pointer-events-none opacity-0' : ''}`}
             aria-label="Isha Sacred Walks home"
           >
-            <img src="/images/logo-nav.png" alt="Isha Sacred Walks" width={220} height={111} className="h-9 w-auto" />
+            <img src="/images/logo-nav.webp" alt="Isha Sacred Walks" width={220} height={111} className="h-9 w-auto" />
           </Link>
 
           <ul className="hidden items-center gap-2 md:flex">
