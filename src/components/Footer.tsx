@@ -2,9 +2,6 @@ import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { IconFacebook, IconInstagram, IconX } from './icons'
 
-const ease = [0.16, 1, 0.3, 1] as const
-const inView = { once: true, margin: '-10% 0px' } as const
-
 const offerings = [
   { label: 'Kailash Manasarovar', href: '#yatras' },
   { label: 'Himalayas', href: '#yatras' },
@@ -27,18 +24,12 @@ const socials = [
   { label: 'Isha Sacred Walks on Instagram', href: '#', Icon: IconInstagram },
 ]
 
-function Column({ title, children, i, className }: { title: string; children: ReactNode; i: number; className?: string }) {
+function Column({ title, children, className }: { title: string; children: ReactNode; className?: string }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 14 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={inView}
-      transition={{ duration: 0.9, ease, delay: 0.15 + i * 0.07 }}
-      className={className}
-    >
+    <div className={className}>
       <h3 className="font-display text-[22px] leading-none font-semibold text-ink">{title}</h3>
       <div className="mt-5">{children}</div>
-    </motion.div>
+    </div>
   )
 }
 
@@ -69,13 +60,7 @@ export default function Footer() {
 
       <div className="relative mx-auto max-w-[1180px]">
         <div className="grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-[1.35fr_1fr_1fr_1.3fr] lg:gap-10">
-          <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={inView}
-            transition={{ duration: 0.9, ease, delay: 0.1 }}
-            className="col-span-2 lg:col-span-1"
-          >
+          <div className="col-span-2 lg:col-span-1">
             <a href="/" aria-label="Isha Sacred Walks home" className="block w-fit">
               <img src="/images/footer/logo.webp" alt="Isha Sacred Walks" width={218} height={109} className="h-20 w-auto md:h-24 lg:h-[128px]" loading="lazy" />
             </a>
@@ -97,9 +82,9 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-          </motion.div>
+          </div>
 
-          <Column title="Our Offerings" i={1}>
+          <Column title="Our Offerings">
             <ul className="space-y-3">
               {offerings.map((l) => (
                 <li key={l.label}>
@@ -109,7 +94,7 @@ export default function Footer() {
             </ul>
           </Column>
 
-          <Column title="Quick Links" i={2}>
+          <Column title="Quick Links">
             <ul className="space-y-3">
               {quickLinks.map((l) => (
                 <li key={l.label}>
@@ -119,7 +104,7 @@ export default function Footer() {
             </ul>
           </Column>
 
-          <Column title="Contact Us" i={3} className="col-span-2 lg:col-span-1">
+          <Column title="Contact Us" className="col-span-2 lg:col-span-1">
             <address className="text-[14px] leading-[1.6] text-ink-soft not-italic">
               <span className="font-medium text-ink-2">Isha Sacred Walks</span>
               <br />

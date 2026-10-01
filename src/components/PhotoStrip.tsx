@@ -85,6 +85,8 @@ export default function PhotoStrip() {
     // so the closing card sits in the glow rather than on grey
     <section
       ref={sectionRef}
+      // from here to the footer the ambient light rests
+      data-still-light
       aria-label="Moments from the yatras"
       className="overflow-hidden bg-[linear-gradient(to_bottom,var(--color-mist)_0%,var(--color-mist)_55%,transparent_100%)] pt-24 pb-24 md:pt-40 md:pb-36"
     >

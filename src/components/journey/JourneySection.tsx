@@ -41,6 +41,7 @@ export default function JourneySection() {
     <section
       ref={sectionRef}
       id="journey"
+      data-opaque
       aria-labelledby="journey-title"
       className="relative bg-white py-20 [--ride:0] md:h-[460vh] md:py-0 md:[--ride:1]"
     >
@@ -52,7 +53,10 @@ export default function JourneySection() {
 
         <div className="flex min-h-0 flex-1 md:relative md:z-10 md:pt-16 md:pb-3">
           <div
-            className="flex w-full snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-[10vw] [scrollbar-width:none] md:w-max md:snap-none md:gap-5 md:overflow-visible md:px-[max(16px,2.5vw)] [&::-webkit-scrollbar]:hidden"
+            // overflow-x: auto would make overflow-y auto too, and the cards'
+            // rising entrance (y: 56) then turns the row into a vertical
+            // scroller; clip y, with bottom room so the rise isn't cut off
+            className="-mb-16 flex w-full snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain px-[10vw] pb-16 [scrollbar-width:none] md:mb-0 md:w-max md:pb-0 md:snap-none md:gap-5 md:overflow-visible md:px-[max(16px,2.5vw)] [&::-webkit-scrollbar]:hidden"
             // the track's right edge meets the screen's right edge exactly at p = 1
             style={{ transform: 'translateX(calc((100vw - 100%) * var(--p) * var(--ride)))' }}
           >

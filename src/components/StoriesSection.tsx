@@ -132,6 +132,7 @@ export default function StoriesSection() {
   return (
     <section
       id="stories"
+      data-opaque
       aria-labelledby="stories-title"
       className="overflow-x-clip bg-mist px-4 py-20 md:px-5 md:py-24 lg:flex lg:h-svh lg:min-h-[700px] lg:flex-col lg:pt-[88px] lg:pb-8"
     >

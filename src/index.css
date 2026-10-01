@@ -117,82 +117,79 @@ html.lenis body { height: auto; }
 
 /*
  * Ambient temple light. Washes are radial gradients that fade to transparent on
- * their own (no filter: blur). Every gradient is painted once and never
- * repainted: all motion is transform + opacity, which the GPU compositor runs
- * off the main thread. The shape drifts by transform; it "breathes" by
- * crossfading between two static gradients (::before and ::after) whose hot
- * spots and hues differ, while the second one slowly swells.
- * The low haze is split into two mid-size washes rather than one huge layer.
+ * their own (no filter: blur). Each is painted once and never repainted, one
+ * layer per wash. Two motions run on that one layer, both on the GPU
+ * compositor, off the main thread:
+ *  - drift: transform (slide, swell, turn) on a 15-24s sweep
+ *  - breathe: opacity swells and a small hue-rotate warms the colour (marigold
+ *    leaning toward saffron and back). A filter on an already-composited layer
+ *    is a cheap shader pass, not a repaint.
+ * While opaque sections cover the whole screen the light can't be seen, so
+ * AmbientLight sets data-paused and every animation here holds still.
  */
 .ambient-cloud {
   position: absolute;
   border-radius: 9999px;
-  will-change: transform;
+  will-change: transform, opacity, filter;
   contain: strict;
-  animation: cloud-drift var(--d, 60s) ease-in-out infinite alternate;
+  background: var(--ga);
+  animation:
+    cloud-drift var(--d, 20s) ease-in-out infinite alternate,
+    cloud-breathe var(--b, 9s) ease-in-out infinite alternate;
 }
-.ambient-cloud::before,
-.ambient-cloud::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-}
-.ambient-cloud::before { background: var(--ga); }
-.ambient-cloud::after {
-  background: var(--gb);
-  opacity: 0;
-  will-change: opacity, transform;
-  animation: cloud-breathe var(--b, 18s) ease-in-out infinite alternate;
-  animation-delay: inherit;
+.ambient[data-paused] .ambient-cloud,
+.ambient[data-paused] .ambient-mote {
+  animation-play-state: paused;
 }
 .ambient-cloud--a {
   /* marigold, upper left */
   width: 72vmax; height: 56vmax; left: -20vmax; top: -14vmax;
-  --d: 34s; --x: 24vw; --y: 18vh; --s: 1.22; --b: 11s;
+  --d: 18s; --x: 34vw; --y: 26vh; --s: 1.3; --r: 10deg;
+  --b: 8s; --h1: -6deg; --h2: -18deg;
   --ga: radial-gradient(closest-side at 38% 42%, rgba(250, 190, 70, 0.30), rgba(250, 196, 80, 0.10) 48%, transparent);
-  --gb: radial-gradient(closest-side at 60% 56%, rgba(255, 176, 60, 0.38), rgba(252, 206, 96, 0.14) 62%, transparent);
 }
 .ambient-cloud--b {
   /* pale turmeric, right */
   width: 64vmax; height: 50vmax; right: -22vmax; top: 20vh;
-  --d: 41s; --x: -26vw; --y: -16vh; --s: 0.84; --b: 14s;
+  --d: 21s; --x: -36vw; --y: -24vh; --s: 0.8; --r: -8deg;
+  --b: 10s; --h1: 4deg; --h2: -14deg;
   --ga: radial-gradient(closest-side at 58% 40%, rgba(247, 212, 100, 0.30), rgba(247, 212, 110, 0.10) 50%, transparent);
-  --gb: radial-gradient(closest-side at 40% 58%, rgba(240, 196, 70, 0.36), rgba(250, 222, 130, 0.13) 64%, transparent);
-  animation-delay: -20s;
+  animation-delay: -9s, -3s;
 }
 .ambient-cloud--c,
 .ambient-cloud--e {
   /* warm apricot haze, low: a hint of saffron. Two mid-size washes instead of one 84vmax layer */
   --ga: radial-gradient(closest-side at 44% 50%, rgba(245, 166, 86, 0.24), rgba(245, 170, 90, 0.08) 52%, transparent);
-  --gb: radial-gradient(closest-side at 62% 42%, rgba(240, 150, 70, 0.30), rgba(248, 190, 100, 0.10) 66%, transparent);
+  --h1: 8deg; --h2: -10deg;
 }
 .ambient-cloud--c {
   width: 50vmax; height: 40vmax; left: -8vw; bottom: -18vmax;
-  --d: 48s; --x: 18vw; --y: -18vh; --s: 1.2; --b: 16s;
-  animation-delay: -40s;
+  --d: 24s; --x: 28vw; --y: -26vh; --s: 1.3; --r: 12deg;
+  --b: 11s;
+  animation-delay: -16s, -5s;
 }
 .ambient-cloud--e {
   width: 46vmax; height: 38vmax; right: -12vw; bottom: -20vmax;
-  --d: 44s; --x: -16vw; --y: -14vh; --s: 1.15; --b: 13s;
-  animation-delay: -18s;
+  --d: 22s; --x: -26vw; --y: -22vh; --s: 1.25; --r: -10deg;
+  --b: 9s;
+  animation-delay: -7s, -2s;
 }
 .ambient-cloud--d {
   /* bright sun-spot that wanders through the middle */
   width: 38vmax; height: 38vmax; left: 34vw; top: 16vh;
-  --d: 27s; --x: -30vw; --y: 32vh; --s: 1.45; --b: 9s;
+  --d: 15s; --x: -38vw; --y: 38vh; --s: 1.55; --r: 0deg;
+  --b: 6s; --h1: 0deg; --h2: -12deg;
   --ga: radial-gradient(closest-side at 50% 50%, rgba(255, 216, 120, 0.30), rgba(255, 214, 120, 0.12) 30%, transparent);
-  --gb: radial-gradient(closest-side at 42% 58%, rgba(255, 200, 90, 0.42), rgba(255, 226, 150, 0.16) 50%, transparent);
-  animation-delay: -12s;
+  animation-delay: -5s, -1s;
 }
 
 @keyframes cloud-drift {
   from { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
-  to   { transform: translate3d(var(--x), var(--y), 0) scale(var(--s)) rotate(8deg); }
+  to   { transform: translate3d(var(--x), var(--y), 0) scale(var(--s)) rotate(var(--r, 8deg)); }
 }
 @keyframes cloud-breathe {
-  from { opacity: 0; transform: scale(0.94); }
-  to   { opacity: 1; transform: scale(1.06); }
+  from { opacity: 0.6; filter: hue-rotate(var(--h1, 0deg)); }
+  to   { opacity: 1; filter: hue-rotate(var(--h2, -12deg)); }
 }
 
 /* dust in a sunbeam: rises the full height, sways side to side */
@@ -227,9 +224,8 @@ html.lenis body { height: auto; }
 
 /*
  * Phones: the washes stay, painted once into the single fixed layer and held
- * still. Ten huge animated layers (each cloud plus its breathing twin) at a
- * phone's pixel density overrun mobile tile memory, so the page itself stops
- * rendering. The motes go too.
+ * still. Large animated layers at a phone's pixel density overrun mobile
+ * tile memory, so the page itself stops rendering. The motes go too.
  */
 @media (hover: none), (max-width: 767px) {
   .ambient-cloud {
@@ -237,13 +233,11 @@ html.lenis body { height: auto; }
     will-change: auto;
     contain: none;
   }
-  .ambient-cloud::after { display: none; }
   .ambient-mote { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .text-saffron-grad { animation: none; }
-  .ambient-cloud,
-  .ambient-cloud::after { animation: none; }
+  .ambient-cloud { animation: none; }
   .ambient-mote { display: none; }
 }
