@@ -1,6 +1,10 @@
 import Hero from '../components/hero/Hero'
 import QuoteSection from '../components/QuoteSection'
 import YatraSection from '../components/yatras/YatraSection'
+import JourneySection from '../components/journey/JourneySection'
+import StoriesSection from '../components/StoriesSection'
+import PhotoStrip from '../components/PhotoStrip'
+import FinalCta from '../components/FinalCta'
 
 export default function Home() {
   return (
@@ -8,6 +12,10 @@ export default function Home() {
       <Hero />
       <QuoteSection />
       <YatraSection />
+      <JourneySection />
+      <StoriesSection />
+      <PhotoStrip />
+      <FinalCta />
     </main>
   )
 }

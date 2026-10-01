@@ -15,16 +15,21 @@ export function BlurText({
   delay = 0,
   className,
   onDone,
+  inView = false,
 }: {
   text: string
   delay?: number
   className?: string
+  /** play when scrolled into view instead of on mount */
+  inView?: boolean
   /** fires when the last letter is fully in focus */
   onDone?: () => void
 }) {
   const words = text.split(' ')
   // letter offset where each word starts (+1 per space)
   const starts = words.map((_, i) => words.slice(0, i).reduce((sum, w) => sum + w.length + 1, 0))
+  const shown = { opacity: 1, filter: 'blur(0px)' }
+  const play = inView ? { whileInView: shown, viewport: { once: true, margin: '-15% 0px' } } : { animate: shown }
 
   return (
     <span className={className} role="text" aria-label={text}>
@@ -36,7 +41,7 @@ export function BlurText({
                 key={ci}
                 className="inline-block"
                 initial={{ opacity: 0, filter: 'blur(12px)' }}
-                animate={{ opacity: 1, filter: 'blur(0px)' }}
+                {...play}
                 transition={{ duration: DURATION, ease, delay: delay + (starts[wi] + ci) * CHAR_STAGGER }}
                 onAnimationComplete={wi === words.length - 1 && ci === w.length - 1 ? onDone : undefined}
               >

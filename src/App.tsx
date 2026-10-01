@@ -2,7 +2,9 @@ import { useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { ReactLenis, useLenis } from 'lenis/react'
 import { MotionConfig } from 'motion/react'
+import AmbientLight from './components/AmbientLight'
 import Nav from './components/Nav'
+import Footer from './components/Footer'
 import Home from './pages/Home'
 
 function ScrollReset() {
@@ -20,11 +22,13 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <ReactLenis root options={{ lerp: 0.085, wheelMultiplier: 0.9 }} />
       <ScrollReset />
+      <AmbientLight />
       <Nav />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="*" element={<Home />} />
       </Routes>
+      <Footer />
     </MotionConfig>
   )
 }

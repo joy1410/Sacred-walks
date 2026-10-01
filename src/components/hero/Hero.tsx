@@ -45,7 +45,9 @@ export default function Hero() {
   const line1Opacity = useScrollRange(scrollYProgress, [0.12, 0.34], [1, 0], { clamp: true })
   // words stay solid while they part, and fade only as the growing card reaches them
   const wordsOpacity = useScrollRange(scrollYProgress, [0.4, 0.64], [1, 0], { clamp: true })
-
+  // the illustration clears out almost immediately, so the film grows over white, not the art
+  const artOpacity = useScrollRange(scrollYProgress, [0, 0.1], [1, 0], { clamp: true })
+  const artScale = useScrollRange(scrollYProgress, [0, 0.1], [1, 1.04], { clamp: true })
 
   useLayoutEffect(() => {
     const measure = () => {
@@ -67,26 +69,33 @@ export default function Hero() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="relative h-[190vh] bg-white" aria-label="Introduction">
+    <section ref={sectionRef} className="relative h-[190vh]" aria-label="Introduction">
       <motion.div
         ref={stageRef}
         className="hero-stage sticky top-0 h-svh w-full overflow-hidden"
         style={{ '--mw': mw, '--mh': mh } as never}
       >
-        <img
-          src="/images/hero.png"
-          alt=""
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-14 z-0 w-full object-contain object-bottom"
-          style={{ height: 'calc(100% - max(30%, 220px) - 3.5rem)', transform: 'translate(-3vw, 3vh)' }}
-        />
+        {/* one composition: a 2:1 box holding the illustration, with the headline set into
+            its empty upper-left corner. On desktop the type is sized in container units, so
+            text and art scale as a single picture. On mobile the headline sits below the art. */}
+        <div className="pointer-events-none absolute inset-0 z-10 flex items-end justify-center pt-14 pb-[3svh]">
+          <div className="@container relative flex w-full flex-col md:block md:aspect-[2/1] md:w-[min(100vw,170svh)]">
+            {/* portrait art on phones, the wide panorama from md up */}
+            <picture className="contents">
+              <source media="(min-width: 768px)" srcSet="/images/hero.png" />
+              <motion.img
+                src="/images/hero_mobile.png"
+                alt=""
+                aria-hidden="true"
+                className="block max-h-[62svh] w-full object-contain object-bottom md:absolute md:inset-0 md:h-full md:max-h-none"
+                style={{ opacity: artOpacity, scale: artScale }}
+              />
+            </picture>
 
-        {/* copy sits in the bottom 30%, on the same 1180 grid as the nav */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex h-[30%] min-h-[220px] flex-col justify-end px-5 pb-[18vh] md:pb-[6vh]">
-          <div className="mx-auto w-full max-w-[1180px]">
-            <h1 className="font-display text-[11vw] leading-[1] md:text-[clamp(2.25rem,4.9vw,4.4rem)] font-semibold tracking-[-0.005em] text-ink-2">
+            <div className="relative mt-6 px-5 md:absolute md:left-[6%] md:top-[28%] md:mt-0 md:px-0">
+            <h1 className="font-display text-[8.5vw] leading-[1.1] md:text-[3.8cqw] md:leading-[1.25] font-semibold tracking-[-0.005em] text-ink">
               {/* scroll choreography lives on the wrappers; the load-in blur lives on the letters */}
-              <motion.span className="block" style={{ y: line1Y, opacity: line1Opacity }}>
+              <motion.span className="block whitespace-nowrap" style={{ y: line1Y, opacity: line1Opacity }}>
                 <BlurText text={LINE1} delay={T_LINE1} />
               </motion.span>
 
@@ -114,6 +123,7 @@ export default function Hero() {
                 </span>
               </span>
             </h1>
+            </div>
           </div>
         </div>
 

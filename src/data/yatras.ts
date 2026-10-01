@@ -1,4 +1,4 @@
-const u = (id: string, w = 1800) =>
+export const u = (id: string, w = 1800) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`
 
 export type Difficulty = 1 | 2 | 3

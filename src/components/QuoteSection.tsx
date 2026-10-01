@@ -5,20 +5,20 @@ const inView = { once: true, margin: '-20% 0px' } as const
 
 /**
  * Static, compact quote. Only the ornaments move: the quote marks settle
- * in, then the signature writes itself underneath.
+ * in, then the signature fades in underneath.
  */
 export default function QuoteSection() {
   return (
-    <section className="bg-white px-5 py-24 md:py-32">
-      <figure className="relative mx-auto max-w-[820px] text-center">
-        <QuoteMark className="mx-auto mb-6 h-8 w-10 md:absolute md:-top-2 md:-left-20 md:mb-0 md:h-10 md:w-12" delay={0.1} />
+    <section className="px-5 py-24 md:py-32">
+      <figure className="relative mx-auto max-w-[720px] text-center">
+        <QuoteMark className="mx-auto mb-6 h-8 w-10 md:absolute md:-top-1 md:-left-12 md:mb-0 md:h-10 md:w-12" delay={0.1} />
 
-        <blockquote className="font-display text-[clamp(1.8rem,3.4vw,2.85rem)] leading-[1.14] font-medium text-ink-2">
-          A pilgrimage is not an achievement but an opportunity to subdue the sense of who you are and to access
-          the <span className="text-saffron">beyond</span>.
+        <blockquote className="font-display text-[clamp(1.8rem,3.4vw,2.85rem)] leading-[1.14] font-medium text-balance text-ink-2">
+          The very idea behind a pilgrimage is fundamentally to <span className="text-saffron">subdue</span> the sense
+          of who&nbsp;you&nbsp;are.
         </blockquote>
 
-        <figcaption className="mt-10 flex justify-center">
+        <figcaption className="mt-8 flex justify-center">
           <Signature />
         </figcaption>
       </figure>
@@ -45,22 +45,19 @@ function QuoteMark({ className = '', delay = 0 }: { className?: string; delay?: 
   )
 }
 
-/**
- * Signature that writes itself left → right once in view.
- * Placeholder lettering: replace with the official Sadhguru signature SVG.
- */
+/** Sadhguru's signature, fading in once the quote is in view. */
 function Signature() {
   return (
-    <motion.span
-      role="img"
-      aria-label="Sadhguru"
-      className="block font-[family-name:var(--font-signature)] text-[3.6rem] leading-[1.1] text-ink"
-      initial={{ clipPath: 'inset(0 100% 0 0)' }}
-      whileInView={{ clipPath: 'inset(0 0% 0 0)' }}
+    <motion.img
+      src="/images/sadhguru-signature.png"
+      alt="Sadhguru"
+      width={358}
+      height={169}
+      className="block h-auto w-[150px] md:w-[180px]"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       viewport={inView}
-      transition={{ duration: 1.8, ease: [0.45, 0, 0.25, 1], delay: 0.5 }}
-    >
-      Sadhguru
-    </motion.span>
+      transition={{ duration: 1.2, ease, delay: 0.4 }}
+    />
   )
 }

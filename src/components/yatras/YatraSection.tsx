@@ -44,7 +44,7 @@ export default function YatraSection() {
     <section id="yatras" className="bg-mist px-4 pt-16 pb-6 md:px-5 md:pt-[72px] lg:h-svh lg:min-h-[680px]">
       <div className="mx-auto flex h-full max-w-[1180px] flex-col">
         <h2 className="mb-3 font-display text-[24px] leading-none font-medium text-ink-2 md:mb-4 md:text-[30px]">
-          Choose your yatra
+          Choose your pilgrimage
         </h2>
 
         {/* segmented control, full width */}
@@ -56,7 +56,7 @@ export default function YatraSection() {
           role="tablist"
           aria-label="Yatra destinations"
           onKeyDown={onKey}
-          className="flex w-max min-w-full rounded-full bg-black/[0.06] p-1 md:grid md:w-full md:grid-cols-4"
+          className="flex w-max min-w-full rounded-full bg-[rgba(120,72,30,0.07)] p-1 md:grid md:w-full md:grid-cols-4"
         >
           {yatras.map((t, i) => {
             const isActive = i === active
