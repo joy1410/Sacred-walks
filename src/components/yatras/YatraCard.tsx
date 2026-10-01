@@ -143,7 +143,7 @@ function StatusNote({ status }: { status: YatraStatus }) {
  * Both sit above the card link on z-10 so each keeps its own click.
  */
 function StatusAction({ status, slug }: { status: YatraStatus; slug: string }) {
-  const label = status.state === 'open' ? 'Enquire' : status.state === 'soon' ? 'Notify me' : `Join ${status.next} waitlist`
+  const label = status.state === 'open' ? 'Register' : status.state === 'soon' ? 'Notify me' : `Join ${status.next} waitlist`
 
   return (
     <div className="relative z-10 mt-2.5 flex gap-2 md:mt-3 md:gap-2.5">

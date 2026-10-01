@@ -136,7 +136,8 @@ export default function StoriesSection() {
       aria-labelledby="stories-title"
       className="overflow-x-clip bg-mist px-4 py-20 md:px-5 md:py-24 lg:flex lg:h-svh lg:min-h-[700px] lg:flex-col lg:pt-[88px] lg:pb-8"
     >
-      <div className="mx-auto flex w-full max-w-[1180px] flex-col lg:min-h-0 lg:flex-1">
+      {/* the deck stops at 640px tall (as the yatra card does); past that the heading and deck centre together */}
+      <div className="mx-auto flex w-full max-w-[1180px] flex-col lg:min-h-0 lg:flex-1 lg:justify-center">
         <div className="mb-6 flex items-end justify-between gap-6 md:mb-8">
           <h2 id="stories-title" className="font-display text-[clamp(2.4rem,4.4vw,4rem)] leading-[0.98] font-semibold text-ink">
             <BlurText text="Stories from the journey" inView />
@@ -155,7 +156,7 @@ export default function StoriesSection() {
         {/* the pile: every card in one grid cell, so it sizes to the tallest */}
         <motion.div
           ref={deckRef}
-          className="relative grid grid-rows-[minmax(0,1fr)] pr-7 md:pr-12 lg:min-h-0 lg:flex-1"
+          className="relative grid grid-rows-[minmax(0,1fr)] pr-7 md:pr-12 lg:max-h-[640px] lg:min-h-0 lg:flex-1"
           role="region"
           aria-roledescription="carousel"
           aria-label="Participant stories"

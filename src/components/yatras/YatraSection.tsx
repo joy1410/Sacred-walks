@@ -96,8 +96,9 @@ export default function YatraSection() {
     // heading + full-width segmented control + card fill exactly one screen on desktop
     // (top padding clears the 48px nav)
     <section id="yatras" data-opaque className="bg-mist px-4 pt-16 pb-6 md:px-5 md:pt-[72px] lg:h-svh lg:min-h-[680px]">
-      <div className="mx-auto flex h-full max-w-[1180px] flex-col">
-        <h2 className="mb-3 font-display text-[24px] leading-none font-medium text-ink-2 md:mb-4 md:text-[30px]">
+      {/* once the card hits its max height, the leftover space splits above and below */}
+      <div className="mx-auto flex h-full max-w-[1180px] flex-col lg:justify-center">
+        <h2 className="mb-3 font-display text-[24px] leading-none font-semibold text-ink md:mb-4 md:text-[30px]">
           Choose your pilgrimage
         </h2>
 
@@ -183,7 +184,8 @@ export default function YatraSection() {
               animate="center"
               exit="exit"
               transition={{ duration: 0.5, ease }}
-              className="min-h-0 flex-1"
+              // fills the screen below the tabs, but stops at 640px so tall screens don't stretch it
+              className="min-h-0 flex-1 lg:max-h-[640px]"
             >
               <YatraCard yatra={y} />
             </motion.div>

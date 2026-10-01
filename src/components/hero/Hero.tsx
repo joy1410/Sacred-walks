@@ -80,9 +80,10 @@ export default function Hero() {
       >
         {/* one composition: a 2:1 box holding the illustration, with the headline set into
             its empty upper-left corner. On desktop the type is sized in container units, so
-            text and art scale as a single picture. On mobile the headline sits below the art. */}
+            text and art scale as a single picture, capped at 1440px so the headline stays near the
+            content column on wide screens. On mobile the headline sits below the art. */}
         <div className="pointer-events-none absolute inset-0 z-10 flex items-end justify-center pt-14 pb-[3svh]">
-          <div className="@container relative flex w-full flex-col md:block md:aspect-[2/1] md:w-[min(100vw,170svh)]">
+          <div className="@container relative flex w-full flex-col md:block md:aspect-[2/1] md:w-[min(100vw,170svh,1440px)]">
             {/* portrait art on phones, the wide panorama from md up */}
             <picture className="contents">
               <source media="(min-width: 768px)" srcSet="/images/hero.webp" />

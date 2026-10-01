@@ -51,7 +51,11 @@ export default function JourneySection() {
       >
         <Intro />
 
-        <div className="flex min-h-0 flex-1 md:relative md:z-10 md:pt-16 md:pb-3">
+        {/* the row fills the screen until the cards hit their 640px cap (+ pt/pb). Past that, the
+            spare height splits evenly between this spacer and the rail's zone below, so the cards
+            stay centred and the rail floats midway between them and the bottom of the screen */}
+        <div aria-hidden className="hidden md:block md:flex-1" />
+        <div className="flex min-h-0 flex-1 md:relative md:z-10 md:flex-[0_1_716px] md:pt-16 md:pb-3">
           <div
             // overflow-x: auto would make overflow-y auto too, and the cards'
             // rising entrance (y: 56) then turns the row into a vertical
@@ -131,7 +135,7 @@ function BeatPanel({ beat, index, setActive }: { beat: Beat; index: number; setA
       initial={stacked ? { opacity: 0, y: 56, scale: 0.94 } : false}
       animate={enter ? { opacity: 1, y: 0, scale: 1 } : undefined}
       transition={{ duration: 1.1, ease, delay: stacked ? Math.min(index, 2) * 0.08 : 0 }}
-      className="relative aspect-[4/5] w-[80vw] shrink-0 snap-center overflow-hidden rounded-[28px] bg-night md:aspect-auto md:h-full md:w-[min(64vw,1040px)]"
+      className="relative aspect-[4/5] w-[80vw] shrink-0 snap-center overflow-hidden rounded-[28px] bg-night md:aspect-auto md:h-full md:max-h-[640px] md:w-[min(64vw,1040px)] md:self-center"
     >
       {/* the photo drifts against the track, so it reads as a window rather than a slide */}
       <motion.img
@@ -177,8 +181,8 @@ function BeatPanel({ beat, index, setActive }: { beat: Beat; index: number; setA
 /** where you are on the walk; desktop only, since mobile reads top to bottom */
 function Rail({ active }: { active: number }) {
   return (
-    <div className="hidden px-[max(16px,2.5vw)] pb-5 md:block" aria-hidden>
-      <ol className="mx-auto grid max-w-[1180px] grid-cols-5 gap-5">
+    <div className="hidden px-[max(16px,2.5vw)] pb-5 md:flex md:flex-1 md:flex-col md:justify-center" aria-hidden>
+      <ol className="mx-auto grid w-full max-w-[1180px] grid-cols-5 gap-5">
         {beats.map((b, i) => {
           const on = i <= active
           return (
