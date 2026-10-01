@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { AnimatePresence, animate, motion, useMotionValue, useTransform, type PanInfo } from 'motion/react'
+import { AnimatePresence, animate, motion, useInView, useMotionValue, useTransform, type PanInfo } from 'motion/react'
 import type { Yatra } from '../../data/yatras'
 import { IconChevronLeft, IconChevronRight, IconPause, IconPlay } from '../icons'
 
@@ -110,7 +110,8 @@ export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
   // timer as a motion value, so pausing freezes the fill where it is
   const fill = useMotionValue(0)
   const fillWidth = useTransform(fill, (v) => `${v * 100}%`)
-  const running = playing && !hovered && !dragging
+  const inView = useInView(frameRef, { amount: 0.3 })
+  const running = playing && !hovered && !dragging && inView
   useEffect(() => fill.set(0), [index, fill])
   useEffect(() => {
     if (!running) return

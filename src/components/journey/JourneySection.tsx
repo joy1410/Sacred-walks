@@ -4,6 +4,7 @@ import { beats, type Beat } from '../../data/journey'
 import { BlurText } from '../hero/BlurIn'
 import { useScrollRange } from '../../lib/useScrollRange'
 import { blur } from '../../lib/lite'
+import { useIsMobile } from '../../lib/useIsMobile'
 
 const ease = [0.16, 1, 0.3, 1] as const
 
@@ -20,7 +21,9 @@ const item: Variants = {
 /**
  * "More than a journey": what sets an Isha yatra apart, one photograph each.
  * Desktop: the section pins and vertical scroll drives a horizontal track.
- * Mobile: the same panels simply stack, text set low over the photo.
+ * Mobile: the panels sit in a swipeable row that snaps each card to the
+ * centre, its neighbours peeking in equally on both sides (10vw gutters on
+ * the row let the first and last cards centre too); text set low over the photo.
  *
  * Like the hero, Motion drives one 0→1 CSS variable (--p) and the geometry
  * is plain CSS; --ride switches the horizontal travel off below md.
@@ -49,7 +52,7 @@ export default function JourneySection() {
 
         <div className="flex min-h-0 flex-1 md:relative md:z-10 md:pt-16 md:pb-3">
           <div
-            className="flex w-full flex-col gap-4 px-4 md:w-max md:flex-row md:gap-5 md:px-[max(16px,2.5vw)]"
+            className="flex w-full snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-[10vw] [scrollbar-width:none] md:w-max md:snap-none md:gap-5 md:overflow-visible md:px-[max(16px,2.5vw)] [&::-webkit-scrollbar]:hidden"
             // the track's right edge meets the screen's right edge exactly at p = 1
             style={{ transform: 'translateX(calc((100vw - 100%) * var(--p) * var(--ride)))' }}
           >
@@ -107,26 +110,15 @@ function Intro() {
   )
 }
 
-/** below md the panels stack, so each card makes its own entrance */
-function useStacked() {
-  const query = '(max-width: 767px)'
-  const [stacked, setStacked] = useState(() => window.matchMedia(query).matches)
-  useEffect(() => {
-    const mq = window.matchMedia(query)
-    const on = () => setStacked(mq.matches)
-    mq.addEventListener('change', on)
-    return () => mq.removeEventListener('change', on)
-  }, [])
-  return stacked
-}
-
 function BeatPanel({ beat, index, setActive }: { beat: Beat; index: number; setActive: SetActive }) {
   const ref = useCentred(index, setActive)
   const seen = useInView(ref, { once: true, amount: 0.45 })
-  // mobile entrance: the card rises and settles while its photo eases back,
-  // the same settle as the hero film and the closing card
-  const stacked = useStacked()
-  const arrived = useInView(ref, { once: true, margin: '0px 0px -10% 0px' })
+  // mobile entrance: the row rises and settles while each photo eases back,
+  // the same settle as the hero film and the closing card. The wide side
+  // margins count cards still waiting off to the right as arrived, so the
+  // whole row lands together rather than each card as it's swiped in.
+  const stacked = useIsMobile()
+  const arrived = useInView(ref, { once: true, margin: '0px 400% -10% 400%' })
   const enter = !stacked || arrived
 
   return (
@@ -134,8 +126,8 @@ function BeatPanel({ beat, index, setActive }: { beat: Beat; index: number; setA
       ref={ref}
       initial={stacked ? { opacity: 0, y: 56, scale: 0.94 } : false}
       animate={enter ? { opacity: 1, y: 0, scale: 1 } : undefined}
-      transition={{ duration: 1.1, ease }}
-      className="relative aspect-[4/5] w-full shrink-0 overflow-hidden rounded-[28px] bg-night md:aspect-auto md:h-full md:w-[min(64vw,1040px)]"
+      transition={{ duration: 1.1, ease, delay: stacked ? Math.min(index, 2) * 0.08 : 0 }}
+      className="relative aspect-[4/5] w-[80vw] shrink-0 snap-center overflow-hidden rounded-[28px] bg-night md:aspect-auto md:h-full md:w-[min(64vw,1040px)]"
     >
       {/* the photo drifts against the track, so it reads as a window rather than a slide */}
       <motion.img

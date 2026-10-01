@@ -133,7 +133,7 @@ export default function StoriesSection() {
     <section
       id="stories"
       aria-labelledby="stories-title"
-      className="bg-mist px-4 py-20 md:px-5 md:py-24 lg:flex lg:h-svh lg:min-h-[700px] lg:flex-col lg:pt-[88px] lg:pb-8"
+      className="overflow-x-clip bg-mist px-4 py-20 md:px-5 md:py-24 lg:flex lg:h-svh lg:min-h-[700px] lg:flex-col lg:pt-[88px] lg:pb-8"
     >
       <div className="mx-auto flex w-full max-w-[1180px] flex-col lg:min-h-0 lg:flex-1">
         <div className="mb-6 flex items-end justify-between gap-6 md:mb-8">
@@ -154,7 +154,7 @@ export default function StoriesSection() {
         {/* the pile: every card in one grid cell, so it sizes to the tallest */}
         <motion.div
           ref={deckRef}
-          className="relative grid grid-rows-[minmax(0,1fr)] pt-7 md:pt-10 lg:min-h-0 lg:flex-1"
+          className="relative grid grid-rows-[minmax(0,1fr)] pr-7 md:pr-12 lg:min-h-0 lg:flex-1"
           role="region"
           aria-roledescription="carousel"
           aria-label="Participant stories"
@@ -223,12 +223,13 @@ function DeckCard({
   const dir = pose.kind === 'out' ? pose.dir : 0
   const depth = pose.kind === 'rest' ? pose.depth : -1
   useEffect(() => {
-    const peek = width < 768 ? 12 : 18
+    // the pile fans out to the right: each card behind sits a step further right
+    const peek = width < 768 ? 12 : 20
     const out = pose.kind === 'out'
     const t = out ? toss : slide
     const target = out
-      ? { x: dir * width * 0.66, y: peek * 1.5, scale: 0.94, rotate: dir * 9, veil: 0 }
-      : { x: 0, y: -depth * peek, scale: 1 - depth * 0.05, rotate: TILT[depth] ?? 0, veil: Math.min(depth * 0.32, 0.64) }
+      ? { x: dir * width * 0.66, y: 0, scale: 0.94, rotate: dir * 9, veil: 0 }
+      : { x: depth * peek, y: 0, scale: 1 - depth * 0.05, rotate: TILT[depth] ?? 0, veil: Math.min(depth * 0.32, 0.64) }
     // the turn happens mid-flight: the card swaps layer while still moving out, and the
     // return spring inherits its velocity, so the throw and the tuck read as one arc
     let turned = false
@@ -270,7 +271,7 @@ function DeckCard({
   return (
     <motion.div
       className={`[grid-area:1/1] min-h-0 ${canDrag ? 'cursor-grab touch-pan-y active:cursor-grabbing' : ''}`}
-      style={{ x, y, scale, rotate, zIndex: layer, transformOrigin: '50% 0%' }}
+      style={{ x, y, scale, rotate, zIndex: layer, transformOrigin: '100% 50%' }}
       drag={canDrag ? 'x' : false}
       dragMomentum={false}
       onDragStart={() => onDragging(true)}

@@ -38,6 +38,8 @@
 @layer base {
   html {
     background: var(--color-white);
+    /* nothing may widen the page: on phones that lets the whole viewport pan sideways */
+    overflow-x: clip;
     color: var(--color-ink);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

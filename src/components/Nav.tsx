@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react'
+import { useLenis } from 'lenis/react'
 import { yatras } from '../data/yatras'
 import { IconChevronDown } from './icons'
 
@@ -90,15 +91,28 @@ const ease = [0.65, 0, 0.35, 1] as const
 /** Full-screen saffron sheet for phones: blooms out of the burger, links rise in. */
 function MobileMenu({ onClose }: { onClose: () => void }) {
   useEffect(() => {
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
     window.addEventListener('keydown', onKey)
-    return () => {
-      document.body.style.overflow = prev
-      window.removeEventListener('keydown', onKey)
-    }
+    return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
+
+  // Lock the page only once the sheet has fully bloomed, and release it once it has
+  // fully closed (unmount). Locking flips the page's overflow, which relayouts the
+  // whole document (and on phones can toggle the address bar); doing that at the
+  // first frame stalled the bloom midway.
+  const lenis = useLenis()
+  const [bloomed, setBloomed] = useState(false)
+  useEffect(() => {
+    if (!bloomed) return
+    lenis?.stop()
+    const root = document.documentElement
+    const prev = root.style.overflow
+    root.style.overflow = 'hidden'
+    return () => {
+      root.style.overflow = prev
+      lenis?.start()
+    }
+  }, [bloomed, lenis])
 
   // bloom out of the burger (top-right) far enough to cover the farthest corner
   const [reach] = useState(() => Math.hypot(window.innerWidth, window.innerHeight))
@@ -119,7 +133,11 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
       initial={{ clipPath: circle(0) }}
       animate={{ clipPath: circle(reach), transition: { duration: 0.75, ease: [0.7, 0, 0.2, 1] } }}
       exit={{ clipPath: circle(0), transition: { duration: 0.55, ease: [0.7, 0, 0.3, 1], delay: 0.05 } }}
-      className="fixed inset-0 z-[60] flex flex-col overflow-y-auto bg-saffron px-4 text-white md:hidden"
+      onAnimationComplete={(def) => {
+        // fires for the exit too; only the open bloom should lock the page
+        if (typeof def === 'object' && def !== null && 'clipPath' in def && def.clipPath === circle(reach)) setBloomed(true)
+      }}
+      className="fixed inset-0 z-[60] flex flex-col overflow-y-auto overscroll-contain bg-saffron px-4 text-white will-change-[clip-path] md:hidden"
     >
       <div className="flex h-12 shrink-0 items-center justify-between">
         <Link to="/" onClick={onClose} aria-label="Isha Sacred Walks home">
