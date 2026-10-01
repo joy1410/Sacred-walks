@@ -115,77 +115,82 @@ html.lenis body { height: auto; }
 
 /*
  * Ambient temple light. Washes are radial gradients that fade to transparent on
- * their own (no filter: blur, so it stays cheap). Two motions layered:
- * the shape drifts by transform, and the gradient itself breathes, its hot
- * spot wandering inside the shape while its colours shift between hues,
- * via registered custom properties (@property) so the browser can tween them.
+ * their own (no filter: blur). Every gradient is painted once and never
+ * repainted: all motion is transform + opacity, which the GPU compositor runs
+ * off the main thread. The shape drifts by transform; it "breathes" by
+ * crossfading between two static gradients (::before and ::after) whose hot
+ * spots and hues differ, while the second one slowly swells.
+ * The low haze is split into two mid-size washes rather than one huge layer.
  */
-@property --cx { syntax: "<percentage>"; inherits: false; initial-value: 50%; }
-@property --cy { syntax: "<percentage>"; inherits: false; initial-value: 50%; }
-@property --spread { syntax: "<percentage>"; inherits: false; initial-value: 55%; }
-@property --c1 { syntax: "<color>"; inherits: false; initial-value: transparent; }
-@property --c2 { syntax: "<color>"; inherits: false; initial-value: transparent; }
-
 .ambient-cloud {
   position: absolute;
   border-radius: 9999px;
   will-change: transform;
-  background: radial-gradient(closest-side at var(--cx) var(--cy), var(--c1), var(--c2) var(--spread), transparent);
-  animation:
-    cloud-drift var(--d, 60s) ease-in-out infinite alternate,
-    var(--breathe) var(--b, 18s) ease-in-out infinite alternate;
+  contain: strict;
+  animation: cloud-drift var(--d, 60s) ease-in-out infinite alternate;
+}
+.ambient-cloud::before,
+.ambient-cloud::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+.ambient-cloud::before { background: var(--ga); }
+.ambient-cloud::after {
+  background: var(--gb);
+  opacity: 0;
+  will-change: opacity, transform;
+  animation: cloud-breathe var(--b, 18s) ease-in-out infinite alternate;
+  animation-delay: inherit;
 }
 .ambient-cloud--a {
   /* marigold, upper left */
   width: 72vmax; height: 56vmax; left: -20vmax; top: -14vmax;
-  --d: 34s; --x: 24vw; --y: 18vh; --s: 1.22;
-  --breathe: breathe-marigold; --b: 11s;
+  --d: 34s; --x: 24vw; --y: 18vh; --s: 1.22; --b: 11s;
+  --ga: radial-gradient(closest-side at 38% 42%, rgba(250, 190, 70, 0.30), rgba(250, 196, 80, 0.10) 48%, transparent);
+  --gb: radial-gradient(closest-side at 60% 56%, rgba(255, 176, 60, 0.38), rgba(252, 206, 96, 0.14) 62%, transparent);
 }
 .ambient-cloud--b {
   /* pale turmeric, right */
   width: 64vmax; height: 50vmax; right: -22vmax; top: 20vh;
-  --d: 41s; --x: -26vw; --y: -16vh; --s: 0.84;
-  --breathe: breathe-turmeric; --b: 14s;
-  animation-delay: -20s, -7s;
+  --d: 41s; --x: -26vw; --y: -16vh; --s: 0.84; --b: 14s;
+  --ga: radial-gradient(closest-side at 58% 40%, rgba(247, 212, 100, 0.30), rgba(247, 212, 110, 0.10) 50%, transparent);
+  --gb: radial-gradient(closest-side at 40% 58%, rgba(240, 196, 70, 0.36), rgba(250, 222, 130, 0.13) 64%, transparent);
+  animation-delay: -20s;
+}
+.ambient-cloud--c,
+.ambient-cloud--e {
+  /* warm apricot haze, low: a hint of saffron. Two mid-size washes instead of one 84vmax layer */
+  --ga: radial-gradient(closest-side at 44% 50%, rgba(245, 166, 86, 0.24), rgba(245, 170, 90, 0.08) 52%, transparent);
+  --gb: radial-gradient(closest-side at 62% 42%, rgba(240, 150, 70, 0.30), rgba(248, 190, 100, 0.10) 66%, transparent);
 }
 .ambient-cloud--c {
-  /* warm apricot haze, low centre: a hint of saffron */
-  width: 84vmax; height: 46vmax; left: 4vw; bottom: -20vmax;
-  --d: 48s; --x: 20vw; --y: -20vh; --s: 1.26;
-  --breathe: breathe-apricot; --b: 16s;
-  animation-delay: -40s, -12s;
+  width: 50vmax; height: 40vmax; left: -8vw; bottom: -18vmax;
+  --d: 48s; --x: 18vw; --y: -18vh; --s: 1.2; --b: 16s;
+  animation-delay: -40s;
+}
+.ambient-cloud--e {
+  width: 46vmax; height: 38vmax; right: -12vw; bottom: -20vmax;
+  --d: 44s; --x: -16vw; --y: -14vh; --s: 1.15; --b: 13s;
+  animation-delay: -18s;
 }
 .ambient-cloud--d {
   /* bright sun-spot that wanders through the middle */
   width: 38vmax; height: 38vmax; left: 34vw; top: 16vh;
-  --d: 27s; --x: -30vw; --y: 32vh; --s: 1.45;
-  --breathe: breathe-sun; --b: 9s;
-  animation-delay: -12s, -4s;
+  --d: 27s; --x: -30vw; --y: 32vh; --s: 1.45; --b: 9s;
+  --ga: radial-gradient(closest-side at 50% 50%, rgba(255, 216, 120, 0.30), rgba(255, 214, 120, 0.12) 30%, transparent);
+  --gb: radial-gradient(closest-side at 42% 58%, rgba(255, 200, 90, 0.42), rgba(255, 226, 150, 0.16) 50%, transparent);
+  animation-delay: -12s;
 }
 
-@keyframes breathe-marigold {
-  0%   { --cx: 38%; --cy: 42%; --spread: 48%; --c1: rgba(250, 190, 70, 0.30); --c2: rgba(250, 196, 80, 0.10); }
-  50%  { --cx: 60%; --cy: 56%; --spread: 62%; --c1: rgba(255, 176, 60, 0.38); --c2: rgba(252, 206, 96, 0.14); }
-  100% { --cx: 46%; --cy: 64%; --spread: 54%; --c1: rgba(252, 208, 92, 0.32); --c2: rgba(245, 170, 80, 0.09); }
-}
-@keyframes breathe-turmeric {
-  0%   { --cx: 58%; --cy: 40%; --spread: 50%; --c1: rgba(247, 212, 100, 0.30); --c2: rgba(247, 212, 110, 0.10); }
-  50%  { --cx: 40%; --cy: 58%; --spread: 64%; --c1: rgba(240, 196, 70, 0.36); --c2: rgba(250, 222, 130, 0.13); }
-  100% { --cx: 52%; --cy: 46%; --spread: 56%; --c1: rgba(255, 220, 120, 0.28); --c2: rgba(242, 186, 90, 0.10); }
-}
-@keyframes breathe-apricot {
-  0%   { --cx: 44%; --cy: 50%; --spread: 52%; --c1: rgba(245, 166, 86, 0.24); --c2: rgba(245, 170, 90, 0.08); }
-  50%  { --cx: 62%; --cy: 42%; --spread: 66%; --c1: rgba(240, 150, 70, 0.30); --c2: rgba(248, 190, 100, 0.10); }
-  100% { --cx: 36%; --cy: 56%; --spread: 58%; --c1: rgba(250, 186, 96, 0.26); --c2: rgba(236, 140, 70, 0.07); }
-}
-@keyframes breathe-sun {
-  0%   { --cx: 50%; --cy: 50%; --spread: 30%; --c1: rgba(255, 216, 120, 0.30); --c2: rgba(255, 214, 120, 0.12); }
-  50%  { --cx: 42%; --cy: 58%; --spread: 50%; --c1: rgba(255, 200, 90, 0.42); --c2: rgba(255, 226, 150, 0.16); }
-  100% { --cx: 58%; --cy: 44%; --spread: 38%; --c1: rgba(255, 228, 150, 0.32); --c2: rgba(250, 190, 90, 0.10); }
-}
 @keyframes cloud-drift {
   from { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
   to   { transform: translate3d(var(--x), var(--y), 0) scale(var(--s)) rotate(8deg); }
+}
+@keyframes cloud-breathe {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1.06); }
 }
 
 /* dust in a sunbeam: rises the full height, sways side to side */
@@ -193,9 +198,8 @@ html.lenis body { height: auto; }
   position: absolute;
   bottom: -24px;
   border-radius: 9999px;
-  /* one flat tone, softened by blur: uniformly hazy, no bright core */
-  background: rgba(240, 176, 60, var(--a, 0.45));
-  filter: blur(3px);
+  /* soft edge from a static gradient rather than filter: blur, so it paints once */
+  background: radial-gradient(circle closest-side, rgba(240, 176, 60, var(--a, 0.45)), rgba(240, 176, 60, calc(var(--a, 0.45) * 0.6)) 50%, rgba(240, 176, 60, 0));
   will-change: transform, opacity;
   animation-name: mote-rise, mote-sway;
   animation-timing-function: linear, ease-in-out;
@@ -205,7 +209,6 @@ html.lenis body { height: auto; }
 /* a crisper spark: bright centre falling off to a soft edge */
 .ambient-mote--spark {
   background: radial-gradient(circle closest-side, rgba(240, 168, 48, var(--a, 0.7)), rgba(246, 186, 70, calc(var(--a, 0.7) * 0.55)) 45%, rgba(250, 200, 90, 0));
-  filter: none;
 }
 @keyframes mote-rise {
   0%   { translate: 0 0; opacity: 0; }
@@ -222,10 +225,7 @@ html.lenis body { height: auto; }
 
 @media (prefers-reduced-motion: reduce) {
   .text-saffron-grad { animation: none; }
-  .ambient-cloud {
-    animation: none;
-    --c1: rgba(250, 196, 80, 0.28);
-    --c2: rgba(250, 196, 80, 0.09);
-  }
+  .ambient-cloud,
+  .ambient-cloud::after { animation: none; }
   .ambient-mote { display: none; }
 }

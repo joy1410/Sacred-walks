@@ -40,6 +40,7 @@ export default function AmbientLight() {
       <span className="ambient-cloud ambient-cloud--b" />
       <span className="ambient-cloud ambient-cloud--c" />
       <span className="ambient-cloud ambient-cloud--d" />
+      <span className="ambient-cloud ambient-cloud--e" />
       {MOTES.map((m, i) => (
         <span
           key={i}
