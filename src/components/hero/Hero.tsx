@@ -29,6 +29,7 @@ export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
   const slotRef = useRef<HTMLSpanElement>(null)
+  const measureRef = useRef<() => void>(() => {})
 
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] })
 
@@ -61,6 +62,7 @@ export default function Hero() {
       stage.style.setProperty('--sw', `${r.width}px`)
       stage.style.setProperty('--sh', `${r.height}px`)
     }
+    measureRef.current = measure
     measure()
     document.fonts?.ready.then(measure)
     const ro = new ResizeObserver(measure)
@@ -87,6 +89,11 @@ export default function Hero() {
                 src="/images/hero_mobile.png"
                 alt=""
                 aria-hidden="true"
+                // intrinsic size reserves the art's space before it loads; the headline
+                // (and so the slot) sits below it, so measure again once it arrives
+                width={1024}
+                height={1536}
+                onLoad={() => measureRef.current()}
                 className="block max-h-[62svh] w-full object-contain object-bottom md:absolute md:inset-0 md:h-full md:max-h-none"
                 style={{ opacity: artOpacity, scale: artScale }}
               />
