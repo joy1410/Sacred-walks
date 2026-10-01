@@ -1,4 +1,5 @@
 import { motion } from 'motion/react'
+import { blur } from '../../lib/lite'
 
 /** Seconds between letters: small enough that several letters are mid-focus at once. */
 export const CHAR_STAGGER = 0.022
@@ -28,7 +29,7 @@ export function BlurText({
   const words = text.split(' ')
   // letter offset where each word starts (+1 per space)
   const starts = words.map((_, i) => words.slice(0, i).reduce((sum, w) => sum + w.length + 1, 0))
-  const shown = { opacity: 1, filter: 'blur(0px)' }
+  const shown = { opacity: 1, ...blur(0) }
   const play = inView ? { whileInView: shown, viewport: { once: true, margin: '-15% 0px' } } : { animate: shown }
 
   return (
@@ -40,7 +41,7 @@ export function BlurText({
               <motion.span
                 key={ci}
                 className="inline-block"
-                initial={{ opacity: 0, filter: 'blur(12px)' }}
+                initial={{ opacity: 0, ...blur(12) }}
                 {...play}
                 transition={{ duration: DURATION, ease, delay: delay + (starts[wi] + ci) * CHAR_STAGGER }}
                 onAnimationComplete={wi === words.length - 1 && ci === w.length - 1 ? onDone : undefined}

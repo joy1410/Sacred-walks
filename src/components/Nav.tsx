@@ -197,7 +197,7 @@ export default function Nav() {
         className={`fixed inset-x-0 top-0 border-b px-4 md:px-5 transition-colors duration-300 ${
           menuOpen
             ? 'z-[70] border-transparent bg-transparent' // floats over the sheet so the burger can become its close button
-            : `z-50 backdrop-blur-xl backdrop-saturate-[1.8] ${scrolled ? 'border-black/[0.08] bg-white/75' : 'border-transparent bg-white/0'}`
+            : `z-50 md:backdrop-blur-xl md:backdrop-saturate-[1.8] ${scrolled ? 'border-black/[0.08] bg-white/95 md:bg-white/75' : 'border-transparent bg-white/0'}`
         }`}
       >
         <nav className="mx-auto flex h-12 max-w-[1180px] items-center justify-between">

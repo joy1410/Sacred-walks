@@ -170,7 +170,7 @@ export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.span
             key={img.caption}
-            className="rounded-full bg-black/30 px-3 py-1.5 text-[12px] font-medium text-white backdrop-blur-xl"
+            className="rounded-full bg-black/30 px-3 py-1.5 text-[12px] font-medium text-white md:backdrop-blur-xl"
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 6 }}
@@ -199,7 +199,7 @@ export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
         </figure>
 
         <div className="pointer-events-auto flex shrink-0 items-center gap-2">
-          <div className="flex h-9 items-center gap-2 rounded-full bg-white/15 px-3.5 backdrop-blur-xl" role="tablist" aria-label="Choose photograph">
+          <div className="flex h-9 items-center gap-2 rounded-full bg-white/15 px-3.5 md:backdrop-blur-xl" role="tablist" aria-label="Choose photograph">
             {images.map((im, i) => {
               const active = i === index
               return (
@@ -227,7 +227,7 @@ export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
             type="button"
             onClick={() => setPlaying((p) => !p)}
             aria-label={playing ? 'Pause slideshow' : 'Play slideshow'}
-            className="grid h-9 w-9 place-items-center rounded-full bg-white/15 text-white backdrop-blur-xl transition-colors hover:bg-white/25"
+            className="grid h-9 w-9 place-items-center rounded-full bg-white/15 text-white md:backdrop-blur-xl transition-colors hover:bg-white/25"
           >
             {playing ? <IconPause className="h-3.5 w-3.5" /> : <IconPlay className="h-3.5 w-3.5" />}
           </button>

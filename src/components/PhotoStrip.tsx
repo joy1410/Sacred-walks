@@ -3,6 +3,7 @@ import {
   motion,
   type PanInfo,
   useAnimationFrame,
+  useInView,
   useMotionValue,
   useReducedMotion,
   useScroll,
@@ -27,6 +28,9 @@ const SPEED = 38 // px per second at rest
 export default function PhotoStrip() {
   const reduced = useReducedMotion()
   const setRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLElement>(null)
+  // no need to drive the ribbon while it is off screen
+  const onScreen = useInView(sectionRef)
   const setWidth = useRef(0)
   useLayoutEffect(() => {
     const el = setRef.current
@@ -56,7 +60,7 @@ export default function PhotoStrip() {
   }
 
   useAnimationFrame((_, delta) => {
-    if (reduced || !setWidth.current || held.current) return
+    if (reduced || !onScreen || !setWidth.current || held.current) return
     const dt = delta / 1000
     const b = boost.get()
     // scrolling up turns the strip around; it keeps that heading until scrolled down again
@@ -80,6 +84,7 @@ export default function PhotoStrip() {
     // the grey of the stories gives way to the page's warm light under the strip,
     // so the closing card sits in the glow rather than on grey
     <section
+      ref={sectionRef}
       aria-label="Moments from the yatras"
       className="overflow-hidden bg-[linear-gradient(to_bottom,var(--color-mist)_0%,var(--color-mist)_55%,transparent_100%)] pt-24 pb-24 md:pt-40 md:pb-36"
     >
@@ -133,7 +138,7 @@ function Tile({ shot, decorative = false }: { shot: Shot; decorative?: boolean }
         className="h-full w-full object-cover transition-transform duration-[1.2s] ease-[var(--ease-out-expo)] select-none group-hover/tile:scale-[1.05]"
       />
       {/* glass badge, as on the yatra photos: always on touch, on hover with a mouse */}
-      <figcaption className="pointer-events-none absolute bottom-3 left-3 translate-y-1 rounded-full bg-black/30 px-3 py-1.5 text-[12px] font-medium text-white opacity-0 backdrop-blur-xl transition-[opacity,translate] duration-500 ease-[var(--ease-out-expo)] group-hover/tile:translate-y-0 group-hover/tile:opacity-100 [@media(hover:none)]:translate-y-0 [@media(hover:none)]:opacity-100">
+      <figcaption className="pointer-events-none absolute bottom-3 left-3 translate-y-1 rounded-full bg-black/30 px-3 py-1.5 text-[12px] font-medium text-white opacity-0 md:backdrop-blur-xl transition-[opacity,translate] duration-500 ease-[var(--ease-out-expo)] group-hover/tile:translate-y-0 group-hover/tile:opacity-100 [@media(hover:none)]:translate-y-0 [@media(hover:none)]:opacity-100">
         {shot.yatra}
       </figcaption>
     </figure>

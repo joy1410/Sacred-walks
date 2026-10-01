@@ -3,6 +3,7 @@ import { motion, useInView, useScroll, type Variants } from 'motion/react'
 import { beats, type Beat } from '../../data/journey'
 import { BlurText } from '../hero/BlurIn'
 import { useScrollRange } from '../../lib/useScrollRange'
+import { blur } from '../../lib/lite'
 
 const ease = [0.16, 1, 0.3, 1] as const
 
@@ -12,8 +13,8 @@ const panel: Variants = {
 }
 // the same focus-pull the hero uses on its letters, applied per line
 const item: Variants = {
-  hidden: { opacity: 0, y: 16, filter: 'blur(8px)' },
-  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.9, ease } },
+  hidden: { opacity: 0, y: 16, ...blur(8) },
+  show: { opacity: 1, y: 0, ...blur(0), transition: { duration: 0.9, ease } },
 }
 
 /**
@@ -150,7 +151,7 @@ function BeatPanel({ beat, index, setActive }: { beat: Beat; index: number; setA
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/0" aria-hidden />
 
-      <span className="absolute top-4 right-4 rounded-full bg-black/25 px-3 py-1 text-[12px] text-white/85 backdrop-blur-md md:top-5 md:right-5">
+      <span className="absolute top-4 right-4 rounded-full bg-black/25 px-3 py-1 text-[12px] text-white/85 md:backdrop-blur-md md:top-5 md:right-5">
         {beat.image.caption}
       </span>
 

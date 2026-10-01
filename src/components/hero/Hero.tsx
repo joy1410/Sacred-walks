@@ -3,6 +3,7 @@ import { motion, useScroll, cubicBezier } from 'motion/react'
 import DivineWord from './DivineWord'
 import { BlurText, after } from './BlurIn'
 import { useScrollRange } from '../../lib/useScrollRange'
+import { blur, lite } from '../../lib/lite'
 
 const ease = [0.16, 1, 0.3, 1] as const
 const inOut = cubicBezier(0.65, 0, 0.35, 1)
@@ -86,7 +87,7 @@ export default function Hero() {
             <picture className="contents">
               <source media="(min-width: 768px)" srcSet="/images/hero.png" />
               <motion.img
-                src="/images/hero_mobile.png"
+                src="/images/hero_mobile.webp"
                 alt=""
                 aria-hidden="true"
                 // intrinsic size reserves the art's space before it loads; the headline
@@ -157,15 +158,16 @@ export default function Hero() {
           <motion.video
             className="h-full w-full object-cover"
             style={{ scale: videoScale }}
-            src="/media/hero.mp4"
+            // 720p cut on phones: a quarter of the bytes and far cheaper to decode
+            src={lite ? '/media/hero-mobile.mp4' : '/media/hero.mp4'}
             poster="/media/hero-poster.jpg"
             autoPlay
             muted
             loop
             playsInline
             preload="auto"
-            initial={{ filter: 'blur(14px)' }}
-            animate={{ filter: 'blur(0px)' }}
+            initial={blur(14)}
+            animate={blur(0)}
             transition={{ duration: 1.6, ease, delay: T_OF }}
           />
         </motion.div>

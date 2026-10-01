@@ -2,6 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { animate, motion, useInView, useMotionValue, useTransform, type MotionValue, type PanInfo, type Variants } from 'motion/react'
 import { stories, type Story } from '../data/journey'
 import { BlurText } from './hero/BlurIn'
+import { blur } from '../lib/lite'
 import { IconChevronLeft, IconChevronRight, IconPause, IconPlay } from './icons'
 
 const DURATION = 7 // seconds per story
@@ -19,8 +20,8 @@ const panel: Variants = {
   show: { transition: { staggerChildren: 0.07, delayChildren: 0.18 } },
 }
 const item: Variants = {
-  hidden: { opacity: 0, y: 14, filter: 'blur(8px)', transition: { duration: 0.25 } },
-  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.9, ease } },
+  hidden: { opacity: 0, y: 14, ...blur(8), transition: { duration: 0.25 } },
+  show: { opacity: 1, y: 0, ...blur(0), transition: { duration: 0.9, ease } },
 }
 
 /** a card's place: resting in the pile at some depth, or thrown out to one side */

@@ -223,6 +223,22 @@ html.lenis body { height: auto; }
   to   { transform: translateX(var(--sway, 18px)); }
 }
 
+/*
+ * Phones: the washes stay, painted once into the single fixed layer and held
+ * still. Ten huge animated layers (each cloud plus its breathing twin) at a
+ * phone's pixel density overrun mobile tile memory, so the page itself stops
+ * rendering. The motes go too.
+ */
+@media (hover: none), (max-width: 767px) {
+  .ambient-cloud {
+    animation: none;
+    will-change: auto;
+    contain: none;
+  }
+  .ambient-cloud::after { display: none; }
+  .ambient-mote { display: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .text-saffron-grad { animation: none; }
   .ambient-cloud,
