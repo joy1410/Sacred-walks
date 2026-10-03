@@ -29,7 +29,8 @@ export default function QuoteSection() {
   )
 }
 
-function QuoteMark({ className = '', delay = 0 }: { className?: string; delay?: number }) {
+/** The saffron mark that opens every Sadhguru quote; Kashi Krama's quote shares it. */
+export function QuoteMark({ className = '', delay = 0 }: { className?: string; delay?: number }) {
   return (
     <motion.svg
       viewBox="0 0 50 40"

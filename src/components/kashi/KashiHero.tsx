@@ -4,7 +4,7 @@ import { useLenis } from 'lenis/react'
 import { kashi } from '../../data/kashi'
 import { BlurText, after } from '../hero/BlurIn'
 import DifficultyMeter from '../yatras/DifficultyMeter'
-import { IconArrowRight } from '../icons'
+import { IconArrowRight, IconPin } from '../icons'
 import { useScrollRange } from '../../lib/useScrollRange'
 import { blur } from '../../lib/lite'
 import { ease, STICKY_OFFSET } from './shared'
@@ -53,9 +53,18 @@ export default function KashiHero() {
         />
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/25 to-black/10" aria-hidden />
 
-        <span className="absolute top-4 right-4 hidden rounded-full bg-black/25 px-3 py-1 text-[12px] text-white/85 md:top-5 md:right-5 md:block md:backdrop-blur-md">
-          {kashi.hero.caption}
-        </span>
+        {/* where the photo stands, set like a place mark in the corner */}
+        <motion.div className="absolute top-4 left-5 md:top-6 md:left-10 lg:left-14" style={{ opacity: textOpacity }}>
+          <motion.p
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, ease, delay: 0.3 }}
+            className="flex items-center gap-1.5 rounded-full bg-black/30 py-1.5 pr-3 pl-2.5 text-[13px] font-medium text-white/90 backdrop-blur-md"
+          >
+            <IconPin className="h-4 w-4" />
+            {kashi.region}
+          </motion.p>
+        </motion.div>
 
         <motion.div className="px-5 pb-6 text-white md:px-10 md:pb-10 lg:px-14 lg:pb-12" style={{ y: textY, opacity: textOpacity }}>
           <motion.div
@@ -71,9 +80,6 @@ export default function KashiHero() {
               </span>
               Registrations open
             </span>
-            <span className="rounded-full bg-white/15 px-3 py-1.5 text-[13px] font-medium text-white/90 md:backdrop-blur-md">
-              {kashi.region}
-            </span>
           </motion.div>
 
           <h1
@@ -83,7 +89,7 @@ export default function KashiHero() {
             <BlurText text={kashi.title} delay={T_TITLE} />
           </h1>
 
-          <div className="mt-4 flex flex-col gap-6 md:mt-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="mt-2 flex flex-col gap-6 md:mt-3 lg:flex-row lg:items-end lg:justify-between">
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}

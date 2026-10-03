@@ -31,6 +31,9 @@ export const IconPause = (p: P) => (
 export const IconRoute = (p: P) => (
   <svg {...base} {...p}><circle cx="6" cy="19" r="2" /><circle cx="18" cy="5" r="2" /><path d="M8 19h7.5a3.5 3.5 0 0 0 0-7h-7a3.5 3.5 0 0 1 0-7H16" /></svg>
 )
+export const IconPin = (p: P) => (
+  <svg {...base} {...p}><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z" /><circle cx="12" cy="10" r="2.3" /></svg>
+)
 export const IconSunrise = (p: P) => (
   <svg {...base} {...p}><path d="M3 18h18M6.5 18a5.5 5.5 0 0 1 11 0M12 4v3M4.9 8.9l1.8 1.8M19.1 8.9l-1.8 1.8M8 21h8" /></svg>
 )
@@ -83,4 +86,7 @@ export const IconDoctor = (p: P) => (
 )
 export const IconTeam = (p: P) => (
   <svg {...base} {...p}><circle cx="9" cy="8" r="3" /><path d="M3.5 19a5.5 5.5 0 0 1 11 0M16 5.2a3 3 0 0 1 0 5.6M17.5 14.2A5.5 5.5 0 0 1 20.5 19" /></svg>
+)
+export const IconPhone = (p: P) => (
+  <svg {...base} {...p}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
 )

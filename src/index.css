@@ -241,3 +241,15 @@ html.lenis body { height: auto; }
   .ambient-cloud { animation: none; }
   .ambient-mote { display: none; }
 }
+
+/* "Print or save as PDF" on the packing list: only that card goes to paper */
+@media print {
+  html.print-packing body * { visibility: hidden; }
+  html.print-packing #packing-list,
+  html.print-packing #packing-list * { visibility: visible; }
+  html.print-packing #packing-list {
+    position: absolute;
+    inset: 0 0 auto 0;
+    background: white;
+  }
+}

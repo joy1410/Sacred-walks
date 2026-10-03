@@ -6,7 +6,6 @@ import AboutKashi from '../components/kashi/AboutKashi'
 import Itinerary from '../components/kashi/Itinerary'
 import DayInYatra from '../components/kashi/DayInYatra'
 import Preparation from '../components/kashi/Preparation'
-import Stay from '../components/kashi/Stay'
 import Cost from '../components/kashi/Cost'
 import Faqs from '../components/kashi/Faqs'
 import Registration from '../components/kashi/Registration'
@@ -30,7 +29,6 @@ export default function KashiKrama() {
       <Itinerary />
       <DayInYatra />
       <Preparation />
-      <Stay />
       <Cost />
       <Faqs />
       <Registration />

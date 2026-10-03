@@ -1,11 +1,23 @@
 import { motion, type Variants } from 'motion/react'
 import { kashi, overview, reasons, type Reason } from '../../data/kashi'
 import { blur } from '../../lib/lite'
+import { QuoteMark } from '../QuoteSection'
 import { ease, inView, Rise, SectionHeading } from './shared'
 
+// one trigger per tile: the card rises, its photo settles inside it, and
+// only once the card has landed do the words follow, line by line
+const TEXT_AFTER = 0.45
+const card: Variants = {
+  hidden: { opacity: 0, y: 40 },
+  show: (d: number) => ({ opacity: 1, y: 0, transition: { duration: 1.1, ease, delay: d } }),
+}
+const photo: Variants = {
+  hidden: { scale: 1.18 },
+  show: (d: number) => ({ scale: 1, transition: { duration: 1.6, ease, delay: d } }),
+}
 const panel: Variants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.08, delayChildren: 0.25 } },
+  show: (d: number) => ({ transition: { staggerChildren: 0.12, delayChildren: d + TEXT_AFTER } }),
 }
 // the journey panels' per-line focus pull
 const item: Variants = {
@@ -74,10 +86,13 @@ function Quote() {
         viewport={inView}
         transition={{ duration: 1.4, ease }}
       />
-      <blockquote className="font-display text-[clamp(1.7rem,3vw,2.6rem)] leading-[1.14] font-medium text-balance text-ink-2">
-        &ldquo;The creation of Kashi is the most phenomenal effort in building{' '}
-        <span className="text-saffron">structures of consciousness</span> ever made on the planet.&rdquo;
-      </blockquote>
+      <div className="relative">
+        <QuoteMark className="mx-auto mb-6 h-8 w-10 md:absolute md:-top-1 md:-left-12 md:mb-0 md:h-10 md:w-12" delay={0.1} />
+        <blockquote className="font-display text-[clamp(1.7rem,3vw,2.6rem)] leading-[1.14] font-medium text-balance text-ink-2">
+          The creation of Kashi is the most phenomenal effort in building{' '}
+          <span className="text-saffron">structures of consciousness</span> ever made on the planet.
+        </blockquote>
+      </div>
       <motion.figcaption
         className="mt-7 flex justify-center"
         initial={{ opacity: 0 }}
@@ -92,22 +107,18 @@ function Quote() {
 }
 
 function Tile({ reason, index, className }: { reason: Reason; index: number; className: string }) {
+  const delay = (index % 2) * 0.1
   return (
     <motion.article
       className={`group/tile relative aspect-[4/5] overflow-hidden rounded-[28px] bg-night sm:aspect-[4/3] md:aspect-auto md:h-[480px] ${className}`}
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      variants={card}
+      custom={delay}
+      initial="hidden"
+      whileInView="show"
       viewport={inView}
-      transition={{ duration: 1.1, ease, delay: (index % 2) * 0.1 }}
     >
       {/* settles as it arrives, then answers hover with a slow lean in */}
-      <motion.div
-        className="absolute inset-0"
-        initial={{ scale: 1.18 }}
-        whileInView={{ scale: 1 }}
-        viewport={inView}
-        transition={{ duration: 1.6, ease }}
-      >
+      <motion.div className="absolute inset-0" variants={photo} custom={delay}>
         <img
           src={reason.image.src}
           alt={reason.image.caption}
@@ -120,9 +131,7 @@ function Tile({ reason, index, className }: { reason: Reason; index: number; cla
 
       <motion.div
         variants={panel}
-        initial="hidden"
-        whileInView="show"
-        viewport={inView}
+        custom={delay}
         className="absolute inset-x-0 bottom-0 p-6 text-white md:p-9"
       >
         <motion.h3 variants={item} className="max-w-[22ch] font-display text-[clamp(1.9rem,3vw,2.8rem)] leading-[0.98] font-semibold">

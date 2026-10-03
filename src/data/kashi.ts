@@ -10,7 +10,9 @@ import { u } from './yatras'
  *
  * Editorial, not on the official site (confirm before shipping):
  *  - day titles and the "why" headings (body copy beneath them is official)
- *  - the "day in the yatra" timings, which are indicative
+ *  - the "day in the yatra" rhythm, which is generic by design
+ *  - the time-of-day labels on each day's route (read from the order and
+ *    cues in the official day copy) and the Vindhyachal drive time
  *  - what Group S covers, and the "not included" list under Cost
  *  - the contribution amount, which isn't published: we route it to enquiry
  */
@@ -81,10 +83,18 @@ export const reasons: Reason[] = [
   },
 ]
 
+/**
+ * One stop on a day's route, in the order the day runs. `when` marks only
+ * where the official copy gives a cue ("starts early", "in the evening");
+ * stops without one follow on under the last cue. `travel` is the journey
+ * before it. Either one starts a new line of the route.
+ */
+export type Stop = { place: string; when?: string; travel?: string }
+
 export type Day = {
   day: number
   title: string
-  places: string[]
+  route: Stop[]
   body: string[]
   image: { src: string; caption: string }
 }
@@ -93,7 +103,7 @@ export const itinerary: Day[] = [
   {
     day: 1,
     title: 'Where the Buddha first spoke',
-    places: ['Sarnath'],
+    route: [{ place: 'Sarnath' }],
     body: [
       'We begin with a visit to Sarnath, where Gautama the Buddha gave his first sermon after his enlightenment. This momentous event is depicted in beautifully crafted sculptures and monuments across the site.',
     ],
@@ -102,7 +112,13 @@ export const itinerary: Day[] = [
   {
     day: 2,
     title: 'Mangala Arati and the river',
-    places: ['Kashi Vishwanath', 'Vishalakshi', 'Annapoorni', 'Manikarnika Ghat'],
+    route: [
+      { place: 'Kashi Vishwanath', when: 'Before dawn' },
+      { place: 'Vishalakshi' },
+      { place: 'Annapoorni' },
+      { place: 'Manikarnika Ghat' },
+      { place: 'Boat & Ganga arati', when: 'Evening' },
+    ],
     body: [
       'The day starts early with Mangala Arati at the Kashi Vishwanath Temple, one of the twelve Jyotirlingas, said to have been consecrated by Shiva himself. We then walk to the Vishalakshi Temple, one of the Shakti Sthalas, and the Annapoorni Temple.',
       'A journey through Kashi is not complete without Manikarnika Ghat, its most sacred cremation ground. We take a boat along the Ganga and join the spectacular evening arati.',
@@ -112,7 +128,12 @@ export const itinerary: Day[] = [
   {
     day: 3,
     title: 'The guardians of Kashi',
-    places: ['Kalabhairava', 'Mahamrityunjaya', 'Markandeya Mahadev'],
+    route: [
+      { place: 'Kalabhairava' },
+      { place: 'Mahamrityunjaya' },
+      { place: 'Markandeya Mahadev' },
+      { place: 'Kashi’s silk weaves', when: 'Before dinner' },
+    ],
     body: [
       'We spend the day at the Kalabhairava Temple, the powerful guardian deity of Kashi; the Mahamrityunjaya Temple, where it is believed one can conquer death; and the Markandeya Mahadev Temple, where the lore of the devotee Markandeya and Shiva unfolded.',
       'Before dinner, a special presentation of local weaves: a chance to take home one of Kashi’s handwoven silk masterpieces.',
@@ -122,7 +143,11 @@ export const itinerary: Day[] = [
   {
     day: 4,
     title: 'To the Goddess at Vindhyachal',
-    places: ['Vindhyavasini', 'Saptarishi Arati'],
+    route: [
+      // Vindhyachal is about 70 km from Varanasi by road
+      { place: 'Vindhyavasini', travel: '~2 hrs by road' },
+      { place: 'Saptarishi Arati', when: 'Evening', travel: 'Back to Kashi' },
+    ],
     body: [
       'We travel to the Vindhyavasini Temple at Vindhyachal, the Shakti Peeth where, according to legend, Goddess Durga battled Mahishasura. Temples to Lakshmi, Kali and Saraswati are placed here to form a spiritually potent “Trikona.”',
       'In the evening we return to Kashi Vishwanath for the Saptarishi Arati, a process transmitted to the seven sages by Adiyogi himself and kept vibrantly alive to this day.',
@@ -132,7 +157,7 @@ export const itinerary: Day[] = [
   {
     day: 5,
     title: 'Two Jyotirlingas and Guru Pooja',
-    places: ['Vaidyanath', 'Mallikarjun Mahadeva', 'Guru Pooja'],
+    route: [{ place: 'Vaidyanath' }, { place: 'Mallikarjun Mahadeva' }, { place: 'Guru Pooja' }],
     body: [
       'Kashi holds representations of all twelve of India’s Jyotirlingas. We visit and meditate at two of them, Vaidyanath and Mallikarjun Mahadeva, recreated from the original forms in Deoghar and Srisailam.',
       'The programme culminates in Guru Pooja, an offering of gratitude to the great beings who have made the possibility of inner transformation available.',
@@ -141,69 +166,114 @@ export const itinerary: Day[] = [
   },
 ]
 
-export type Moment = { time: string; title: string; body: string }
+/**
+ * The rhythm most days share, by time of day rather than by clock: the days
+ * differ (Day 4 leaves the city, not every day starts before dawn), so
+ * nothing here promises an hour.
+ */
+export type Moment = { when: string; title: string; body: string }
 
-/** an indicative day, drawn from the itinerary; real timings vary day to day */
 export const dayMoments: Moment[] = [
-  { time: '3:30', title: 'Before the city wakes', body: 'Some days begin in the dark, walking through quiet lanes to Mangala Arati at Kashi Vishwanath.' },
-  { time: '6:30', title: 'Morning sadhana', body: 'Practices together as the light comes up, to meet the day’s places with a settled body and mind.' },
-  { time: '9:00', title: 'Into the sacred spaces', body: 'By air-conditioned coach and on foot through the galis, to the temples and ghats of the day.' },
-  { time: '13:00', title: 'A meal and a pause', body: 'Wholesome vegetarian food, then time to rest in the heat of the afternoon.' },
-  { time: '16:30', title: 'Meditation & satsang', body: 'Chants, guided meditations and satsang bring an inner dimension to everything seen.' },
-  { time: '18:30', title: 'Evening on the Ganga', body: 'Boats, lamps and arati as the river turns gold, then the walk back through the lit city.' },
+  { when: 'Before dawn', title: 'An early start', body: 'Some days begin in the dark, with arati at a temple while the city is still asleep.' },
+  { when: 'Morning', title: 'Into the sacred spaces', body: 'By coach to the day’s first places, then on foot through temple lanes and down to the ghats.' },
+  { when: 'Midday', title: 'A meal together', body: 'Simple vegetarian food, and a little time to rest before the afternoon.' },
+  { when: 'Afternoon', title: 'Practice and more places', body: 'Meditations, chants or a satsang, alongside the rest of the day’s temples and ghats.' },
+  { when: 'Evening', title: 'Lamps and arati', body: 'Most days close with an evening arati, on the river or in a temple, as the lamps are lit.' },
+  { when: 'Night', title: 'An early night', body: 'Back to the hotel to rest. The next day may begin before dawn.' },
 ]
+
+/*
+ * Preparation. Requirements, rules and every packing item are Isha's own
+ * (Program Guide and Prerequisites pages). What the days involve is read from
+ * the official itinerary; the details around it come from public sources,
+ * noted beside each:
+ *  - Mangala Arati at Kashi Vishwanath runs about 3 – 4 am, with queues
+ *    before the gates open (temple timing guides)
+ *  - footwear comes off at the gate, arms and legs covered, no phones or
+ *    smartwatches inside Kashi Vishwanath, lockers outside (temple visitor rules)
+ *  - Varanasi in early December: ~8 – 10°C at dawn, low 20s by afternoon,
+ *    dense fog on the river some mornings (weather-atlas.com, kashitaxi.in)
+ */
+export type Demand = { kicker: string; title: string; body: string }
+export type PackItem = { item: string; why?: string }
+export type PackGroup = { title: string; items: PackItem[] }
 
 export const preparation = {
-  difficultyLabel: 'Gentle',
-  summary:
-    'Kashi Krama is a gentle yatra on foot through temple lanes and ghat steps, with travel by coach in between. What it asks of you is readiness, inside and out.',
-  requirements: [
+  lede: 'Kashi Krama is not a trek, but it isn’t a seated tour either.',
+  demands: [
     {
-      title: 'Medical fitness',
-      body: 'Physical and mental fitness are essential. You should be able to sit cross-legged on the ground and walk without difficulty.',
+      kicker: '3 am',
+      title: 'Some days begin in the dark',
+      body: 'Mangala Arati at Kashi Vishwanath is held around 3 am, and the group gathers before the gates open. Evenings close with arati too.',
     },
     {
-      title: 'Travel guidelines',
-      body: 'Carry your passport, or a valid government ID for Indian nationals, for travel and hotel check-in. Cigarettes, e-cigarettes, alcohol and recreational drugs are strictly prohibited throughout.',
+      kicker: 'Barefoot',
+      title: 'Shoes off at every temple',
+      body: 'Nine temples in five days, each entered barefoot over stone floors, often after a queue.',
     },
+    {
+      kicker: 'On foot',
+      title: 'Lanes, ghats and steps',
+      body: 'The coach covers the longer distances. Between temples in the old city we walk narrow, crowded lanes and climb the ghat steps from the river.',
+    },
+    {
+      kicker: 'Cross-legged',
+      title: 'Long sittings on the floor',
+      body: 'Meditations, satsangs and the closing Guru Pooja are all done seated on the ground.',
+    },
+  ] satisfies Demand[],
+  prerequisites: [
+    { title: 'Inner Engineering, completed', body: 'Including Shambhavi Mahamudra Kriya.' },
+    { title: 'Fit in body and mind', body: 'Able to sit cross-legged on the ground and walk without difficulty.' },
+  ],
+  rules: [
+    { title: 'Carry your ID', body: 'Passport, or a valid government ID for Indian nationals. Needed in travel and at hotel check-in.' },
+    { title: 'Nothing that intoxicates', body: 'No cigarettes, e-cigarettes, alcohol or recreational drugs, for the whole sojourn.' },
+    { title: 'No phones in Kashi Vishwanath', body: 'Phones and smartwatches stay in the lockers at the gate.' },
   ],
   packing: [
-    'Personal clothing',
-    'Warm shawl or jacket',
-    'General footwear',
-    'Water bottle',
-    'Sunglasses / sun hat',
-    'Umbrella / raincoat',
-    'Yoga mat',
-    'Mosquito repellent',
-    'Hand sanitizer',
-    'Toiletries',
-    'Flashlight',
-    'Snacks',
-  ],
-  medicalKit:
-    'with essential medications for fever, cold, headache, nausea, vomiting, diarrhoea, indigestion and other common ailments.',
+    {
+      title: 'To wear',
+      items: [
+        { item: 'Footwear that slips on and off', why: 'It comes off at every gate' },
+        { item: 'Clothes that cover arms and legs', why: 'A kurta, saree or salwar kameez is ideal' },
+        { item: 'Warm shawl or jacket', why: 'Dawns are near 10°C, colder on the river' },
+        { item: 'Sunglasses or a sun hat', why: 'Afternoons warm into the low 20s' },
+        { item: 'Umbrella or raincoat' },
+      ],
+    },
+    {
+      title: 'To carry',
+      items: [
+        { item: 'Your ID' },
+        { item: 'Yoga mat', why: 'For meditations and satsangs' },
+        { item: 'Flashlight', why: 'For the pre-dawn starts' },
+        { item: 'Water bottle and snacks', why: 'Queues and coach rides run long' },
+        { item: 'Mosquito repellent', why: 'On the ghats at dusk' },
+        { item: 'Hand sanitizer and toiletries' },
+      ],
+    },
+  ] satisfies PackGroup[],
+  medical: {
+    ailments: ['Fever', 'Cold', 'Headache', 'Nausea and vomiting', 'Diarrhoea', 'Indigestion'],
+    note: 'Plus anything for other common ailments. A doctor travels with the group.',
+  },
 }
 
-export type Convenience = { title: string; body: string; icon: 'hotel' | 'meal' | 'bus' | 'doctor' | 'team' | 'boat' }
-
-export const stay: Convenience[] = [
-  { icon: 'hotel', title: '5-star hotel', body: 'Accommodation on a twin-sharing basis.' },
-  { icon: 'meal', title: 'Vegetarian meals', body: 'Wholesome meals and mineral water throughout.' },
-  { icon: 'bus', title: 'Air-conditioned coach', body: 'All travel between the sacred sites.' },
-  { icon: 'boat', title: 'On the Ganga', body: 'A boat ride on the holy river.' },
-  { icon: 'doctor', title: 'A doctor with the group', body: 'Qualified and well equipped, for the whole yatra.' },
-  { icon: 'team', title: 'A dedicated Isha team', body: 'The sojourn is conducted and managed end to end.' },
-]
+export type Highlight = { title: string; body: string; icon: 'hotel' | 'meal' | 'doctor' }
 
 export const cost = {
+  // the three people ask about first, from the official Conveniences Offered page
+  highlights: [
+    { icon: 'hotel', title: '5-star hotel', body: 'Twin-sharing rooms for the whole yatra.' },
+    { icon: 'meal', title: 'Vegetarian meals', body: 'Wholesome food at every meal, and mineral water through the day.' },
+    { icon: 'doctor', title: 'A doctor with the group', body: 'Qualified and well equipped, travelling with you throughout.' },
+  ] satisfies Highlight[],
   included: [
-    '5-star stay, twin sharing',
-    'Vegetarian meals & mineral water',
     'Air-conditioned coach travel',
     'Boat ride on the Ganga',
     'Entry fees for every place on the itinerary',
-    'Accompanying doctor & Isha team',
+    'A dedicated Isha team, end to end',
     'A collection of photos after the yatra',
   ],
   // not on the official site; confirm before shipping
@@ -251,23 +321,44 @@ export const faqs: Faq[] = [
 
 /**
  * Every departure open for registration. The official table lists one,
- * 3 – 7 Dec 2026, run as two groups; add rows here as dates are announced.
- * seatsLeft / seats are PLACEHOLDERS: the official site doesn't publish them.
+ * 3 – 7 Dec 2026, run as two groups; add entries here as dates are announced.
+ * Visitors never see the group codes: they pick the description that fits them.
+ * seats / seatsLeft are PLACEHOLDERS: the official site doesn't publish them.
  */
-export type Departure = {
-  dates: string
-  month: string
+export type Pool = {
+  id: 'india' | 'international'
+  /** the programme's internal code, kept for when registration takes it */
   group: string
+  label: string
   who: string
-  language: string
   seats: number
   seatsLeft: number
 }
 
+export type Departure = {
+  /** full form, e.g. for the hero */
+  dates: string
+  /** without the year, for headings and the CTA */
+  short: string
+  year: number
+  days: number
+  language: string
+  pools: Pool[]
+}
+
 export const departures: Departure[] = [
-  { dates: '3 – 7 Dec 2026', month: 'December', group: 'A', who: 'For Indians residing in India', language: 'English', seats: 60, seatsLeft: 18 },
-  // the official table only footnotes Group A; confirm who Group S is for
-  { dates: '3 – 7 Dec 2026', month: 'December', group: 'S', who: 'For all other participants', language: 'English', seats: 40, seatsLeft: 23 },
+  {
+    dates: '3 – 7 Dec 2026',
+    short: '3 – 7 Dec',
+    year: 2026,
+    days: 5,
+    language: 'English',
+    pools: [
+      { id: 'india', group: 'A', label: 'Indian, living in India', who: 'Indian citizens residing in India', seats: 60, seatsLeft: 18 },
+      // the official table only footnotes Group A; confirm who Group S is for
+      { id: 'international', group: 'S', label: 'Everyone else', who: 'Other nationalities, or Indians living abroad', seats: 40, seatsLeft: 23 },
+    ],
+  },
 ]
 
 /** the one hard prerequisite, shown where people decide to register */

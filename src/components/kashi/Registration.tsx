@@ -1,17 +1,17 @@
 import { useRef } from 'react'
 import { motion, useScroll } from 'motion/react'
-import { departures, ENQUIRE_URL, REGISTER_URL } from '../../data/kashi'
+import { departures, ENQUIRE_URL } from '../../data/kashi'
 import { BlurText } from '../hero/BlurIn'
-import { IconArrowRight } from '../icons'
 import { useScrollRange } from '../../lib/useScrollRange'
+import DateCard from './DateCard'
 import { ease, inView } from './shared'
 
 const HEADLINE = 'Kashi is calling'
 
 /**
  * The page closes as the homepage does: a card framed like the hero film,
- * its photo settling from 1.15× as it arrives. The dates table sits on it
- * in glass, one row per group, each with its own way in.
+ * its photo settling from 1.15× as it arrives. The dates sit on it
+ * in glass: the same date card as the top of the page, so the two never disagree.
  */
 export default function Registration() {
   const ref = useRef<HTMLElement>(null)
@@ -49,40 +49,11 @@ export default function Registration() {
             </motion.p>
           </div>
 
-          <ul className="mt-10 space-y-2.5 md:mt-14">
-            {departures.map((b, i) => (
-              <motion.li
-                key={b.group + b.dates}
-                className="grid grid-cols-[auto_1fr] items-center gap-x-5 gap-y-4 rounded-[22px] bg-white/10 p-4 md:grid-cols-[auto_1.4fr_1fr_auto] md:gap-x-8 md:p-5 md:pl-6 md:backdrop-blur-md"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={inView}
-                transition={{ duration: 0.9, ease, delay: 0.55 + i * 0.1 }}
-              >
-                <span className="grid h-12 w-12 place-items-center rounded-full bg-white font-display text-[26px] leading-none font-semibold text-ink">
-                  {b.group}
-                </span>
-                <span>
-                  <span className="block text-[12px] text-white/55">Group {b.group}</span>
-                  <span className="block text-[15px] font-semibold">{b.who}</span>
-                </span>
-                <span className="col-span-2 md:col-span-1">
-                  <span className="block text-[12px] text-white/55">Arrive / depart · {b.language}</span>
-                  <span className="block text-[15px] font-semibold tabular-nums">{b.dates}</span>
-                </span>
-                <motion.a
-                  href={REGISTER_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                  whileTap={{ scale: 0.98 }}
-                  className="group/reg col-span-2 inline-flex items-center justify-center gap-1.5 rounded-full bg-saffron px-6 py-3 text-[15px] font-medium text-white transition-colors hover:bg-[#b93c1b] md:col-span-1"
-                >
-                  Register
-                  <IconArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/reg:translate-x-0.5" />
-                </motion.a>
-              </motion.li>
+          <div className="mt-10 space-y-3 md:mt-14">
+            {departures.map((d, i) => (
+              <DateCard key={d.dates} d={d} dark delay={0.55 + i * 0.1} />
             ))}
-          </ul>
+          </div>
 
           <motion.div
             className="mt-10 text-center"

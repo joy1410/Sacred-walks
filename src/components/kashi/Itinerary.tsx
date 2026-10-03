@@ -1,16 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion, useInView } from 'motion/react'
-import { itinerary, type Day } from '../../data/kashi'
+import { AnimatePresence, animate, motion, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react'
+import { useLenis } from 'lenis/react'
+import { itinerary, type Day, type Stop } from '../../data/kashi'
 import { blur } from '../../lib/lite'
 import { ease, inView, SectionHeading } from './shared'
 
 /**
  * Desktop: the days scroll past on the right while a framed photograph holds
  * still on the left and changes with them, the new day's picture settling
- * in from 1.08× as the old one lets go. A grey rail runs down the days;
- * each day's stretch of it fills with saffron when you reach that day and
- * stays filled behind you; the day in view stays bright while the others fall back.
+ * in from 1.08× as the old one lets go. The day in view stays bright while
+ * the others fall back.
  * Mobile: each day carries its own photograph and the page reads straight down.
+ * Both: a grey rail runs down the days and one saffron line marks the day
+ * in view, gliding to the next day in one motion: shorter while it
+ * travels, growing into the new day as it lands.
  */
 /** the sticky frame needs the two-column layout, which starts at lg */
 function useStacked() {
@@ -25,10 +28,95 @@ function useStacked() {
   return stacked
 }
 
+/** the saffron line never draws shorter than this, even mid-flight */
+const SHORT = 40
+const glide = [0.65, 0, 0.35, 1] as const
+
 export default function Itinerary() {
   const [active, setActive] = useState(0)
   const mobile = useStacked()
   const day = itinerary[active]
+  const reduced = useReducedMotion()
+
+  /*
+   * Desktop rail: one saffron line whose two ends move on their own. The
+   * trailing end leaves first, so the line draws in as it sets off; the
+   * leading end leaves a beat later and lands last, so the line grows into
+   * its new day as it settles. One continuous motion, no holds, and a new
+   * day mid-flight simply redirects both ends from wherever they are.
+   */
+  const listRef = useRef<HTMLOListElement>(null)
+  const blocks = useRef<(HTMLDivElement | null)[]>([])
+  const top = useMotionValue(0)
+  const bottom = useMotionValue(0)
+  const down = useRef(true)
+  const railY = useTransform<number, number>([top, bottom], ([t, b]) =>
+    // at its shortest the line reaches ahead from its trailing end
+    b - t >= SHORT || down.current ? t : b - SHORT,
+  )
+  const railH = useTransform<number, number>([top, bottom], ([t, b]) => (b === 0 ? 0 : Math.max(SHORT, b - t)))
+  // nothing is marked until the list has actually been reached
+  const started = useInView(listRef, { once: true, margin: '0px 0px -45% 0px' })
+
+  // the day chips on the photo: bring that day to the middle of the screen,
+  // where the list already listens for the day in view
+  const lenis = useLenis()
+  const jumpTo = (i: number) => {
+    const el = blocks.current[i]
+    if (!el) return
+    const target = el.getBoundingClientRect().top + window.scrollY - (window.innerHeight - el.offsetHeight) / 2
+    if (lenis) lenis.scrollTo(target, { duration: 1.2 })
+    else window.scrollTo({ top: target, behavior: 'smooth' })
+  }
+
+  useEffect(() => {
+    if (!started) return
+    const measure = () => {
+      const el = blocks.current[active]
+      const li = el?.offsetParent as HTMLElement | null
+      // offsets, not rects: they ignore the blocks' own entrance transforms
+      return el && li ? { top: li.offsetTop + el.offsetTop, bottom: li.offsetTop + el.offsetTop + el.offsetHeight } : null
+    }
+    const to = measure()
+    if (!to) return
+
+    let runs: ReturnType<typeof animate>[] = []
+    const first = bottom.get() === 0
+    if (reduced) {
+      top.set(to.top)
+      bottom.set(to.bottom)
+    } else if (first) {
+      // first arrival: grow down from the day's top
+      top.set(to.top)
+      bottom.set(to.top + SHORT)
+      runs = [animate(bottom, to.bottom, { duration: 0.9, ease })]
+    } else {
+      down.current = to.top > top.get()
+      const distance = Math.abs(to.top - top.get())
+      const d = 0.9 + Math.min(0.5, distance / 1500)
+      const [tail, head] = down.current ? [top, bottom] : [bottom, top]
+      const [tailTo, headTo] = down.current ? [to.top, to.bottom] : [to.bottom, to.top]
+      runs = [
+        animate(tail, tailTo, { duration: d * 0.7, ease: glide }),
+        animate(head, headTo, { duration: d * 0.75, delay: d * 0.25, ease: glide }),
+      ]
+    }
+
+    let moving = runs.length > 0
+    Promise.all(runs).then(() => (moving = false))
+    // text reflows on resize: re-seat the line without animating
+    const ro = new ResizeObserver(() => {
+      const m = measure()
+      if (!m || moving) return
+      top.set(m.top)
+      bottom.set(m.bottom)
+    })
+    if (listRef.current) ro.observe(listRef.current)
+    return () => {
+      runs.forEach((r) => r.stop())
+      ro.disconnect()
+    }
+  }, [active, started, reduced, top, bottom])
 
   return (
     <section id="itinerary" aria-labelledby="itinerary-title" className="px-4 py-20 md:px-5 md:py-28">
@@ -76,20 +164,44 @@ export default function Itinerary() {
                     </motion.span>
                   </AnimatePresence>
                 </div>
+                {/* where you are among the five, and a way to any of them */}
+                <nav aria-label="Itinerary days" className="absolute right-7 bottom-7 flex gap-1.5">
+                  {itinerary.map((d, i) => (
+                    <button
+                      key={d.day}
+                      type="button"
+                      onClick={() => jumpTo(i)}
+                      aria-label={`Day ${d.day}: ${d.title}`}
+                      aria-current={i === active ? 'step' : undefined}
+                      className={`grid h-9 w-9 place-items-center rounded-full text-[13px] font-semibold tabular-nums transition-colors duration-300 ${
+                        i === active ? 'bg-white text-ink' : 'bg-black/25 text-white/80 backdrop-blur-md hover:bg-black/45 hover:text-white'
+                      }`}
+                    >
+                      {d.day}
+                    </button>
+                  ))}
+                </nav>
               </div>
             </div>
           )}
 
-          <ol className="relative">
-            {/* one grey track down the whole list; each day draws its saffron over it */}
+          <ol ref={listRef} className="relative">
+            {/* one grey track down the whole list; the saffron line rides it */}
             <span className="absolute inset-y-0 left-0 w-[2px] rounded-full bg-line-soft" aria-hidden />
+            <motion.span
+              className="absolute top-0 left-0 w-[2px] rounded-full bg-saffron"
+              style={{ y: railY, height: railH }}
+              aria-hidden
+            />
             {itinerary.map((d, i) => (
               <DayItem
                 key={d.day}
                 day={d}
                 index={i}
                 on={mobile || i === active}
-                reached={i <= active}
+                blockRef={(el) => {
+                  blocks.current[i] = el
+                }}
                 onCentre={setActive}
                 mobile={mobile}
               />
@@ -109,14 +221,14 @@ function DayItem({
   day,
   index,
   on,
-  reached,
+  blockRef,
   onCentre,
   mobile,
 }: {
   day: Day
   index: number
   on: boolean
-  reached: boolean
+  blockRef: (el: HTMLDivElement | null) => void
   onCentre: (i: number) => void
   mobile: boolean
 }) {
@@ -125,9 +237,6 @@ function DayItem({
   useEffect(() => {
     if (centred) onCentre(index)
   }, [centred, index, onCentre])
-  // phones read straight down: a day's rail fills as it comes into view
-  const seen = useInView(ref, { once: true, margin: '0px 0px -40% 0px' })
-  const filled = mobile ? seen : reached
 
   return (
     <li
@@ -136,21 +245,13 @@ function DayItem({
     >
 
       <motion.div
+        ref={blockRef}
         className="relative"
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={inView}
         transition={{ duration: 1, ease }}
       >
-        {/* this day's stretch of the rail, the height of its text, filling top down */}
-        <span className="absolute inset-y-0 -left-8 w-[2px] overflow-hidden rounded-full md:-left-10" aria-hidden>
-          <motion.span
-            className="block h-full w-full origin-top rounded-full bg-saffron"
-            initial={false}
-            animate={{ scaleY: filled ? 1 : 0 }}
-            transition={{ duration: 0.9, ease }}
-          />
-        </span>
         {mobile && (
           <div className="relative mb-5 aspect-[4/3] overflow-hidden rounded-[22px] bg-night">
             <img src={day.image.src} alt={day.image.caption} loading="lazy" decoding="async" className="h-full w-full object-cover" />
@@ -161,13 +262,7 @@ function DayItem({
         )}
         <span className="block text-[13px] font-semibold text-saffron tabular-nums md:text-[14px]">Day 0{day.day}</span>
         <h3 className="mt-1.5 font-display text-[clamp(1.9rem,3vw,2.6rem)] leading-[1] font-semibold text-ink">{day.title}</h3>
-        <ul className="mt-4 flex flex-wrap gap-1.5">
-          {day.places.map((p) => (
-            <li key={p} className="rounded-full bg-[rgba(120,72,30,0.08)] px-3 py-1 text-[13px] font-medium text-ink">
-              {p}
-            </li>
-          ))}
-        </ul>
+        <Route stops={day.route} />
         {day.body.map((p) => (
           <p key={p.slice(0, 24)} className="mt-4 text-[15.5px] leading-[1.6] text-ink-soft md:text-[16.5px]">
             {p}
@@ -175,5 +270,45 @@ function DayItem({
         ))}
       </motion.div>
     </li>
+  )
+}
+
+/**
+ * The day's stops in the order it runs, split wherever the day gives a cue
+ * ("Before dawn", "Evening", "~2 hrs by road"): the cue sits on its own line
+ * and that stretch's stops follow beneath it as connected pills. Each joint
+ * is drawn by the stop after it, reaching back across the gap, so when a row
+ * wraps the row's overflow clips the joint off the first stop of the new line.
+ */
+function Route({ stops }: { stops: Stop[] }) {
+  const legs: { cue: string; stops: Stop[] }[] = []
+  for (const s of stops) {
+    // "Evening · back to Kashi": the travel note follows the cue in lower case
+    const travel = s.travel && s.when ? s.travel[0].toLowerCase() + s.travel.slice(1) : s.travel
+    const cue = [s.when, travel].filter(Boolean).join(' · ')
+    if (cue || !legs.length) legs.push({ cue, stops: [s] })
+    else legs[legs.length - 1].stops.push(s)
+  }
+
+  return (
+    <div className="mt-4 space-y-3">
+      {legs.map((leg) => (
+        <div key={leg.stops[0].place}>
+          {leg.cue && <p className="mb-1.5 text-[12.5px] font-medium text-ink-mute">{leg.cue}</p>}
+          <ol className="flex flex-wrap items-center gap-x-5 gap-y-2.5 overflow-hidden">
+            {leg.stops.map((s, i) => (
+              <li
+                key={s.place}
+                className={`relative rounded-full bg-[rgba(120,72,30,0.08)] px-3 py-1 text-[13px] font-medium whitespace-nowrap text-ink ${
+                  i ? 'before:absolute before:top-1/2 before:right-full before:h-px before:w-5 before:bg-[rgba(120,72,30,0.3)]' : ''
+                }`}
+              >
+                {s.place}
+              </li>
+            ))}
+          </ol>
+        </div>
+      ))}
+    </div>
   )
 }

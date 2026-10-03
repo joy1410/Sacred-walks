@@ -9,8 +9,7 @@ const pageSections = [
   { id: 'itinerary', label: 'Itinerary' },
   { id: 'day', label: 'A day in the yatra' },
   { id: 'preparation', label: 'Preparation' },
-  { id: 'stay', label: 'Stay' },
-  { id: 'cost', label: 'Cost' },
+  { id: 'included', label: 'What’s included' },
   { id: 'faqs', label: 'FAQs' },
   { id: 'register', label: 'Registration' },
 ] as const

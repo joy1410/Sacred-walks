@@ -1,48 +1,48 @@
 import { motion } from 'motion/react'
-import { cost, ENQUIRE_URL } from '../../data/kashi'
-import { IconCheck, IconPlus } from '../icons'
+import { cost, ENQUIRE_URL, type Highlight } from '../../data/kashi'
+import { IconCheck, IconDoctor, IconHotel, IconMeal, IconPhone, IconPlus } from '../icons'
 import { ease, inView, Rise, SectionHeading } from './shared'
 
+const icons: Record<Highlight['icon'], typeof IconHotel> = {
+  hotel: IconHotel,
+  meal: IconMeal,
+  doctor: IconDoctor,
+}
+
 /**
- * The contribution isn't published, so this answers the question that is:
- * what it covers. The ask routes to enquiry, never a dead end.
+ * What the contribution covers: the three things people ask about first,
+ * then the plain included / not included list. The amount isn't published,
+ * so it closes the section as a quiet line that routes to enquiry, rather
+ * than a second headline competing with the section's own.
  */
 export default function Cost() {
   return (
-    <section id="cost" aria-labelledby="cost-title" className="px-4 py-20 md:px-5 md:py-28">
+    <section id="included" aria-labelledby="included-title" className="px-4 py-20 md:px-5 md:py-28">
       <div className="mx-auto max-w-[1180px]">
-        <SectionHeading label="Cost" id="cost-title" title="What your contribution covers" />
+        <SectionHeading label="What’s included" id="included-title" title="What your contribution covers" />
 
-        <Rise className="mt-10 md:mt-14">
-          <div className="grid gap-2 rounded-[32px] bg-white p-2 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_30px_60px_-30px_rgba(0,0,0,0.18)] lg:grid-cols-[1fr_1.3fr]">
-            <div className="flex flex-col rounded-[26px] bg-saffron-soft p-6 md:p-9">
-              <p className="text-[14px] font-semibold text-saffron-ink">Contribution for 2026</p>
-              <p className="mt-3 font-display text-[clamp(2.6rem,4.6vw,4rem)] leading-[0.95] font-semibold text-ink">Shared on enquiry</p>
-              <p className="mt-4 max-w-[380px] text-[15px] leading-[1.55] text-ink-2">
-                Send an enquiry and the team will share the contribution, payment details and the registration form for your group.
-              </p>
-              <div className="mt-8 flex flex-col gap-2.5 sm:flex-row lg:mt-auto lg:pt-10">
-                <motion.a
-                  href={ENQUIRE_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                  whileTap={{ scale: 0.98 }}
-                  className="inline-flex flex-1 items-center justify-center rounded-full bg-saffron px-6 py-3.5 text-[15px] font-medium text-white transition-colors hover:bg-[#b93c1b]"
-                >
-                  Enquire now
-                </motion.a>
-                <a
-                  href="tel:+918144123123"
-                  className="inline-flex flex-1 items-center justify-center rounded-full border border-ink/15 bg-white px-6 py-3.5 text-[15px] font-medium whitespace-nowrap text-ink tabular-nums transition-colors hover:border-ink/40"
-                >
-                  +91 81441 23123
-                </a>
-              </div>
-            </div>
+        <ul className="mt-10 grid gap-3 md:mt-14 md:grid-cols-3 md:gap-5">
+          {cost.highlights.map((h, i) => {
+            const Icon = icons[h.icon]
+            return (
+              <li key={h.title}>
+                <Rise delay={i * 0.08} className="h-full rounded-[28px] border border-line-soft bg-white p-6 md:p-8">
+                  <span className="grid h-12 w-12 place-items-center rounded-full bg-saffron-soft text-saffron">
+                    <Icon className="h-6 w-6" />
+                  </span>
+                  <h3 className="mt-6 text-[19px] font-semibold text-ink md:mt-10">{h.title}</h3>
+                  <p className="mt-2 text-[15px] leading-[1.55] text-ink-soft">{h.body}</p>
+                </Rise>
+              </li>
+            )
+          })}
+        </ul>
 
-            <div className="grid gap-8 p-6 md:grid-cols-[1.4fr_1fr] md:p-9">
+        <Rise className="mt-3 md:mt-5">
+          <div className="rounded-[28px] border border-line-soft bg-white">
+            <div className="grid gap-8 p-6 md:grid-cols-2 md:gap-12 md:p-9">
               <div>
-                <h3 className="text-[15px] font-semibold text-ink">Included</h3>
+                <h3 className="text-[15px] font-semibold text-ink">Also included</h3>
                 <ul className="mt-4 space-y-3">
                   {cost.included.map((c, i) => (
                     <motion.li
@@ -73,6 +73,33 @@ export default function Cost() {
                     </li>
                   ))}
                 </ul>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-5 border-t border-line-soft p-6 md:flex-row md:items-center md:justify-between md:px-9 md:py-7">
+              <div>
+                <p className="text-[17px] font-semibold text-ink">The 2026 contribution is shared on enquiry</p>
+                <p className="mt-1 max-w-[520px] text-[15px] leading-[1.5] text-ink-soft">
+                  The team will send the amount, payment details and the registration form for your group.
+                </p>
+              </div>
+              <div className="flex shrink-0 flex-col gap-2.5 sm:flex-row">
+                <motion.a
+                  href={ENQUIRE_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  whileTap={{ scale: 0.98 }}
+                  className="inline-flex items-center justify-center rounded-full bg-saffron px-6 py-3.5 text-[15px] font-medium text-white transition-colors hover:bg-[#b93c1b]"
+                >
+                  Enquire now
+                </motion.a>
+                <a
+                  href="tel:+918144123123"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-ink/15 bg-white px-6 py-3.5 text-[15px] font-medium whitespace-nowrap text-ink tabular-nums transition-colors hover:border-ink/40"
+                >
+                  <IconPhone className="h-4 w-4" />
+                  +91 81441 23123
+                </a>
               </div>
             </div>
           </div>
