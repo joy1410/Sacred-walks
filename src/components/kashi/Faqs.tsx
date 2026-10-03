@@ -5,7 +5,7 @@ import { IconArrowUpRight, IconPlus } from '../icons'
 import { ease, Rise, SectionHeading } from './shared'
 
 export default function Faqs() {
-  const [open, setOpen] = useState<number | null>(0)
+  const [open, setOpen] = useState<number | null>(null)
 
   return (
     <section id="faqs" data-opaque aria-labelledby="faqs-title" className="bg-mist px-4 py-20 md:px-5 md:py-28">

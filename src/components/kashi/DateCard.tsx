@@ -1,7 +1,7 @@
 import { useId, useSyncExternalStore } from 'react'
 import { motion, type Variants } from 'motion/react'
-import { REGISTER_URL, type Departure, type Pool } from '../../data/kashi'
-import { IconArrowRight, IconCheck } from '../icons'
+import { ENQUIRE_URL, innerEngineering, REGISTER_URL, type Departure, type Pool } from '../../data/kashi'
+import { IconArrowRight, IconArrowUpRight, IconCheck, IconInfo } from '../icons'
 import { ease, inView } from './shared'
 
 /** a visitor on Indian time most likely lives in India; they can still switch */
@@ -45,10 +45,12 @@ const bar: Variants = {
 
 /**
  * One date, one card, one way in. The date is what people are choosing, so
- * it appears once; the programme's two groups become a plain question
- * ("which applies to you?") answered with a tap, preselected from the
- * visitor's timezone so most people never need to touch it. Each answer
+ * it appears once, with its details right under it; the programme's two
+ * groups sit side by side with yours highlighted, preselected from the
+ * visitor's timezone so most people never need to touch it. Each group
  * carries its own seats, and the single CTA names the date it registers for.
+ * Inner Engineering is a hard prerequisite, so it shares the footer with the
+ * buttons: the one place everyone about to register is already looking.
  */
 export default function DateCard({ d, dark = false, delay = 0 }: { d: Departure; dark?: boolean; delay?: number }) {
   const poolId = useSyncExternalStore(subscribe, () => chosen ?? guessPool(d.pools))
@@ -57,7 +59,7 @@ export default function DateCard({ d, dark = false, delay = 0 }: { d: Departure;
 
   const t = dark
     ? {
-        card: 'bg-white/10 text-white md:backdrop-blur-md',
+        card: 'bg-white/10 text-white backdrop-blur-md',
         mute: 'text-white/60',
         soft: 'text-white/75',
         tile: 'bg-white/[0.06] ring-1 ring-white/15 hover:bg-white/10',
@@ -65,18 +67,28 @@ export default function DateCard({ d, dark = false, delay = 0 }: { d: Departure;
         track: 'bg-white/15',
         dot: 'border-white/40',
         dotOn: 'border-white bg-white text-ink',
+        bar: 'bg-white/80',
         warn: 'text-[#ffb59c]',
+        link: 'text-white hover:text-white/80',
+        rule: 'border-white/15',
+        icon: 'bg-white/15 text-white',
+        ghost: 'text-white ring-1 ring-white/40 hover:bg-white/10',
       }
     : {
         card: 'bg-white text-ink shadow-[0_1px_2px_rgba(0,0,0,0.04),0_20px_40px_-28px_rgba(0,0,0,0.18)]',
         mute: 'text-ink-mute',
         soft: 'text-ink-soft',
         tile: 'bg-mist ring-1 ring-transparent hover:ring-line',
-        on: 'bg-saffron-soft/60 ring-2 ring-saffron',
+        on: 'bg-mist ring-2 ring-saffron',
         track: 'bg-line-soft',
         dot: 'border-line',
         dotOn: 'border-saffron bg-saffron text-white',
+        bar: 'bg-ink-2',
         warn: 'text-saffron-ink',
+        link: 'text-saffron-ink hover:text-saffron',
+        rule: 'border-line-soft',
+        icon: 'bg-saffron-soft text-saffron-ink',
+        ghost: 'text-ink ring-1 ring-line hover:bg-mist',
       }
 
   return (
@@ -88,16 +100,16 @@ export default function DateCard({ d, dark = false, delay = 0 }: { d: Departure;
       whileInView="show"
       viewport={inView}
     >
-      <header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-1 px-1">
+      <header className="px-1">
         <h3 className="font-display text-[34px] leading-none font-semibold tabular-nums md:text-[42px]">{d.short}</h3>
-        <p className={`text-[14px] tabular-nums md:pb-1 ${t.soft}`}>
+        <p className={`mt-2 text-[14px] tabular-nums ${t.soft}`}>
           {d.year} · {d.days} days · {d.language}
         </p>
       </header>
 
       <fieldset className="mt-5 md:mt-6">
-        <legend className={`px-1 text-[13px] font-semibold ${t.mute}`}>Which applies to you?</legend>
-        <div className="mt-2.5 grid gap-2 sm:grid-cols-2 md:gap-2.5">
+        <legend className="sr-only">Seats by group</legend>
+        <div className="grid gap-2 sm:grid-cols-2 md:gap-2.5">
           {d.pools.map((p, i) => {
             const on = p.id === pool.id
             return (
@@ -132,7 +144,7 @@ export default function DateCard({ d, dark = false, delay = 0 }: { d: Departure;
                   </span>
                   <span className={`mt-2 block h-[4px] overflow-hidden rounded-full ${t.track}`} aria-hidden>
                     <motion.span
-                      className="block h-full origin-left rounded-full bg-saffron"
+                      className={`block h-full origin-left rounded-full ${t.bar}`}
                       variants={bar}
                       custom={{ taken: 1 - p.seatsLeft / p.seats, delay: delay + 0.3 + i * 0.1 }}
                     />
@@ -144,21 +156,49 @@ export default function DateCard({ d, dark = false, delay = 0 }: { d: Departure;
         </div>
       </fieldset>
 
-      <div className="mt-4 flex flex-col items-center gap-3 md:mt-5 md:flex-row-reverse md:justify-between md:pl-1">
-        <motion.a
-          href={REGISTER_URL}
-          target="_blank"
-          rel="noreferrer"
-          whileTap={{ scale: 0.98 }}
-          className="group/reg inline-flex w-full items-center justify-center gap-2 rounded-full bg-saffron px-8 py-4 text-[16px] font-medium whitespace-nowrap text-white transition-colors hover:bg-[#b93c1b] md:w-auto"
-        >
-          Register for {d.short}
-          <IconArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/reg:translate-x-0.5" />
-        </motion.a>
-        <p className={`text-center text-[13px] leading-snug md:text-left ${t.mute}`}>
-          Seats are held separately for each. The form opens on Isha's site.
-        </p>
-      </div>
+      <footer className={`mt-5 flex flex-col gap-5 border-t px-1 pt-5 md:mt-6 md:flex-row md:items-center md:justify-between md:gap-10 md:pt-6 ${t.rule}`}>
+        <div className="flex gap-3.5">
+          <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full ${t.icon}`} aria-hidden>
+            <IconInfo className="h-[18px] w-[18px]" />
+          </span>
+          <div>
+            <p className="text-[16px] leading-snug font-semibold">{innerEngineering.title}</p>
+            <p className={`mt-1 text-[14px] leading-snug ${t.soft}`}>
+              {innerEngineering.body}{' '}
+              <a
+                href={innerEngineering.link.href}
+                target="_blank"
+                rel="noreferrer"
+                className={`group/link inline-flex items-center gap-1 font-medium whitespace-nowrap ${t.link}`}
+              >
+                {innerEngineering.link.label}
+                <IconArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
+              </a>
+            </p>
+          </div>
+        </div>
+
+        <div className="flex shrink-0 flex-col gap-2.5 sm:flex-row">
+          <motion.a
+            href={REGISTER_URL}
+            target="_blank"
+            rel="noreferrer"
+            whileTap={{ scale: 0.98 }}
+            className="group/reg inline-flex items-center justify-center gap-2 rounded-full bg-saffron px-8 py-4 text-[16px] font-medium whitespace-nowrap text-white transition-colors hover:bg-[#b93c1b] sm:order-2"
+          >
+            Register for {d.short}
+            <IconArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/reg:translate-x-0.5" />
+          </motion.a>
+          <a
+            href={ENQUIRE_URL}
+            target="_blank"
+            rel="noreferrer"
+            className={`inline-flex items-center justify-center rounded-full px-7 py-4 text-[16px] font-medium whitespace-nowrap transition-colors sm:order-1 ${t.ghost}`}
+          >
+            Enquire
+          </a>
+        </div>
+      </footer>
     </motion.article>
   )
 }

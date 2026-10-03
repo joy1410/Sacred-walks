@@ -361,9 +361,9 @@ export const departures: Departure[] = [
   },
 ]
 
-/** the one hard prerequisite, shown where people decide to register */
+/** the one hard prerequisite, beside every Register button */
 export const innerEngineering = {
-  title: 'Inner Engineering is mandatory',
-  body: 'Completion of Inner Engineering, including Shambhavi Mahamudra Kriya, is a prerequisite for this sojourn.',
+  title: 'Inner Engineering is required',
+  body: 'Open only to those who have completed it, including Shambhavi Mahamudra Kriya.',
   link: { label: 'About Inner Engineering', href: 'https://www.innerengineering.com' },
 }

@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { motion, useScroll } from 'motion/react'
-import { departures, ENQUIRE_URL } from '../../data/kashi'
+import { departures } from '../../data/kashi'
 import { BlurText } from '../hero/BlurIn'
 import { useScrollRange } from '../../lib/useScrollRange'
 import DateCard from './DateCard'
@@ -38,15 +38,6 @@ export default function Registration() {
             <h2 id="register-title" className="mt-3 font-display text-[clamp(2.8rem,6.4vw,5.8rem)] leading-[0.96] font-semibold">
               <BlurText text={HEADLINE} delay={0.1} inView />
             </h2>
-            <motion.p
-              className="mx-auto mt-5 max-w-[480px] text-[16px] leading-[1.5] text-white/80 md:text-[18px]"
-              initial={{ opacity: 0, y: 14 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={inView}
-              transition={{ duration: 1, ease, delay: 0.45 }}
-            >
-              Registrations for December 2026 are open. Applications are processed on a first-come, first-served basis.
-            </motion.p>
           </div>
 
           <div className="mt-10 space-y-3 md:mt-14">
@@ -62,16 +53,8 @@ export default function Registration() {
             viewport={inView}
             transition={{ duration: 1, ease, delay: 0.8 }}
           >
-            <a
-              href={ENQUIRE_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center justify-center rounded-full bg-white px-7 py-3.5 text-[15px] font-medium text-ink transition-colors hover:bg-mist"
-            >
-              Not sure yet? Enquire
-            </a>
-            <p className="mt-7 text-[13px] text-white/60 tabular-nums">
-              Or call <a href="tel:+918144123123" className="text-white/85 hover:text-white">+91 81441 23123</a> (India) ·{' '}
+            <p className="text-[13px] text-white/60 tabular-nums">
+              Questions? Call <a href="tel:+918144123123" className="text-white/85 hover:text-white">+91 81441 23123</a> (India) ·{' '}
               <a href="tel:+19312186466" className="text-white/85 hover:text-white">+1 931 218 6466</a> (USA)
             </p>
           </motion.div>

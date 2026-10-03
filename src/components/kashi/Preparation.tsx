@@ -14,10 +14,10 @@ export default function Preparation() {
       <div className="mx-auto max-w-[1180px]">
         <SectionHeading label="Fitness & preparation" id="preparation-title" title="What the days ask of you" lede={preparation.lede} />
 
-        <ul className="mt-10 grid gap-x-8 gap-y-8 sm:grid-cols-2 md:mt-14 lg:grid-cols-4">
+        <ul className="mt-10 grid gap-x-8 gap-y-10 sm:grid-cols-2 md:mt-14 lg:grid-cols-4">
           {preparation.demands.map((d, i) => (
             <li key={d.title}>
-              <Rise delay={i * 0.08} className="h-full border-t border-line pt-5">
+              <Rise delay={i * 0.08} className="h-full">
                 <p className="font-display text-[40px] leading-none font-semibold text-saffron md:text-[44px]">{d.kicker}</p>
                 <h3 className="mt-4 text-[16px] font-semibold text-ink">{d.title}</h3>
                 <p className="mt-1.5 text-[15px] leading-[1.55] text-ink-soft">{d.body}</p>
