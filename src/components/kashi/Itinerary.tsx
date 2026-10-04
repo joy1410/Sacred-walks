@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { AnimatePresence, animate, motion, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion, useInView, useMotionValue, useMotionValueEvent, useScroll } from 'motion/react'
 import { useLenis } from 'lenis/react'
 import { itinerary, type Day, type Stop } from '../../data/kashi'
 import { blur } from '../../lib/lite'
@@ -12,8 +12,9 @@ import { ease, inView, SectionHeading } from './shared'
  * the others fall back.
  * Mobile: each day carries its own photograph and the page reads straight down.
  * Both: a grey rail runs down the days and one saffron line marks the day
- * in view, gliding to the next day in one motion: shorter while it
- * travels, growing into the new day as it lands.
+ * in view. The line is tied to the scroll itself, not timed: between two
+ * days it slides and resizes in step with the page, so it is always where
+ * the reader is, however fast they scroll.
  */
 /** the sticky frame needs the two-column layout, which starts at lg */
 function useStacked() {
@@ -28,35 +29,78 @@ function useStacked() {
   return stacked
 }
 
-/** the saffron line never draws shorter than this, even mid-flight */
-const SHORT = 40
-const glide = [0.65, 0, 0.35, 1] as const
+/** the reading line: the band the days listen on (-45% / -50%) sits here */
+const READ = 0.475
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v))
+// eases each handover so the line settles into a day rather than stopping dead
+const smooth = (f: number) => f * f * (3 - 2 * f)
+const lerp = (a: number, b: number, f: number) => a + (b - a) * f
 
 export default function Itinerary() {
   const [active, setActive] = useState(0)
   const mobile = useStacked()
   const day = itinerary[active]
-  const reduced = useReducedMotion()
 
   /*
-   * Desktop rail: one saffron line whose two ends move on their own. The
-   * trailing end leaves first, so the line draws in as it sets off; the
-   * leading end leaves a beat later and lands last, so the line grows into
-   * its new day as it settles. One continuous motion, no holds, and a new
-   * day mid-flight simply redirects both ends from wherever they are.
+   * The rail: the saffron line's top and length follow the reading line.
+   * Inside a day it covers that day. Across the gap to the next day (at
+   * least a quarter screen, so short gaps on phones don't snap) it slides
+   * and resizes from one day to the other, in proportion to the scroll.
+   * Before the first day it draws down as the list arrives.
    */
   const listRef = useRef<HTMLOListElement>(null)
   const blocks = useRef<(HTMLDivElement | null)[]>([])
-  const top = useMotionValue(0)
-  const bottom = useMotionValue(0)
-  const down = useRef(true)
-  const railY = useTransform<number, number>([top, bottom], ([t, b]) =>
-    // at its shortest the line reaches ahead from its trailing end
-    b - t >= SHORT || down.current ? t : b - SHORT,
-  )
-  const railH = useTransform<number, number>([top, bottom], ([t, b]) => (b === 0 ? 0 : Math.max(SHORT, b - t)))
-  // nothing is marked until the list has actually been reached
-  const started = useInView(listRef, { once: true, margin: '0px 0px -45% 0px' })
+  const spans = useRef<{ top: number; bottom: number }[]>([])
+  const railY = useMotionValue(0)
+  const railH = useMotionValue(0)
+
+  const place = useCallback(() => {
+    const list = listRef.current
+    const s = spans.current
+    if (!list || !s.length) return
+    const vh = window.innerHeight
+    const p = vh * READ - list.getBoundingClientRect().top
+    const set = (top: number, bottom: number) => {
+      railY.set(top)
+      railH.set(Math.max(0, bottom - top))
+    }
+    const first = s[0]
+    if (p <= first.top) {
+      const lead = vh * 0.3
+      return set(first.top, lerp(first.top, first.bottom, smooth(clamp01((p - first.top + lead) / lead))))
+    }
+    for (let i = 0; i < s.length - 1; i++) {
+      const a = s[i]
+      const b = s[i + 1]
+      const w = Math.max(b.top - a.bottom, vh * 0.25)
+      const from = (a.bottom + b.top - w) / 2
+      if (p < from + w) {
+        const f = smooth(clamp01((p - from) / w))
+        return set(lerp(a.top, b.top, f), lerp(a.bottom, b.bottom, f))
+      }
+    }
+    const last = s[s.length - 1]
+    set(last.top, last.bottom)
+  }, [railY, railH])
+
+  const { scrollY } = useScroll()
+  useMotionValueEvent(scrollY, 'change', place)
+
+  // offsets, not rects: they ignore the blocks' own entrance transforms.
+  // Re-measured whenever the list reflows (resize, fonts, images on phones).
+  useEffect(() => {
+    const measure = () => {
+      spans.current = blocks.current.flatMap((el) => {
+        const li = el?.offsetParent as HTMLElement | null
+        return el && li ? [{ top: li.offsetTop + el.offsetTop, bottom: li.offsetTop + el.offsetTop + el.offsetHeight }] : []
+      })
+      place()
+    }
+    measure()
+    const ro = new ResizeObserver(measure)
+    if (listRef.current) ro.observe(listRef.current)
+    return () => ro.disconnect()
+  }, [place, mobile])
 
   // the day chips on the photo: bring that day to the middle of the screen,
   // where the list already listens for the day in view
@@ -68,55 +112,6 @@ export default function Itinerary() {
     if (lenis) lenis.scrollTo(target, { duration: 1.2 })
     else window.scrollTo({ top: target, behavior: 'smooth' })
   }
-
-  useEffect(() => {
-    if (!started) return
-    const measure = () => {
-      const el = blocks.current[active]
-      const li = el?.offsetParent as HTMLElement | null
-      // offsets, not rects: they ignore the blocks' own entrance transforms
-      return el && li ? { top: li.offsetTop + el.offsetTop, bottom: li.offsetTop + el.offsetTop + el.offsetHeight } : null
-    }
-    const to = measure()
-    if (!to) return
-
-    let runs: ReturnType<typeof animate>[] = []
-    const first = bottom.get() === 0
-    if (reduced) {
-      top.set(to.top)
-      bottom.set(to.bottom)
-    } else if (first) {
-      // first arrival: grow down from the day's top
-      top.set(to.top)
-      bottom.set(to.top + SHORT)
-      runs = [animate(bottom, to.bottom, { duration: 0.9, ease })]
-    } else {
-      down.current = to.top > top.get()
-      const distance = Math.abs(to.top - top.get())
-      const d = 0.9 + Math.min(0.5, distance / 1500)
-      const [tail, head] = down.current ? [top, bottom] : [bottom, top]
-      const [tailTo, headTo] = down.current ? [to.top, to.bottom] : [to.bottom, to.top]
-      runs = [
-        animate(tail, tailTo, { duration: d * 0.7, ease: glide }),
-        animate(head, headTo, { duration: d * 0.75, delay: d * 0.25, ease: glide }),
-      ]
-    }
-
-    let moving = runs.length > 0
-    Promise.all(runs).then(() => (moving = false))
-    // text reflows on resize: re-seat the line without animating
-    const ro = new ResizeObserver(() => {
-      const m = measure()
-      if (!m || moving) return
-      top.set(m.top)
-      bottom.set(m.bottom)
-    })
-    if (listRef.current) ro.observe(listRef.current)
-    return () => {
-      runs.forEach((r) => r.stop())
-      ro.disconnect()
-    }
-  }, [active, started, reduced, top, bottom])
 
   return (
     <section id="itinerary" aria-labelledby="itinerary-title" className="px-4 py-20 md:px-5 md:py-28">
@@ -275,9 +270,7 @@ function DayItem({
 /**
  * The day's stops in the order it runs, split wherever the day gives a cue
  * ("Before dawn", "Evening", "~2 hrs by road"): the cue sits on its own line
- * and that stretch's stops follow beneath it as connected pills. Each joint
- * is drawn by the stop after it, reaching back across the gap, so when a row
- * wraps the row's overflow clips the joint off the first stop of the new line.
+ * and that stretch's stops follow beneath it as pills, in reading order.
  */
 function Route({ stops }: { stops: Stop[] }) {
   const legs: { cue: string; stops: Stop[] }[] = []
