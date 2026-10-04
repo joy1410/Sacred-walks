@@ -140,7 +140,7 @@ function Tile({ shot, decorative = false }: { shot: Shot; decorative?: boolean }
         className="h-full w-full object-cover transition-transform duration-[1.2s] ease-[var(--ease-out-expo)] select-none group-hover/tile:scale-[1.05]"
       />
       {/* glass badge, as on the yatra photos: always on touch, on hover with a mouse */}
-      <figcaption className="pointer-events-none absolute bottom-3 left-3 translate-y-1 rounded-full bg-black/30 px-3 py-1.5 text-[12px] font-medium text-white opacity-0 md:backdrop-blur-xl transition-[opacity,translate] duration-500 ease-[var(--ease-out-expo)] group-hover/tile:translate-y-0 group-hover/tile:opacity-100 [@media(hover:none)]:translate-y-0 [@media(hover:none)]:opacity-100">
+      <figcaption className="pointer-events-none absolute bottom-3 left-3 translate-y-1 rounded-full bg-black/30 px-3 py-1.5 type-caption font-medium text-white opacity-0 md:backdrop-blur-xl transition-[opacity,translate] duration-500 ease-[var(--ease-out-expo)] group-hover/tile:translate-y-0 group-hover/tile:opacity-100 [@media(hover:none)]:translate-y-0 [@media(hover:none)]:opacity-100">
         {shot.yatra}
       </figcaption>
     </figure>

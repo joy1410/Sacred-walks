@@ -59,7 +59,7 @@ export default function KashiHero() {
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease, delay: 0.3 }}
-            className="flex items-center gap-1.5 rounded-full bg-black/30 py-1.5 pr-3 pl-2.5 text-[13px] font-medium text-white/90 backdrop-blur-md"
+            className="flex items-center gap-1.5 rounded-full bg-black/30 py-1.5 pr-3 pl-2.5 type-chip text-white/90 backdrop-blur-md"
           >
             <IconPin className="h-4 w-4" />
             {kashi.region}
@@ -73,7 +73,7 @@ export default function KashiHero() {
             transition={{ duration: 0.9, ease, delay: 0.1 }}
             className="flex flex-wrap items-center gap-2"
           >
-            <span className="inline-flex items-center gap-2 rounded-full bg-white py-1.5 pr-3 pl-2.5 text-[13px] font-semibold text-saffron-ink">
+            <span className="inline-flex items-center gap-2 rounded-full bg-white py-1.5 pr-3 pl-2.5 type-chip text-saffron-ink">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inset-0 animate-ping rounded-full bg-saffron opacity-40 motion-reduce:hidden" />
                 <span className="relative h-2 w-2 rounded-full bg-saffron" />
@@ -84,7 +84,7 @@ export default function KashiHero() {
 
           <h1
             id="kashi-title"
-            className="mt-4 font-display text-[clamp(4rem,13vw,10.5rem)] leading-[0.92] font-semibold tracking-[-0.01em] md:mt-5"
+            className="mt-4 type-display-xl md:mt-5"
           >
             <BlurText text={kashi.title} delay={T_TITLE} />
           </h1>
@@ -95,9 +95,9 @@ export default function KashiHero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease, delay: T_AFTER }}
             >
-              <p className="text-[19px] font-medium text-white/90 md:text-[24px]">{kashi.tagline}</p>
+              <p className="type-lead-l text-white/90">{kashi.tagline}</p>
               {/* the card's facts row, set in glass */}
-              <div className="mt-4 inline-flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl bg-white/12 px-4 py-2.5 text-[14px] font-semibold whitespace-nowrap tabular-nums md:mt-5 md:gap-x-5 md:px-5 md:py-3 md:text-[15px] md:backdrop-blur-md">
+              <div className="mt-4 inline-flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl bg-white/12 px-4 py-2.5 type-label-sm whitespace-nowrap tabular-nums md:mt-5 md:gap-x-5 md:px-5 md:py-3 md:backdrop-blur-md">
                 <span>{kashi.days} days</span>
                 <span className="h-4 w-px bg-white/25" aria-hidden />
                 <span className="inline-flex items-center gap-1.5">
@@ -120,7 +120,7 @@ export default function KashiHero() {
               <button
                 type="button"
                 onClick={toSection('itinerary')}
-                className="group/view inline-flex flex-1 items-center justify-center gap-1.5 rounded-full bg-white px-6 py-3.5 text-[15px] font-medium whitespace-nowrap text-ink transition-colors hover:bg-mist lg:flex-none"
+                className="group/view inline-flex flex-1 items-center justify-center gap-1.5 rounded-full bg-white px-6 py-3.5 type-button whitespace-nowrap text-ink transition-colors hover:bg-mist lg:flex-none"
               >
                 See the itinerary
                 <IconArrowRight className="h-4 w-4 rotate-90 transition-transform duration-300 group-hover/view:translate-y-0.5" />
@@ -130,7 +130,7 @@ export default function KashiHero() {
                 type="button"
                 onClick={toSection('dates')}
                 whileTap={{ scale: 0.98 }}
-                className="inline-flex flex-1 items-center justify-center rounded-full bg-saffron px-7 py-3.5 text-[15px] font-medium whitespace-nowrap text-white transition-colors hover:bg-[#b93c1b] lg:flex-none"
+                className="inline-flex flex-1 items-center justify-center rounded-full bg-saffron px-7 py-3.5 type-button whitespace-nowrap text-white transition-colors hover:bg-[#b93c1b] lg:flex-none"
               >
                 Register
               </motion.button>

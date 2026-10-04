@@ -201,13 +201,13 @@ export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
 
       {/* top: glass badges */}
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-4">
-        <span className="rounded-full bg-white px-3 py-1.5 text-[12px] font-semibold text-ink shadow-[0_2px_8px_rgba(0,0,0,0.12)]">
+        <span className="rounded-full bg-white px-3 py-1.5 type-chip text-ink shadow-[0_2px_8px_rgba(0,0,0,0.12)]">
           {yatra.region}
         </span>
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.span
             key={img.caption}
-            className="rounded-full bg-black/30 px-3 py-1.5 text-[12px] font-medium text-white md:backdrop-blur-xl"
+            className="rounded-full bg-black/30 px-3 py-1.5 type-caption font-medium text-white md:backdrop-blur-xl"
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 6 }}
@@ -226,10 +226,10 @@ export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
       <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-end gap-8 p-3 text-white md:justify-between md:p-6">
         {/* quote is desktop-only: on phones the photo stays a compact header */}
         <figure className="hidden max-w-[26rem] md:block">
-          <blockquote className="text-[16px] leading-[1.4] font-medium tracking-[-0.01em] md:text-[17px]">
+          <blockquote className="type-body font-medium">
             &ldquo;{quote.text}&rdquo;
           </blockquote>
-          <figcaption className="mt-2.5 flex items-center gap-2 text-[13px] text-white/70">
+          <figcaption className="mt-2.5 flex items-center gap-2 type-caption text-white/70">
             <span className="h-px w-4 bg-saffron" />
             {quote.by}
           </figcaption>

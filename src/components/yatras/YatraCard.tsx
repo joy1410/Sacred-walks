@@ -57,7 +57,7 @@ export default function YatraCard({ yatra }: { yatra: Yatra }) {
           <StatusPill status={s} />
         </motion.div>
 
-        <motion.h3 variants={item} className="mt-3 text-[28px] leading-[1.08] font-semibold tracking-[-0.022em] text-ink md:mt-4 md:text-[34px]">
+        <motion.h3 variants={item} className="mt-3 type-title-l text-ink md:mt-4">
           <SiteLink
             href={yatraHref(yatra.slug)}
             className="card-link inline-flex items-center gap-2 outline-none after:absolute after:inset-0 after:rounded-[32px]"
@@ -67,7 +67,7 @@ export default function YatraCard({ yatra }: { yatra: Yatra }) {
             <IconArrowRight className="h-5 w-5 -translate-x-1 text-ink-mute opacity-0 transition-all duration-300 group-hover/card:translate-x-0 group-hover/card:text-saffron group-hover/card:opacity-100" />
           </SiteLink>
         </motion.h3>
-        <motion.p variants={item} className="mt-1 text-[15px] tracking-[-0.015em] text-ink-soft md:mt-1.5 md:text-[16px]">
+        <motion.p variants={item} className="mt-1 type-body text-ink-soft md:mt-1.5">
           {yatra.tagline}
         </motion.p>
 
@@ -75,7 +75,7 @@ export default function YatraCard({ yatra }: { yatra: Yatra }) {
             sits centred in its gap */}
         <motion.div
           variants={item}
-          className="mt-4 flex items-center justify-between border-y border-line-soft px-1 py-2.5 text-[14px] md:mt-5 md:px-3 md:py-3 md:text-[15px] font-semibold whitespace-nowrap text-ink tabular-nums"
+          className="mt-4 flex items-center justify-between border-y border-line-soft px-1 py-2.5 type-label-sm md:mt-5 md:px-3 md:py-3 whitespace-nowrap text-ink tabular-nums"
         >
           <span>{yatra.days} days</span>
           <span className="h-4 w-px bg-line-soft" aria-hidden />
@@ -93,7 +93,7 @@ export default function YatraCard({ yatra }: { yatra: Yatra }) {
             return (
               <li key={h.text} className="flex items-center gap-3.5">
                 <Icon className="h-5 w-5 shrink-0 text-ink" />
-                <span className="text-[14px] leading-snug text-ink-2 md:text-[15px]">{h.text}</span>
+                <span className="type-body-sm text-ink-2">{h.text}</span>
               </li>
             )
           })}
@@ -112,7 +112,7 @@ export function StatusPill({ status }: { status: YatraStatus }) {
   if (status.state === 'open') {
     const few = status.seatsLeft !== undefined && status.seatsLeft <= 20
     return (
-      <span className="inline-flex items-center gap-2 rounded-full bg-saffron-soft py-1.5 pr-3 pl-2.5 text-[13px] font-semibold text-saffron-ink">
+      <span className="inline-flex items-center gap-2 rounded-full bg-saffron-soft py-1.5 pr-3 pl-2.5 type-chip text-saffron-ink">
         <span className="relative flex h-2 w-2">
           <span className="absolute inset-0 animate-ping rounded-full bg-saffron opacity-40 motion-reduce:hidden" />
           <span className="relative h-2 w-2 rounded-full bg-saffron" />
@@ -123,7 +123,7 @@ export function StatusPill({ status }: { status: YatraStatus }) {
   }
   const label = status.state === 'soon' ? `Registrations open ${status.opens}` : `Closed for ${status.completed}`
   return (
-    <span className="inline-flex items-center gap-2 rounded-full bg-mist py-1.5 pr-3 pl-2.5 text-[13px] font-semibold text-ink-2">
+    <span className="inline-flex items-center gap-2 rounded-full bg-mist py-1.5 pr-3 pl-2.5 type-chip text-ink-2">
       <span className="h-2 w-2 rounded-full border-[1.5px] border-ink-mute" />
       {label}
     </span>
@@ -132,10 +132,10 @@ export function StatusPill({ status }: { status: YatraStatus }) {
 
 function StatusNote({ status }: { status: YatraStatus }) {
   return (
-    <div className="rounded-2xl bg-mist px-3.5 py-2.5 text-[13.5px] leading-snug text-ink-2 md:px-4 md:py-3 md:text-[14px]">
+    <div className="rounded-2xl bg-mist px-3.5 py-2.5 type-body-sm text-ink-2 md:px-4 md:py-3">
       {status.state === 'open' && (
         <>
-          <span className="block text-[12px] text-ink-mute">Next departure</span>
+          <span className="block type-caption text-ink-mute">Next departure</span>
           <b className="font-semibold text-ink tabular-nums">{status.departure}</b>
           {status.seatsLeft !== undefined && <span className="tabular-nums"> · {status.seatsLeft} seats left</span>}
         </>
@@ -170,7 +170,7 @@ function StatusAction({ status, slug }: { status: YatraStatus; slug: string }) {
       <SiteLink
         href={yatraHref(slug)}
         tabIndex={-1}
-        className="group/view flex flex-1 items-center justify-center gap-1.5 rounded-full border border-ink/15 bg-white px-2.5 py-3 text-[14px] md:px-4 md:py-3.5 md:text-[15px] font-medium whitespace-nowrap text-ink transition-colors hover:border-ink/40 hover:bg-mist"
+        className="group/view flex flex-1 items-center justify-center gap-1.5 rounded-full border border-ink/15 bg-white px-2.5 py-3 type-button-sm md:px-4 md:py-3.5 md:type-button whitespace-nowrap text-ink transition-colors hover:border-ink/40 hover:bg-mist"
       >
         View yatra
         <IconArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/view:translate-x-0.5" />
@@ -179,7 +179,7 @@ function StatusAction({ status, slug }: { status: YatraStatus; slug: string }) {
         // a yatra with its own page takes you to its registration section
         href={yatraHref(slug).startsWith('/yatras/') ? `${yatraHref(slug)}#register` : '#'}
         whileTap={{ scale: 0.98 }}
-        className={`flex flex-1 items-center justify-center rounded-full px-2.5 py-3 text-[14px] md:px-4 md:py-3.5 md:text-[15px] font-medium whitespace-nowrap transition-colors ${
+        className={`flex flex-1 items-center justify-center rounded-full px-2.5 py-3 type-button-sm md:px-4 md:py-3.5 md:type-button whitespace-nowrap transition-colors ${
           // filled saffron only when you can act now; otherwise saffron outline
           status.state === 'open'
             ? 'bg-saffron text-white hover:bg-[#b93c1b]'

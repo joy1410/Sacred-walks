@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { animate, motion, useInView, useMotionValue, useTransform, type MotionValue, type PanInfo, type Variants } from 'motion/react'
+import { animate, motion, useInView, useMotionValue, type PanInfo, type Variants } from 'motion/react'
 import { stories, type Story } from '../data/journey'
 import { BlurText } from './hero/BlurIn'
 import { blur } from '../lib/lite'
-import { IconChevronLeft, IconChevronRight, IconPause, IconPlay } from './icons'
+import { IconChevronLeft, IconChevronRight } from './icons'
 
-const DURATION = 7 // seconds per story
 const ease = [0.16, 1, 0.3, 1] as const
 // the carousel's spring: settles fast, no bounce
 const slide = { type: 'spring', stiffness: 260, damping: 34, mass: 0.9 } as const
@@ -36,18 +35,15 @@ const TILT = [0, -2.2, 2.6, -1.4]
  * "Tuck and rise": the front card is thrown aside and slipped under the pile
  * while the next one rises to the front and pulls its words into focus.
  * Previous runs it in reverse, drawing the bottom card out and laying it on top.
- * Swipe the card on touch, arrows on desktop, and it walks itself on a timer.
+ * Swipe the card on touch, arrows on desktop. It never moves on its own:
+ * these are for reading, and nobody should lose a story mid-sentence.
  */
 export default function StoriesSection() {
   const n = stories.length
   const [order, setOrder] = useState(() => stories.map((_, i) => i))
   const [move, setMove] = useState<Move | null>(null)
-  const [playing, setPlaying] = useState(true)
-  const [hovered, setHovered] = useState(false)
-  const [dragging, setDragging] = useState(false)
 
   const deckRef = useRef<HTMLDivElement>(null)
-  const inView = useInView(deckRef, { amount: 0.4 })
   const revealed = useInView(deckRef, { once: true, amount: 0.3 })
 
   const [width, setWidth] = useState(0)
@@ -104,30 +100,7 @@ export default function StoriesSection() {
     return n - (pose.kind === 'rest' ? pose.depth : 0)
   }
 
-  // timer as a motion value, so pausing freezes the fill where it is
-  const fill = useMotionValue(0)
-  const fillWidth = useTransform(fill, (v) => `${v * 100}%`)
-  const running = playing && !hovered && !dragging && inView && !move
-  useEffect(() => fill.set(0), [shown, fill])
-  useEffect(() => {
-    if (!running) return
-    const controls = animate(fill, 1, {
-      duration: (1 - fill.get()) * DURATION,
-      ease: 'linear',
-      onComplete: () => next(),
-    })
-    return () => controls.stop()
-  }, [shown, running, next, fill])
-
-  const controls = (
-    <Controls
-      shown={shown}
-      playing={playing}
-      fillWidth={fillWidth}
-      onPick={goTo}
-      onToggle={() => setPlaying((p) => !p)}
-    />
-  )
+  const controls = <Controls shown={shown} onPick={goTo} />
 
   return (
     <section
@@ -139,7 +112,7 @@ export default function StoriesSection() {
       {/* the deck stops at 640px tall (as the yatra card does); past that the heading and deck centre together */}
       <div className="mx-auto flex w-full max-w-[1180px] flex-col lg:min-h-0 lg:flex-1 lg:justify-center">
         <div className="mb-6 flex items-end justify-between gap-6 md:mb-8">
-          <h2 id="stories-title" className="font-display text-[clamp(2.4rem,4.4vw,4rem)] leading-[1.04] font-semibold text-ink">
+          <h2 id="stories-title" className="type-h2 text-ink">
             <BlurText text="In their own words" inView />
           </h2>
           <div className="hidden shrink-0 items-center gap-3 pb-1 md:flex">
@@ -160,8 +133,6 @@ export default function StoriesSection() {
           role="region"
           aria-roledescription="carousel"
           aria-label="Participant stories"
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
           initial={{ opacity: 0, y: 28 }}
           animate={revealed ? { opacity: 1, y: 0 } : undefined}
           transition={{ duration: 1, ease }}
@@ -180,7 +151,6 @@ export default function StoriesSection() {
                 canDrag={top && !move}
                 onOut={onOut}
                 onSwipe={next}
-                onDragging={setDragging}
               />
             )
           })}
@@ -201,7 +171,6 @@ function DeckCard({
   canDrag,
   onOut,
   onSwipe,
-  onDragging,
 }: {
   story: Story
   pose: Pose
@@ -211,7 +180,6 @@ function DeckCard({
   canDrag: boolean
   onOut: () => void
   onSwipe: (dir: 1 | -1) => void
-  onDragging: (d: boolean) => void
 }) {
   const x = useMotionValue(0)
   const y = useMotionValue(0)
@@ -261,7 +229,6 @@ function DeckCard({
   }, [pose.kind, dir, depth, width])
 
   const onDragEnd = (_: unknown, info: PanInfo) => {
-    onDragging(false)
     const swipe = info.offset.x + info.velocity.x * 0.2
     if (Math.abs(swipe) > width * 0.2) onSwipe(swipe > 0 ? 1 : -1)
     else {
@@ -276,7 +243,6 @@ function DeckCard({
       style={{ x, y, scale, rotate, zIndex: layer, transformOrigin: '100% 50%' }}
       drag={canDrag ? 'x' : false}
       dragMomentum={false}
-      onDragStart={() => onDragging(true)}
       onDrag={() => rotate.set(x.get() / 32)}
       onDragEnd={onDragEnd}
       aria-hidden={!live}
@@ -302,11 +268,11 @@ function DeckCard({
           className="flex flex-1 flex-col px-4 pt-4 pb-5 select-none md:px-6 lg:justify-center lg:px-10 lg:py-10"
         >
           <motion.div variants={item}>
-            <QuoteMark className="mb-5 h-6 w-8 text-saffron-2 md:h-7 md:w-9" />
+            <QuoteMark className="mb-4 h-5 w-7 text-saffron-2 md:mb-5 md:h-7 md:w-9" />
           </motion.div>
           <motion.blockquote
             variants={item}
-            className="font-display text-[clamp(1.45rem,min(2.3vw,3.6svh),2.15rem)] leading-[1.2] font-medium text-ink"
+            className="text-[16px] leading-[1.5] md:text-[clamp(1.15rem,min(1.6vw,2.6svh),1.4rem)] md:leading-[1.45] font-medium tracking-[-0.01em] text-pretty text-ink"
           >
             {story.text}
           </motion.blockquote>
@@ -322,50 +288,31 @@ function DeckCard({
   )
 }
 
-/** Apple's capsule from the yatra carousel: the active dot stretches into a timer */
-function Controls({
-  shown,
-  playing,
-  fillWidth,
-  onPick,
-  onToggle,
-}: {
-  shown: number
-  playing: boolean
-  fillWidth: MotionValue<string>
-  onPick: (i: number) => void
-  onToggle: () => void
-}) {
+/** Apple's capsule from the yatra carousel: the active dot stretches into a saffron pill */
+function Controls({ shown, onPick }: { shown: number; onPick: (i: number) => void }) {
   return (
-    <>
-      <div className="flex h-11 items-center gap-2 rounded-full bg-white px-4 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_3px_10px_rgba(0,0,0,0.06)]" role="tablist" aria-label="Choose story">
-        {stories.map((s, i) => {
-          const active = i === shown
-          return (
-            <button
-              key={s.name}
-              type="button"
-              role="tab"
-              aria-selected={active}
-              aria-label={`Story ${i + 1}: ${s.name}`}
-              onClick={() => onPick(i)}
-              className="flex h-6 items-center"
-            >
-              <motion.span
-                className="relative block h-[7px] overflow-hidden rounded-full bg-line hover:bg-ink-mute"
-                animate={{ width: active ? 36 : 7 }}
-                transition={{ duration: 0.5, ease }}
-              >
-                {active && <motion.span className="absolute inset-y-0 left-0 rounded-full bg-saffron" style={{ width: fillWidth }} />}
-              </motion.span>
-            </button>
-          )
-        })}
-      </div>
-      <RoundButton label={playing ? 'Pause stories' : 'Play stories'} onClick={onToggle}>
-        {playing ? <IconPause className="h-3.5 w-3.5" /> : <IconPlay className="h-3.5 w-3.5" />}
-      </RoundButton>
-    </>
+    <div className="flex h-11 items-center gap-2 rounded-full bg-white px-4 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_3px_10px_rgba(0,0,0,0.06)]" role="tablist" aria-label="Choose story">
+      {stories.map((s, i) => {
+        const active = i === shown
+        return (
+          <button
+            key={s.name}
+            type="button"
+            role="tab"
+            aria-selected={active}
+            aria-label={`Story ${i + 1}: ${s.name}`}
+            onClick={() => onPick(i)}
+            className="flex h-6 items-center"
+          >
+            <motion.span
+              className={`block h-[7px] rounded-full transition-colors duration-500 ${active ? 'bg-saffron' : 'bg-line hover:bg-ink-mute'}`}
+              animate={{ width: active ? 36 : 7 }}
+              transition={{ duration: 0.5, ease }}
+            />
+          </button>
+        )
+      })}
+    </div>
   )
 }
 
@@ -385,10 +332,9 @@ function RoundButton({ label, onClick, children }: { label: string; onClick: () 
 
 function Attribution({ story }: { story: Story }) {
   return (
-    <figcaption className="mt-6 flex items-center gap-3 text-[14px]">
+    <figcaption className="mt-4 flex items-center gap-3 type-body-sm md:mt-6">
       <span className="h-px w-6 bg-saffron" aria-hidden />
       <span className="font-semibold text-ink">{story.name}</span>
-      <span className="text-ink-mute">{story.yatra}</span>
     </figcaption>
   )
 }

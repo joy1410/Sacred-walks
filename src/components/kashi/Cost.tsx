@@ -30,8 +30,8 @@ export default function Cost() {
                   <span className="grid h-12 w-12 place-items-center rounded-full bg-saffron-soft text-saffron">
                     <Icon className="h-6 w-6" />
                   </span>
-                  <h3 className="mt-6 text-[19px] font-semibold text-ink md:mt-10">{h.title}</h3>
-                  <p className="mt-2 text-[15px] leading-[1.55] text-ink-soft">{h.body}</p>
+                  <h3 className="mt-6 type-title-s text-ink md:mt-10">{h.title}</h3>
+                  <p className="mt-2 type-body-sm text-ink-soft">{h.body}</p>
                 </Rise>
               </li>
             )
@@ -42,12 +42,12 @@ export default function Cost() {
           <div className="rounded-[28px] border border-line-soft bg-white">
             <div className="grid gap-8 p-6 md:grid-cols-2 md:gap-12 md:p-9">
               <div>
-                <h3 className="text-[15px] font-semibold text-ink">Also included</h3>
+                <h3 className="type-label-sm text-ink">Also included</h3>
                 <ul className="mt-4 space-y-3">
                   {cost.included.map((c, i) => (
                     <motion.li
                       key={c}
-                      className="flex gap-3 text-[15px] leading-snug text-ink-2"
+                      className="flex gap-3 type-body-sm text-ink-2"
                       initial={{ opacity: 0, x: -8 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={inView}
@@ -62,10 +62,10 @@ export default function Cost() {
                 </ul>
               </div>
               <div>
-                <h3 className="text-[15px] font-semibold text-ink">Not included</h3>
+                <h3 className="type-label-sm text-ink">Not included</h3>
                 <ul className="mt-4 space-y-3">
                   {cost.excluded.map((c) => (
-                    <li key={c} className="flex gap-3 text-[15px] leading-snug text-ink-soft">
+                    <li key={c} className="flex gap-3 type-body-sm text-ink-soft">
                       <span className="mt-px grid h-5 w-5 shrink-0 place-items-center rounded-full border border-line text-ink-mute">
                         <IconPlus className="h-3 w-3 rotate-45" />
                       </span>
@@ -78,8 +78,8 @@ export default function Cost() {
 
             <div className="flex flex-col gap-5 border-t border-line-soft p-6 md:flex-row md:items-center md:justify-between md:px-9 md:py-7">
               <div>
-                <p className="text-[17px] font-semibold text-ink">The 2026 contribution is shared on enquiry</p>
-                <p className="mt-1 max-w-[520px] text-[15px] leading-[1.5] text-ink-soft">
+                <p className="type-label text-ink">The 2026 contribution is shared on enquiry</p>
+                <p className="mt-1 max-w-[520px] type-body-sm text-ink-soft">
                   The team will send the amount, payment details and the registration form for your group.
                 </p>
               </div>
@@ -89,13 +89,13 @@ export default function Cost() {
                   target="_blank"
                   rel="noreferrer"
                   whileTap={{ scale: 0.98 }}
-                  className="inline-flex items-center justify-center rounded-full bg-saffron px-6 py-3.5 text-[15px] font-medium text-white transition-colors hover:bg-[#b93c1b]"
+                  className="inline-flex items-center justify-center rounded-full bg-saffron px-6 py-3.5 type-button text-white transition-colors hover:bg-[#b93c1b]"
                 >
                   Enquire now
                 </motion.a>
                 <a
                   href="tel:+918144123123"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-ink/15 bg-white px-6 py-3.5 text-[15px] font-medium whitespace-nowrap text-ink tabular-nums transition-colors hover:border-ink/40"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-ink/15 bg-white px-6 py-3.5 type-button whitespace-nowrap text-ink tabular-nums transition-colors hover:border-ink/40"
                 >
                   <IconPhone className="h-4 w-4" />
                   +91 81441 23123

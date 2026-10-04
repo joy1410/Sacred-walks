@@ -98,7 +98,7 @@ export default function YatraSection() {
     <section id="yatras" data-opaque className="bg-mist px-4 pt-14 pb-6 md:px-5 md:pt-[60px] lg:h-svh lg:min-h-[680px]">
       {/* once the card hits its max height, the leftover space splits above and below */}
       <div className="mx-auto flex h-full max-w-[1180px] flex-col lg:justify-center">
-        <h2 className="mb-4 font-display text-[clamp(2.2rem,3.6vw,3.25rem)] leading-[1.04] font-semibold text-ink md:mb-5">
+        <h2 className="mb-4 type-h2 text-ink md:mb-5">
           Choose your pilgrimage
         </h2>
 
@@ -132,7 +132,7 @@ export default function YatraSection() {
                     aria-controls={`panel-${t.slug}`}
                     tabIndex={isActive ? 0 : -1}
                     onClick={() => select(i)}
-                    className="group/tab relative grow shrink-0 cursor-pointer rounded-full px-4 py-2.5 text-[14px] font-medium whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-saffron md:px-3 md:text-[15px]"
+                    className="group/tab relative grow shrink-0 cursor-pointer rounded-full px-4 py-2.5 type-button-sm whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-saffron md:px-3"
                   >
                     {isActive && (
                       <motion.span

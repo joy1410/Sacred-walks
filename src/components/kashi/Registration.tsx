@@ -34,8 +34,8 @@ export default function Registration() {
 
         <div className="relative mx-auto max-w-[900px] text-white">
           <div className="text-center">
-            <p className="text-[13px] font-semibold text-white/60 md:text-[14px]">Registration</p>
-            <h2 id="register-title" className="mt-3 font-display text-[clamp(2.8rem,6.4vw,5.8rem)] leading-[1.02] font-semibold">
+            <p className="type-label-sm text-white/60">Registration</p>
+            <h2 id="register-title" className="mt-3 type-display-l">
               <BlurText text={HEADLINE} delay={0.1} inView />
             </h2>
           </div>
@@ -53,7 +53,7 @@ export default function Registration() {
             viewport={inView}
             transition={{ duration: 1, ease, delay: 0.8 }}
           >
-            <p className="text-[13px] text-white/60 tabular-nums">
+            <p className="type-caption text-white/60 tabular-nums">
               Questions? Call <a href="tel:+918144123123" className="text-white/85 hover:text-white">+91 81441 23123</a> (India) ·{' '}
               <a href="tel:+19312186466" className="text-white/85 hover:text-white">+1 931 218 6466</a> (USA)
             </p>

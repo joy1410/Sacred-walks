@@ -101,8 +101,8 @@ export default function DateCard({ d, dark = false, delay = 0 }: { d: Departure;
       viewport={inView}
     >
       <header className="px-1">
-        <h3 className="text-[30px] leading-none font-semibold tracking-[-0.025em] tabular-nums md:text-[36px]">{d.short}</h3>
-        <p className={`mt-2 text-[14px] tabular-nums ${t.soft}`}>
+        <h3 className="type-title-l tabular-nums">{d.short}</h3>
+        <p className={`mt-2 type-body-sm tabular-nums ${t.soft}`}>
           {d.year} · {d.days} days · {d.language}
         </p>
       </header>
@@ -132,10 +132,10 @@ export default function DateCard({ d, dark = false, delay = 0 }: { d: Departure;
                   {on && <IconCheck className="h-3 w-3" strokeWidth={2.6} />}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block text-[16px] leading-snug font-semibold">{p.label}</span>
-                  <span className={`mt-0.5 block text-[13.5px] leading-snug ${t.soft}`}>{p.who}</span>
+                  <span className="block type-label">{p.label}</span>
+                  <span className={`mt-0.5 block type-body-sm ${t.soft}`}>{p.who}</span>
 
-                  <span className="mt-4 flex items-baseline justify-between gap-3 text-[13px] tabular-nums">
+                  <span className="mt-4 flex items-baseline justify-between gap-3 type-caption tabular-nums">
                     <span>
                       <b className="font-semibold">{p.seatsLeft} seats left</b>
                       <span className={t.mute}> of {p.seats}</span>
@@ -162,8 +162,8 @@ export default function DateCard({ d, dark = false, delay = 0 }: { d: Departure;
             <IconInfo className="h-[18px] w-[18px]" />
           </span>
           <div>
-            <p className="text-[16px] leading-snug font-semibold">{innerEngineering.title}</p>
-            <p className={`mt-1 text-[14px] leading-snug ${t.soft}`}>
+            <p className="type-label">{innerEngineering.title}</p>
+            <p className={`mt-1 type-body-sm ${t.soft}`}>
               {innerEngineering.body}{' '}
               <a
                 href={innerEngineering.link.href}
@@ -184,7 +184,7 @@ export default function DateCard({ d, dark = false, delay = 0 }: { d: Departure;
             target="_blank"
             rel="noreferrer"
             whileTap={{ scale: 0.98 }}
-            className="group/reg inline-flex items-center justify-center gap-2 rounded-full bg-saffron px-8 py-4 text-[16px] font-medium whitespace-nowrap text-white transition-colors hover:bg-[#b93c1b] sm:order-2"
+            className="group/reg inline-flex items-center justify-center gap-2 rounded-full bg-saffron px-8 py-4 type-button whitespace-nowrap text-white transition-colors hover:bg-[#b93c1b] sm:order-2"
           >
             Register for {d.short}
             <IconArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/reg:translate-x-0.5" />
@@ -193,7 +193,7 @@ export default function DateCard({ d, dark = false, delay = 0 }: { d: Departure;
             href={ENQUIRE_URL}
             target="_blank"
             rel="noreferrer"
-            className={`inline-flex items-center justify-center rounded-full px-7 py-4 text-[16px] font-medium whitespace-nowrap transition-colors sm:order-1 ${t.ghost}`}
+            className={`inline-flex items-center justify-center rounded-full px-7 py-4 type-button whitespace-nowrap transition-colors sm:order-1 ${t.ghost}`}
           >
             Enquire
           </a>

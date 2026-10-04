@@ -145,11 +145,11 @@ export default function Itinerary() {
                   />
                 </AnimatePresence>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/0 to-black/0" aria-hidden />
-                <span className="absolute top-5 right-5 rounded-full bg-black/25 px-3 py-1 text-[12px] text-white/85 backdrop-blur-md">
+                <span className="absolute top-5 right-5 rounded-full bg-black/25 px-3 py-1 type-caption text-white/85 backdrop-blur-md">
                   {day.image.caption}
                 </span>
                 <div className="absolute bottom-7 left-8 flex items-end gap-3 text-white">
-                  <span className="font-display text-[22px] leading-none font-semibold text-white/70">Day</span>
+                  <span className="type-display-s text-white/70">Day</span>
                   <AnimatePresence mode="popLayout" initial={false}>
                     <motion.span
                       key={day.day}
@@ -172,7 +172,7 @@ export default function Itinerary() {
                       onClick={() => jumpTo(i)}
                       aria-label={`Day ${d.day}: ${d.title}`}
                       aria-current={i === active ? 'step' : undefined}
-                      className={`grid h-9 w-9 place-items-center rounded-full text-[13px] font-semibold tabular-nums transition-colors duration-300 ${
+                      className={`grid h-9 w-9 place-items-center rounded-full type-chip tabular-nums transition-colors duration-300 ${
                         i === active ? 'bg-white text-ink' : 'bg-black/25 text-white/80 backdrop-blur-md hover:bg-black/45 hover:text-white'
                       }`}
                     >
@@ -208,7 +208,7 @@ export default function Itinerary() {
           </ol>
         </div>
 
-        <p className="mt-10 max-w-[620px] text-[13.5px] leading-[1.5] text-ink-mute lg:ml-[calc(50%+32px)]">
+        <p className="mt-10 max-w-[620px] type-body-sm text-ink-mute lg:ml-[calc(50%+32px)]">
           The itinerary is indicative of the places we will visit. The actual order may vary depending on several factors.
         </p>
       </div>
@@ -254,16 +254,16 @@ function DayItem({
         {mobile && (
           <div className="relative mb-5 aspect-[4/3] overflow-hidden rounded-[22px] bg-night">
             <img src={day.image.src} alt={day.image.caption} loading="lazy" decoding="async" className="h-full w-full object-cover" />
-            <span className="absolute right-3 bottom-3 rounded-full bg-black/30 px-2.5 py-1 text-[11.5px] text-white/90">
+            <span className="absolute right-3 bottom-3 rounded-full bg-black/30 px-2.5 py-1 type-caption text-white/90">
               {day.image.caption}
             </span>
           </div>
         )}
-        <span className="block text-[13px] font-semibold text-saffron tabular-nums md:text-[14px]">Day 0{day.day}</span>
-        <h3 className="mt-1.5 font-display text-[clamp(1.9rem,3vw,2.6rem)] leading-[1.06] font-semibold text-ink">{day.title}</h3>
+        <span className="block type-label-sm text-saffron tabular-nums">Day 0{day.day}</span>
+        <h3 className="mt-1.5 type-h3 text-ink">{day.title}</h3>
         <Route stops={day.route} />
         {day.body.map((p) => (
-          <p key={p.slice(0, 24)} className="mt-4 text-[15.5px] leading-[1.6] text-ink-soft md:text-[16.5px]">
+          <p key={p.slice(0, 24)} className="mt-4 type-body text-ink-soft">
             {p}
           </p>
         ))}
@@ -293,14 +293,12 @@ function Route({ stops }: { stops: Stop[] }) {
     <div className="mt-4 space-y-3">
       {legs.map((leg) => (
         <div key={leg.stops[0].place}>
-          {leg.cue && <p className="mb-1.5 text-[12.5px] font-medium text-ink-mute">{leg.cue}</p>}
-          <ol className="flex flex-wrap items-center gap-x-5 gap-y-2.5 overflow-hidden">
-            {leg.stops.map((s, i) => (
+          {leg.cue && <p className="mb-1.5 type-caption font-medium text-ink-mute">{leg.cue}</p>}
+          <ol className="flex flex-wrap items-center gap-2">
+            {leg.stops.map((s) => (
               <li
                 key={s.place}
-                className={`relative rounded-full bg-[rgba(120,72,30,0.08)] px-3 py-1 text-[13px] font-medium whitespace-nowrap text-ink ${
-                  i ? 'before:absolute before:top-1/2 before:right-full before:h-px before:w-5 before:bg-[rgba(120,72,30,0.3)]' : ''
-                }`}
+                className="rounded-full bg-[rgba(120,72,30,0.08)] px-3 py-1 type-body-sm font-medium whitespace-nowrap text-ink"
               >
                 {s.place}
               </li>

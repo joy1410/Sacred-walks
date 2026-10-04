@@ -43,7 +43,7 @@ export default function AboutKashi() {
           <div>
             <SectionHeading label="About Kashi" id="about-title" title="The city of light" />
             <Rise delay={0.3}>
-              <p className="mt-6 text-[21px] leading-[1.35] font-medium tracking-[-0.02em] text-ink-2 md:text-[25px]">
+              <p className="mt-6 type-lead-l text-ink-2">
                 {overview.lead.before}
                 <span className="text-saffron">{overview.lead.accent}</span>
                 {overview.lead.after}
@@ -52,7 +52,7 @@ export default function AboutKashi() {
           </div>
           <Rise delay={0.2} className="lg:pt-[52px]">
             {overview.body.map((p) => (
-              <p key={p.slice(0, 20)} className="mb-5 text-[16px] leading-[1.6] text-ink-soft md:text-[17px]">
+              <p key={p.slice(0, 20)} className="mb-5 type-body text-ink-soft">
                 {p}
               </p>
             ))}
@@ -88,7 +88,7 @@ function Quote() {
       />
       <div className="relative">
         <QuoteMark className="mx-auto mb-6 h-8 w-10 md:absolute md:-top-1 md:-left-12 md:mb-0 md:h-10 md:w-12" />
-        <blockquote className="font-display text-[clamp(1.7rem,3vw,2.6rem)] leading-[1.14] font-medium text-balance text-ink">
+        <blockquote className="type-quote text-balance text-ink">
           The creation of Kashi is the most phenomenal effort in building{' '}
           <span className="text-saffron">structures of consciousness</span> ever made on the planet.
         </blockquote>
@@ -134,10 +134,10 @@ function Tile({ reason, index, className }: { reason: Reason; index: number; cla
         custom={delay}
         className="absolute inset-x-0 bottom-0 p-6 text-white md:p-9"
       >
-        <motion.h3 variants={item} className="max-w-[22ch] font-display text-[clamp(1.9rem,3vw,2.8rem)] leading-[1.04] font-semibold">
+        <motion.h3 variants={item} className="max-w-[22ch] type-h3">
           {reason.title}
         </motion.h3>
-        <motion.p variants={item} className="mt-3 max-w-[440px] text-[15px] leading-[1.45] text-white/80 md:text-[16px]">
+        <motion.p variants={item} className="mt-3 max-w-[440px] type-body text-white/80">
           {reason.body}
         </motion.p>
       </motion.div>

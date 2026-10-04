@@ -59,7 +59,7 @@ function Card({ yatra }: { yatra: Yatra }) {
         <div>
           <StatusPill status={yatra.status} />
         </div>
-        <h3 className="mt-3 text-[24px] leading-[1.08] font-semibold tracking-[-0.02em] text-ink md:text-[26px]">
+        <h3 className="mt-3 type-title-m text-ink">
           <SiteLink
             href={yatraHref(yatra.slug)}
             className="card-link inline-flex items-center gap-2 outline-none after:absolute after:inset-0 after:rounded-[28px]"
@@ -68,9 +68,9 @@ function Card({ yatra }: { yatra: Yatra }) {
             <IconArrowRight className="h-5 w-5 shrink-0 -translate-x-1 text-ink-mute opacity-0 transition-all duration-300 group-hover/card:translate-x-0 group-hover/card:text-saffron group-hover/card:opacity-100" />
           </SiteLink>
         </h3>
-        <p className="mt-1.5 mb-4 text-[15px] tracking-[-0.015em] text-ink-soft">{yatra.tagline}</p>
+        <p className="mt-1.5 mb-4 type-body-sm text-ink-soft">{yatra.tagline}</p>
 
-        <div className="mt-auto flex items-center justify-between border-t border-line-soft px-1 pt-3 text-[14px] font-semibold whitespace-nowrap text-ink tabular-nums">
+        <div className="mt-auto flex items-center justify-between border-t border-line-soft px-1 pt-3 type-label-sm whitespace-nowrap text-ink tabular-nums">
           <span>{yatra.days} days</span>
           <span className="h-4 w-px bg-line-soft" aria-hidden />
           <span className="inline-flex items-center gap-1.5">

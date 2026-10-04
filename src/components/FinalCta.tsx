@@ -34,7 +34,7 @@ export default function FinalCta() {
         <div className="absolute inset-0 bg-black/50" aria-hidden />
 
         <div className="relative max-w-[760px] text-white">
-          <h2 id="cta-title" className="font-display text-[clamp(2.8rem,6.4vw,5.8rem)] leading-[1.02] font-semibold">
+          <h2 id="cta-title" className="type-display-l">
             <BlurText text={HEADLINE} delay={0.1} inView />
           </h2>
 
@@ -44,14 +44,14 @@ export default function FinalCta() {
             viewport={inView}
             transition={{ duration: 1, ease, delay: after(0.1, HEADLINE) }}
           >
-            <p className="mx-auto mt-6 max-w-[480px] text-[16px] leading-[1.5] text-white/80 md:text-[18px]">
+            <p className="mx-auto mt-6 max-w-[480px] type-lead text-white/80">
               Four yatras, each a doorway. Find the one that is calling you, or talk to us and we'll help you choose.
             </p>
 
             <div className="mt-9 flex flex-col justify-center gap-2.5 sm:flex-row">
               <a
                 href="#yatras"
-                className="group/view inline-flex items-center justify-center gap-1.5 rounded-full bg-white px-7 py-3.5 text-[15px] font-medium text-ink transition-colors hover:bg-mist"
+                className="group/view inline-flex items-center justify-center gap-1.5 rounded-full bg-white px-7 py-3.5 type-button text-ink transition-colors hover:bg-mist"
               >
                 Explore the yatras
                 <IconArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/view:translate-x-0.5" />
@@ -59,13 +59,13 @@ export default function FinalCta() {
               <motion.a
                 href="#"
                 whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center justify-center rounded-full bg-saffron px-7 py-3.5 text-[15px] font-medium text-white transition-colors hover:bg-[#b93c1b]"
+                className="inline-flex items-center justify-center rounded-full bg-saffron px-7 py-3.5 type-button text-white transition-colors hover:bg-[#b93c1b]"
               >
                 Enquire
               </motion.a>
             </div>
 
-            <p className="mt-7 text-[13px] text-white/60 tabular-nums">
+            <p className="mt-7 type-caption text-white/60 tabular-nums">
               Or call <a href="tel:+918144123123" className="text-white/85 hover:text-white">+91 81441 23123</a> (India) ·{' '}
               <a href="tel:+19312186466" className="text-white/85 hover:text-white">+1 931 218 6466</a> (USA)
             </p>

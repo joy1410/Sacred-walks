@@ -102,11 +102,11 @@ function IntroSpacer({ setActive }: { setActive: SetActive }) {
 function Intro() {
   return (
     <div className="flex shrink-0 flex-col justify-center px-4 pb-6 md:absolute md:inset-y-0 md:left-[max(16px,2.5vw)] md:z-0 md:w-[min(34vw,460px)] md:translate-x-[calc((1_-_var(--fade))*-32px)] md:px-0 md:pt-16 md:pr-8 md:pb-24 md:opacity-(--fade)">
-      <h2 id="journey-title" className="font-display text-[clamp(2.6rem,4.6vw,4.4rem)] leading-[1.04] font-semibold text-ink">
+      <h2 id="journey-title" className="type-h2 text-ink">
         <BlurText text="More than a journey" inView />
       </h2>
       <motion.p
-        className="mt-5 max-w-[400px] text-[17px] leading-[1.45] text-ink-soft md:text-[19px]"
+        className="mt-5 max-w-[400px] type-lead text-ink-soft"
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-15% 0px' }}
@@ -151,7 +151,7 @@ function BeatPanel({ beat, index, setActive }: { beat: Beat; index: number; setA
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/0" aria-hidden />
 
-      <span className="absolute top-4 right-4 rounded-full bg-black/25 px-3 py-1 text-[12px] text-white/85 md:backdrop-blur-md md:top-5 md:right-5">
+      <span className="absolute top-4 right-4 rounded-full bg-black/25 px-3 py-1 type-caption text-white/85 md:backdrop-blur-md md:top-5 md:right-5">
         {beat.image.caption}
       </span>
 
@@ -161,16 +161,16 @@ function BeatPanel({ beat, index, setActive }: { beat: Beat; index: number; setA
         animate={seen ? 'show' : 'hidden'}
         className="absolute inset-x-0 bottom-0 p-6 text-white md:p-10"
       >
-        <motion.span variants={item} className="block text-[13px] font-semibold text-white/60 tabular-nums md:text-[14px]">
+        <motion.span variants={item} className="block type-label-sm text-white/60 tabular-nums">
           0{index + 1}
         </motion.span>
         <motion.h3
           variants={item}
-          className="mt-2 max-w-[16ch] font-display text-[clamp(2.1rem,3.8vw,3.6rem)] leading-[1.04] font-semibold"
+          className="mt-2 max-w-[16ch] type-h3"
         >
           {beat.title}
         </motion.h3>
-        <motion.p variants={item} className="mt-3 max-w-[460px] text-[15px] leading-[1.45] text-white/80 md:mt-4 md:text-[17px]">
+        <motion.p variants={item} className="mt-3 max-w-[460px] type-body text-white/80 md:mt-4">
           {beat.body}
         </motion.p>
       </motion.div>
@@ -196,7 +196,7 @@ function Rail({ active }: { active: number }) {
                 />
               </span>
               <span
-                className={`mt-2.5 flex gap-2 text-[13px] font-medium transition-colors duration-500 ${on ? 'text-ink' : 'text-ink-mute'}`}
+                className={`mt-2.5 flex gap-2 type-caption font-medium transition-colors duration-500 ${on ? 'text-ink' : 'text-ink-mute'}`}
               >
                 <span className="tabular-nums">0{i + 1}</span>
                 {b.short}

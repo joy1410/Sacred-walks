@@ -85,7 +85,7 @@ export default function SectionNav() {
                   href={`#${s.id}`}
                   onClick={go(i)}
                   aria-current={on ? 'true' : undefined}
-                  className="relative rounded-full px-3.5 py-1.5 text-[13.5px] font-medium whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-saffron"
+                  className="relative rounded-full px-3.5 py-1.5 type-button-sm whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-saffron"
                 >
                   {on && (
                     <motion.span

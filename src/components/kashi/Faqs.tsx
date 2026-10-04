@@ -13,14 +13,14 @@ export default function Faqs() {
         <div className="lg:sticky lg:top-[132px] lg:self-start">
           <SectionHeading label="FAQs" id="faqs-title" title="Questions, answered" />
           <Rise delay={0.3}>
-            <p className="mt-5 max-w-[360px] text-[16px] leading-[1.5] text-ink-soft">
+            <p className="mt-5 max-w-[360px] type-body text-ink-soft">
               Something else on your mind? The Sacred Walks team is a message or a call away.
             </p>
             <a
               href={ENQUIRE_URL}
               target="_blank"
               rel="noreferrer"
-              className="group/link mt-5 inline-flex items-center gap-1 text-[15px] font-medium text-saffron-ink hover:text-saffron"
+              className="group/link mt-5 inline-flex items-center gap-1 type-button text-saffron-ink hover:text-saffron"
             >
               Ask the team
               <IconArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
@@ -41,7 +41,7 @@ export default function Faqs() {
                       aria-expanded={on}
                       aria-controls={`faq-a-${i}`}
                       onClick={() => setOpen(on ? null : i)}
-                      className="flex w-full items-center justify-between gap-5 rounded-[22px] px-5 py-5 text-left text-[16px] font-semibold text-ink outline-none focus-visible:ring-2 focus-visible:ring-saffron md:px-7 md:py-6 md:text-[17px]"
+                      className="flex w-full items-center justify-between gap-5 rounded-[22px] px-5 py-5 text-left type-label text-ink outline-none focus-visible:ring-2 focus-visible:ring-saffron md:px-7 md:py-6"
                     >
                       {f.q}
                       <span
@@ -63,7 +63,7 @@ export default function Faqs() {
                         transition={{ duration: 0.5, ease }}
                         className="overflow-hidden"
                       >
-                        <div className="px-5 pb-6 text-[15px] leading-[1.6] text-ink-soft md:px-7 md:pb-7 md:text-[16px]">
+                        <div className="px-5 pb-6 type-body text-ink-soft md:px-7 md:pb-7">
                           {Array.isArray(f.a) ? (
                             <ul className="space-y-1.5">
                               {f.a.map((a) => (

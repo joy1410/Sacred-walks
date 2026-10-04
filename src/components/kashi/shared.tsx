@@ -30,7 +30,7 @@ export function SectionHeading({
   return (
     <div className={className}>
       <motion.p
-        className={`text-[13px] font-semibold md:text-[14px] ${dark ? 'text-white/60' : 'text-ink-mute'}`}
+        className={`type-label-sm ${dark ? 'text-white/60' : 'text-ink-mute'}`}
         initial={{ opacity: 0, y: 8 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={inView}
@@ -40,13 +40,13 @@ export function SectionHeading({
       </motion.p>
       <h2
         id={id}
-        className={`mt-3 font-display text-[clamp(2.4rem,4.4vw,4rem)] leading-[1.04] font-semibold text-balance ${dark ? 'text-white' : 'text-ink'}`}
+        className={`mt-3 type-h2 text-balance ${dark ? 'text-white' : 'text-ink'}`}
       >
         <BlurText text={title} inView />
       </h2>
       {lede && (
         <motion.p
-          className={`mt-5 max-w-[560px] text-[17px] leading-[1.45] md:text-[19px] ${dark ? 'text-white/70' : 'text-ink-soft'}`}
+          className={`mt-5 max-w-[560px] type-lead ${dark ? 'text-white/70' : 'text-ink-soft'}`}
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={inView}

@@ -46,7 +46,6 @@ export const beats: Beat[] = [
 
 export type Story = {
   name: string
-  yatra: string
   text: string
   image?: { src: string; caption: string }
 }
@@ -54,24 +53,20 @@ export type Story = {
 /*
  * Testimonials and photos are verbatim from the "Experience & Sharing" section
  * of isha.sadhguru.org/sacred-walks, in the site's order.
- * Sandesh's yatra isn't named on the site; confirm before shipping.
  */
 export const stories: Story[] = [
   {
     name: 'Shivali',
-    yatra: 'Kailash Manasarovar',
     text: 'I enjoyed the Kailash sojourn thoroughly. Seeing all the participants go through the 14 days with utmost bliss and devotion really touched me. The volunteers were all wonderful! I hope everyone gets an opportunity to experience this and be touched by his grace.',
     image: { src: '/images/stories/shivali.webp', caption: 'Yatris wrapped up against the snow on the Kailash route' },
   },
   {
     name: 'Azniv',
-    yatra: 'Kailash Manasarovar',
     text: 'Kailash – a journey of a lifetime! This experience cannot be put into words; it has to be experienced.',
     image: { src: '/images/stories/azniv.webp', caption: 'Sitting in stillness on a suspension bridge in Nepal' },
   },
   {
     name: 'Sandesh',
-    yatra: 'Isha Sacred Walks',
     text: 'Each and every place that we visited has its own reverberations. And yes, there were things I witnessed that are still unfathomable to me, but I am grateful that I got a chance to experience them in person.',
     image: { src: '/images/stories/sandesh.webp', caption: 'Yatris chanting together, hands folded in devotion' },
   },

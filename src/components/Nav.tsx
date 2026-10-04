@@ -7,7 +7,7 @@ import SiteLink from './SiteLink'
 import { IconChevronDown } from './icons'
 
 const pill =
-  'rounded-full px-3.5 py-1.5 text-[14px] font-medium text-ink-2 transition-colors hover:bg-black/[0.06] hover:text-ink'
+  'rounded-full px-3.5 py-1.5 type-button-sm text-ink-2 transition-colors hover:bg-black/[0.06] hover:text-ink'
 
 /** Yatras link with a hover / focus menu listing every yatra. */
 function YatrasMenu() {
@@ -71,8 +71,8 @@ function YatrasMenu() {
                       className="h-10 w-10 shrink-0 rounded-lg object-cover"
                     />
                     <span className="min-w-0">
-                      <span className="block truncate text-[13px] font-medium text-ink">{y.title}</span>
-                      <span className="block truncate text-[11.5px] text-ink-soft">
+                      <span className="block truncate type-body-sm font-medium text-ink">{y.title}</span>
+                      <span className="block truncate type-caption text-ink-soft">
                         {y.region} · {y.days} days
                       </span>
                     </span>
@@ -173,8 +173,8 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
             {yatras.map((y, i) => (
               <motion.li key={y.slug} {...rise(i + 1)}>
                 <SiteLink href={yatraHref(y.slug)} onClick={onClose} className="flex items-baseline justify-between gap-3 py-2">
-                  <span className="text-[17px] font-medium">{y.title}</span>
-                  <span className="shrink-0 text-[12.5px] text-white/70">
+                  <span className="type-body font-medium">{y.title}</span>
+                  <span className="shrink-0 type-caption text-white/70">
                     {y.region} · {y.days}d
                   </span>
                 </SiteLink>
@@ -194,7 +194,7 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
             {...rise(yatras.length + 3)}
             href="/#yatras"
             onClick={onClose}
-            className="mt-auto self-start rounded-full bg-white px-5 py-2.5 text-[14px] font-medium text-saffron-ink"
+            className="mt-auto self-start rounded-full bg-white px-5 py-2.5 type-button-sm text-saffron-ink"
           >
             Enquire
           </motion.a>
@@ -268,7 +268,7 @@ export default function Nav() {
           <div className="flex items-center gap-1.5">
             <a
               href="/#yatras"
-              className={`rounded-full bg-saffron px-4 py-1.5 text-[14px] font-medium text-white transition-[background-color,opacity] duration-200 hover:bg-saffron-ink ${menuOpen ? 'pointer-events-none opacity-0' : ''}`}
+              className={`rounded-full bg-saffron px-4 py-1.5 type-button-sm text-white transition-[background-color,opacity] duration-200 hover:bg-saffron-ink ${menuOpen ? 'pointer-events-none opacity-0' : ''}`}
             >
               Enquire
             </a>
