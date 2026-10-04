@@ -35,7 +35,7 @@ export default function Registration() {
         <div className="relative mx-auto max-w-[900px] text-white">
           <div className="text-center">
             <p className="text-[13px] font-semibold text-white/60 md:text-[14px]">Registration</p>
-            <h2 id="register-title" className="mt-3 font-display text-[clamp(2.8rem,6.4vw,5.8rem)] leading-[0.96] font-semibold">
+            <h2 id="register-title" className="mt-3 font-display text-[clamp(2.8rem,6.4vw,5.8rem)] leading-[1.02] font-semibold">
               <BlurText text={HEADLINE} delay={0.1} inView />
             </h2>
           </div>

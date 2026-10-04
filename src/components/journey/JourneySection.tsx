@@ -102,7 +102,7 @@ function IntroSpacer({ setActive }: { setActive: SetActive }) {
 function Intro() {
   return (
     <div className="flex shrink-0 flex-col justify-center px-4 pb-6 md:absolute md:inset-y-0 md:left-[max(16px,2.5vw)] md:z-0 md:w-[min(34vw,460px)] md:translate-x-[calc((1_-_var(--fade))*-32px)] md:px-0 md:pt-16 md:pr-8 md:pb-24 md:opacity-(--fade)">
-      <h2 id="journey-title" className="font-display text-[clamp(2.6rem,4.6vw,4.4rem)] leading-[0.98] font-semibold text-ink">
+      <h2 id="journey-title" className="font-display text-[clamp(2.6rem,4.6vw,4.4rem)] leading-[1.04] font-semibold text-ink">
         <BlurText text="More than a journey" inView />
       </h2>
       <motion.p
@@ -166,7 +166,7 @@ function BeatPanel({ beat, index, setActive }: { beat: Beat; index: number; setA
         </motion.span>
         <motion.h3
           variants={item}
-          className="mt-2 max-w-[16ch] font-display text-[clamp(2.1rem,3.8vw,3.6rem)] leading-[0.98] font-semibold"
+          className="mt-2 max-w-[16ch] font-display text-[clamp(2.1rem,3.8vw,3.6rem)] leading-[1.04] font-semibold"
         >
           {beat.title}
         </motion.h3>

@@ -139,7 +139,7 @@ export default function StoriesSection() {
       {/* the deck stops at 640px tall (as the yatra card does); past that the heading and deck centre together */}
       <div className="mx-auto flex w-full max-w-[1180px] flex-col lg:min-h-0 lg:flex-1 lg:justify-center">
         <div className="mb-6 flex items-end justify-between gap-6 md:mb-8">
-          <h2 id="stories-title" className="font-display text-[clamp(2.4rem,4.4vw,4rem)] leading-[0.98] font-semibold text-ink">
+          <h2 id="stories-title" className="font-display text-[clamp(2.4rem,4.4vw,4rem)] leading-[1.04] font-semibold text-ink">
             <BlurText text="In their own words" inView />
           </h2>
           <div className="hidden shrink-0 items-center gap-3 pb-1 md:flex">
@@ -306,7 +306,7 @@ function DeckCard({
           </motion.div>
           <motion.blockquote
             variants={item}
-            className="font-display text-[clamp(1.45rem,min(2.3vw,3.6svh),2.15rem)] leading-[1.12] font-medium text-ink"
+            className="font-display text-[clamp(1.45rem,min(2.3vw,3.6svh),2.15rem)] leading-[1.2] font-medium text-ink"
           >
             {story.text}
           </motion.blockquote>

@@ -18,7 +18,7 @@ export default function Preparation() {
           {preparation.demands.map((d, i) => (
             <li key={d.title}>
               <Rise delay={i * 0.08} className="h-full">
-                <p className="font-display text-[40px] leading-none font-semibold text-saffron md:text-[44px]">{d.kicker}</p>
+                <p className="text-[34px] leading-none font-semibold tracking-[-0.025em] text-saffron lg:text-[clamp(1.9rem,3vw,2.375rem)]">{d.kicker}</p>
                 <h3 className="mt-4 text-[16px] font-semibold text-ink">{d.title}</h3>
                 <p className="mt-1.5 text-[15px] leading-[1.55] text-ink-soft">{d.body}</p>
               </Rise>
@@ -46,7 +46,7 @@ export default function Preparation() {
 function Card({ title, items }: { title: string; items: { title: string; body: string }[] }) {
   return (
     <div className="h-full rounded-[28px] border border-line-soft bg-white p-6 md:p-8">
-      <h3 className="font-display text-[28px] leading-none font-semibold text-ink md:text-[32px]">{title}</h3>
+      <h3 className="text-[24px] leading-none font-semibold tracking-[-0.02em] text-ink md:text-[28px]">{title}</h3>
       <ul className="mt-6 divide-y divide-black/[0.06]">
         {items.map((a) => (
           <li key={a.title} className="py-4 first:pt-0 last:pb-0">
@@ -75,7 +75,7 @@ function printList() {
 function Tile({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="h-full rounded-[20px] bg-white p-5 md:p-6">
-      <h4 className="font-display text-[22px] leading-none font-semibold text-ink">{title}</h4>
+      <h4 className="text-[19px] leading-none font-semibold tracking-[-0.015em] text-ink">{title}</h4>
       <div className="mt-4">{children}</div>
     </div>
   )
@@ -86,7 +86,7 @@ function Packing() {
   return (
     <div id="packing-list" className="rounded-[28px] bg-mist p-4 md:p-8">
       <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 px-2 pt-2 md:px-0 md:pt-0">
-        <h3 className="font-display text-[28px] leading-none font-semibold text-ink md:text-[32px]">What to pack</h3>
+        <h3 className="text-[24px] leading-none font-semibold tracking-[-0.02em] text-ink md:text-[28px]">What to pack</h3>
         <button
           type="button"
           onClick={printList}

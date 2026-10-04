@@ -59,7 +59,7 @@ function Card({ yatra }: { yatra: Yatra }) {
         <div>
           <StatusPill status={yatra.status} />
         </div>
-        <h3 className="mt-3 font-display text-[28px] leading-[1] font-semibold text-ink md:text-[30px]">
+        <h3 className="mt-3 text-[24px] leading-[1.08] font-semibold tracking-[-0.02em] text-ink md:text-[26px]">
           <SiteLink
             href={yatraHref(yatra.slug)}
             className="card-link inline-flex items-center gap-2 outline-none after:absolute after:inset-0 after:rounded-[28px]"

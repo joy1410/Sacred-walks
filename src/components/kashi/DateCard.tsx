@@ -101,7 +101,7 @@ export default function DateCard({ d, dark = false, delay = 0 }: { d: Departure;
       viewport={inView}
     >
       <header className="px-1">
-        <h3 className="font-display text-[34px] leading-none font-semibold tabular-nums md:text-[42px]">{d.short}</h3>
+        <h3 className="text-[30px] leading-none font-semibold tracking-[-0.025em] tabular-nums md:text-[36px]">{d.short}</h3>
         <p className={`mt-2 text-[14px] tabular-nums ${t.soft}`}>
           {d.year} · {d.days} days · {d.language}
         </p>

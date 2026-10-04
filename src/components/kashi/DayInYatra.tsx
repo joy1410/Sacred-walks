@@ -134,7 +134,7 @@ function SunDay() {
                   exit={{ opacity: 0, y: -12, ...blur(6) }}
                   transition={{ duration: 0.55, ease }}
                 >
-                  <span className="font-display text-[clamp(3.2rem,5.4vw,5rem)] leading-[0.85] font-semibold text-[#f2c27a]">{m.when}</span>
+                  <span className="text-[clamp(2.8rem,4.6vw,4.25rem)] leading-[0.9] font-semibold tracking-[-0.03em] text-[#f2c27a]">{m.when}</span>
                   <h3 className="mt-3 font-display text-[clamp(1.8rem,2.6vw,2.4rem)] leading-none font-semibold">{m.title}</h3>
                   <p className="mt-3 max-w-[420px] text-[16px] leading-[1.5] text-white/70">{m.body}</p>
                 </motion.div>
@@ -198,7 +198,7 @@ function Timeline() {
             transition={{ duration: 0.9, ease, delay: Math.min(i, 1) * 0.05 }}
           >
             <span className="absolute top-2.5 left-0 h-[15px] w-[15px] rounded-full border-[1.5px] border-saffron-2 bg-night" aria-hidden />
-            <span className="font-display text-[30px] leading-none font-semibold text-[#f2c27a]">{d.when}</span>
+            <span className="text-[26px] leading-none font-semibold tracking-[-0.025em] text-[#f2c27a]">{d.when}</span>
             <h3 className="mt-1 font-display text-[24px] leading-none font-semibold">{d.title}</h3>
             <p className="mt-2 text-[15px] leading-[1.5] text-white/70">{d.body}</p>
           </motion.li>

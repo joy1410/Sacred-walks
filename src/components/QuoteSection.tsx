@@ -15,7 +15,7 @@ export default function QuoteSection() {
         <div className="relative">
           <QuoteMark className="mx-auto mb-6 h-8 w-10 md:absolute md:-top-1 md:-left-12 md:mb-0 md:h-10 md:w-12" />
 
-          <blockquote className="font-display text-[clamp(1.8rem,3.4vw,2.85rem)] leading-[1.14] font-medium text-balance text-ink-2">
+          <blockquote className="font-display text-[clamp(1.8rem,3.4vw,2.85rem)] leading-[1.14] font-medium text-balance text-ink">
             The very idea behind a pilgrimage is fundamentally to <span className="text-saffron">subdue</span> the sense
             of who&nbsp;you&nbsp;are.
           </blockquote>

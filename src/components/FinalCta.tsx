@@ -34,7 +34,7 @@ export default function FinalCta() {
         <div className="absolute inset-0 bg-black/50" aria-hidden />
 
         <div className="relative max-w-[760px] text-white">
-          <h2 id="cta-title" className="font-display text-[clamp(2.8rem,6.4vw,5.8rem)] leading-[0.96] font-semibold">
+          <h2 id="cta-title" className="font-display text-[clamp(2.8rem,6.4vw,5.8rem)] leading-[1.02] font-semibold">
             <BlurText text={HEADLINE} delay={0.1} inView />
           </h2>
 

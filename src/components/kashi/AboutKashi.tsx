@@ -88,7 +88,7 @@ function Quote() {
       />
       <div className="relative">
         <QuoteMark className="mx-auto mb-6 h-8 w-10 md:absolute md:-top-1 md:-left-12 md:mb-0 md:h-10 md:w-12" />
-        <blockquote className="font-display text-[clamp(1.7rem,3vw,2.6rem)] leading-[1.14] font-medium text-balance text-ink-2">
+        <blockquote className="font-display text-[clamp(1.7rem,3vw,2.6rem)] leading-[1.14] font-medium text-balance text-ink">
           The creation of Kashi is the most phenomenal effort in building{' '}
           <span className="text-saffron">structures of consciousness</span> ever made on the planet.
         </blockquote>
@@ -134,7 +134,7 @@ function Tile({ reason, index, className }: { reason: Reason; index: number; cla
         custom={delay}
         className="absolute inset-x-0 bottom-0 p-6 text-white md:p-9"
       >
-        <motion.h3 variants={item} className="max-w-[22ch] font-display text-[clamp(1.9rem,3vw,2.8rem)] leading-[0.98] font-semibold">
+        <motion.h3 variants={item} className="max-w-[22ch] font-display text-[clamp(1.9rem,3vw,2.8rem)] leading-[1.04] font-semibold">
           {reason.title}
         </motion.h3>
         <motion.p variants={item} className="mt-3 max-w-[440px] text-[15px] leading-[1.45] text-white/80 md:text-[16px]">

@@ -1,7 +1,9 @@
 @import "tailwindcss";
 @import "@fontsource-variable/geist";
-@import "@fontsource/khand/latin-500.css";
-@import "@fontsource/khand/latin-600.css";
+@import "@fontsource/libre-caslon-condensed/latin-400.css";
+@import "@fontsource/libre-caslon-condensed/latin-400-italic.css";
+@import "@fontsource/libre-caslon-condensed/latin-500.css";
+@import "@fontsource/libre-caslon-condensed/latin-600.css";
 
 /* ------------------------------------------------------------------
    Sacred Walks — "Tirtha"
@@ -9,8 +11,8 @@
    India is carried by light and place, not ornament.
 ------------------------------------------------------------------- */
 @theme {
-  /* headlines: Khand, Indian Type Foundry (designed alongside its Devanagari) */
-  --font-display: "Khand", "Geist Variable", sans-serif;
+  /* headlines: Libre Caslon Condensed — a printed-book serif, narrowed to stay modern */
+  --font-display: "Libre Caslon Condensed", Georgia, serif;
   --font-sans: "Geist Variable", "Geist", -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
 
   --color-white: #ffffff;

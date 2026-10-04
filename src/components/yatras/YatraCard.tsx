@@ -57,7 +57,7 @@ export default function YatraCard({ yatra }: { yatra: Yatra }) {
           <StatusPill status={s} />
         </motion.div>
 
-        <motion.h3 variants={item} className="mt-3 font-display text-[30px] leading-[1] font-semibold text-ink md:mt-4 md:text-[40px]">
+        <motion.h3 variants={item} className="mt-3 text-[28px] leading-[1.08] font-semibold tracking-[-0.022em] text-ink md:mt-4 md:text-[34px]">
           <SiteLink
             href={yatraHref(yatra.slug)}
             className="card-link inline-flex items-center gap-2 outline-none after:absolute after:inset-0 after:rounded-[32px]"

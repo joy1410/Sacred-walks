@@ -40,7 +40,7 @@ export function SectionHeading({
       </motion.p>
       <h2
         id={id}
-        className={`mt-3 font-display text-[clamp(2.4rem,4.4vw,4rem)] leading-[0.98] font-semibold text-balance ${dark ? 'text-white' : 'text-ink'}`}
+        className={`mt-3 font-display text-[clamp(2.4rem,4.4vw,4rem)] leading-[1.04] font-semibold text-balance ${dark ? 'text-white' : 'text-ink'}`}
       >
         <BlurText text={title} inView />
       </h2>

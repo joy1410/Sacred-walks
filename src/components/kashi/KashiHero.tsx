@@ -84,7 +84,7 @@ export default function KashiHero() {
 
           <h1
             id="kashi-title"
-            className="mt-4 font-display text-[clamp(4rem,13vw,10.5rem)] leading-[0.86] font-semibold tracking-[-0.01em] md:mt-5"
+            className="mt-4 font-display text-[clamp(4rem,13vw,10.5rem)] leading-[0.92] font-semibold tracking-[-0.01em] md:mt-5"
           >
             <BlurText text={kashi.title} delay={T_TITLE} />
           </h1>

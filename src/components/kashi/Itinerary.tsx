@@ -260,7 +260,7 @@ function DayItem({
           </div>
         )}
         <span className="block text-[13px] font-semibold text-saffron tabular-nums md:text-[14px]">Day 0{day.day}</span>
-        <h3 className="mt-1.5 font-display text-[clamp(1.9rem,3vw,2.6rem)] leading-[1] font-semibold text-ink">{day.title}</h3>
+        <h3 className="mt-1.5 font-display text-[clamp(1.9rem,3vw,2.6rem)] leading-[1.06] font-semibold text-ink">{day.title}</h3>
         <Route stops={day.route} />
         {day.body.map((p) => (
           <p key={p.slice(0, 24)} className="mt-4 text-[15.5px] leading-[1.6] text-ink-soft md:text-[16.5px]">

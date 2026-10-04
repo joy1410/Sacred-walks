@@ -101,7 +101,7 @@ export default function Hero() {
               />
             </picture>
 
-            <div className="relative mt-6 px-5 md:absolute md:left-[6%] md:top-[28%] md:mt-0 md:px-0">
+            <div className="relative mt-6 px-5 md:absolute md:left-[6%] md:top-[25%] md:mt-0 md:px-0">
             <h1 className="font-display text-[8.5vw] leading-[1.1] md:text-[3.8cqw] md:leading-[1.25] font-semibold tracking-[-0.005em] text-ink">
               {/* scroll choreography lives on the wrappers; the load-in blur lives on the letters */}
               <motion.span className="block whitespace-nowrap" style={{ y: line1Y, opacity: line1Opacity }}>
