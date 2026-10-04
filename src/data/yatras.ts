@@ -45,8 +45,11 @@ export type Yatra = {
 /*
  * Open/closed status is confirmed; departure dates are placeholders until registration data is wired in.
  */
-/** yatras that have their own page so far; the rest point at the homepage list */
-export const yatraHref = (slug: string) => (slug === 'kashi-krama' ? `/yatras/${slug}` : '/#yatras')
+/**
+ * The yatra's own page, or null while it has none. A yatra without a page is
+ * shown but never linked: nothing should send people somewhere it isn't.
+ */
+export const yatraPage = (slug: string): string | null => (slug === 'kashi-krama' ? `/yatras/${slug}` : null)
 
 export const yatras: Yatra[] = [
   {

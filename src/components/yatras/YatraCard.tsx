@@ -1,5 +1,6 @@
 import { motion, type Variants } from 'motion/react'
-import { yatraHref, type HighlightIcon, type Yatra, type YatraStatus } from '../../data/yatras'
+import { yatraPage, type HighlightIcon, type Yatra, type YatraStatus } from '../../data/yatras'
+import { ENQUIRE_URL, REGISTER_URL } from '../../data/kashi'
 import SiteLink, { MotionSiteLink } from '../SiteLink'
 import ImageCarousel from './ImageCarousel'
 import DifficultyMeter from './DifficultyMeter'
@@ -44,12 +45,14 @@ const item: Variants = {
  * The whole card opens the yatra page (Airbnb pattern): the title link is
  * stretched over the card, and the few real controls (carousel buttons, the
  * status action) sit above it on z-10, so they keep their own clicks.
+ * A yatra without a page yet has no card link, and its "View yatra" is not clickable.
  */
 export default function YatraCard({ yatra }: { yatra: Yatra }) {
   const s = yatra.status
+  const page = yatraPage(yatra.slug)
 
   return (
-    <article className="group/card relative grid cursor-pointer gap-2 rounded-[32px] bg-white p-2 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_30px_60px_-30px_rgba(0,0,0,0.18)] transition-shadow duration-500 hover:shadow-[0_1px_2px_rgba(0,0,0,0.04),0_40px_80px_-30px_rgba(0,0,0,0.28)] has-[.card-link:focus-visible]:ring-2 has-[.card-link:focus-visible]:ring-saffron lg:h-full lg:grid-cols-[1.55fr_1fr]">
+    <article className={`group/card relative grid ${page ? 'cursor-pointer' : ''} gap-2 rounded-[32px] bg-white p-2 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_30px_60px_-30px_rgba(0,0,0,0.18)] transition-shadow duration-500 hover:shadow-[0_1px_2px_rgba(0,0,0,0.04),0_40px_80px_-30px_rgba(0,0,0,0.28)] has-[.card-link:focus-visible]:ring-2 has-[.card-link:focus-visible]:ring-saffron lg:h-full lg:grid-cols-[1.55fr_1fr]`}>
       <ImageCarousel yatra={yatra} />
 
       <motion.div className="flex min-h-0 flex-col px-3 pt-3 pb-2 *:shrink-0 md:px-7 md:pt-7 md:pb-4" variants={panel} initial="hidden" animate="show">
@@ -58,14 +61,18 @@ export default function YatraCard({ yatra }: { yatra: Yatra }) {
         </motion.div>
 
         <motion.h3 variants={item} className="mt-3 type-title-l text-ink md:mt-4">
-          <SiteLink
-            href={yatraHref(yatra.slug)}
-            className="card-link inline-flex items-center gap-2 outline-none after:absolute after:inset-0 after:rounded-[32px]"
-          >
-            {yatra.title}
-            {/* the only visible hint that the card opens: an arrow that answers hover */}
-            <IconArrowRight className="h-5 w-5 -translate-x-1 text-ink-mute opacity-0 transition-all duration-300 group-hover/card:translate-x-0 group-hover/card:text-saffron group-hover/card:opacity-100" />
-          </SiteLink>
+          {page ? (
+            <SiteLink
+              href={page}
+              className="card-link inline-flex items-center gap-2 outline-none after:absolute after:inset-0 after:rounded-[32px]"
+            >
+              {yatra.title}
+              {/* the only visible hint that the card opens: an arrow that answers hover */}
+              <IconArrowRight className="h-5 w-5 -translate-x-1 text-ink-mute opacity-0 transition-all duration-300 group-hover/card:translate-x-0 group-hover/card:text-saffron group-hover/card:opacity-100" />
+            </SiteLink>
+          ) : (
+            yatra.title
+          )}
         </motion.h3>
         <motion.p variants={item} className="mt-1 type-body text-ink-soft md:mt-1.5">
           {yatra.tagline}
@@ -164,20 +171,35 @@ function StatusNote({ status }: { status: YatraStatus }) {
  */
 function StatusAction({ status, slug }: { status: YatraStatus; slug: string }) {
   const label = status.state === 'open' ? 'Register' : status.state === 'soon' ? 'Notify me' : `Join ${status.next} waitlist`
+  const page = yatraPage(slug)
+  // with a page: its registration section. Without one: Isha's own registration or enquiry form
+  const external = { target: '_blank', rel: 'noopener noreferrer' }
+  const viewButton =
+    'flex flex-1 items-center justify-center gap-1.5 rounded-full border border-ink/15 bg-white px-2.5 py-3 type-button-sm md:px-4 md:py-3.5 md:type-button whitespace-nowrap text-ink'
+  const action = page
+    ? { href: `${page}#register` }
+    : { href: status.state === 'open' ? REGISTER_URL : ENQUIRE_URL, ...external }
 
   return (
     <div className="relative z-10 mt-2.5 flex gap-2 md:mt-3 md:gap-2.5">
-      <SiteLink
-        href={yatraHref(slug)}
-        tabIndex={-1}
-        className="group/view flex flex-1 items-center justify-center gap-1.5 rounded-full border border-ink/15 bg-white px-2.5 py-3 type-button-sm md:px-4 md:py-3.5 md:type-button whitespace-nowrap text-ink transition-colors hover:border-ink/40 hover:bg-mist"
-      >
-        View yatra
-        <IconArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/view:translate-x-0.5" />
-      </SiteLink>
+      {page ? (
+        <SiteLink
+          href={page}
+          tabIndex={-1}
+          className={`group/view ${viewButton} transition-colors hover:border-ink/40 hover:bg-mist`}
+        >
+          View yatra
+          <IconArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/view:translate-x-0.5" />
+        </SiteLink>
+      ) : (
+        // no page yet: the same button, shown but not clickable
+        <span className={`${viewButton} cursor-default`}>
+          View yatra
+          <IconArrowRight className="h-4 w-4" />
+        </span>
+      )}
       <MotionSiteLink
-        // a yatra with its own page takes you to its registration section
-        href={yatraHref(slug).startsWith('/yatras/') ? `${yatraHref(slug)}#register` : '#'}
+        {...action}
         whileTap={{ scale: 0.98 }}
         className={`flex flex-1 items-center justify-center rounded-full px-2.5 py-3 type-button-sm md:px-4 md:py-3.5 md:type-button whitespace-nowrap transition-colors ${
           // filled saffron only when you can act now; otherwise saffron outline

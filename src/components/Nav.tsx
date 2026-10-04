@@ -1,16 +1,28 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react'
 import { useLenis } from 'lenis/react'
-import { yatraHref, yatras } from '../data/yatras'
-import SiteLink from './SiteLink'
+import { yatraPage, yatras, type Yatra } from '../data/yatras'
+import { ENQUIRE_URL } from '../data/kashi'
+import SiteLink, { MotionSiteLink } from './SiteLink'
 import { IconChevronDown } from './icons'
 
 const pill =
   'rounded-full px-3.5 py-1.5 type-button-sm text-ink-2 transition-colors hover:bg-black/[0.06] hover:text-ink'
+/** the page you're on: the hover state, held (neutral, so the yatra page's saffron section bar stays the only accent) */
+const pillOn = 'bg-black/[0.06] text-ink'
 
-/** Yatras link with a hover / focus menu listing every yatra. */
-function YatrasMenu() {
+/** which top-level item the current page belongs to */
+function useCurrent() {
+  const { pathname } = useLocation()
+  return {
+    yatras: pathname.startsWith('/yatras/'),
+    why: pathname === '/why-pilgrimage',
+  }
+}
+
+/** Yatras menu: opens on hover, focus or click; only yatras with a page are links. */
+function YatrasMenu({ current }: { current: boolean }) {
   const [open, setOpen] = useState(false)
   const closeTimer = useRef<number | undefined>(undefined)
 
@@ -36,17 +48,20 @@ function YatrasMenu() {
         if (e.key === 'Escape') setOpen(false)
       }}
     >
-      <a
-        href="/#yatras"
+      <button
+        type="button"
+        // hover has usually opened it already, so a click only ever opens; leaving, Escape or blur closes
+        onClick={show}
         aria-haspopup="true"
         aria-expanded={open}
-        className={`${pill} flex items-center gap-1 ${open ? 'bg-black/[0.06] text-ink' : ''}`}
+        aria-current={current ? 'page' : undefined}
+        className={`${pill} flex items-center gap-1 ${open || current ? pillOn : ''}`}
       >
         Yatras
         <IconChevronDown
           className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
         />
-      </a>
+      </button>
 
       <AnimatePresence>
         {open && (
@@ -58,32 +73,57 @@ function YatrasMenu() {
             className="absolute left-1/2 top-full -translate-x-1/2 pt-2.5"
           >
             <ul className="w-[300px] rounded-2xl border border-black/[0.06] bg-white/95 p-1.5 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.25)] backdrop-blur-xl">
-              {yatras.map((y) => (
-                <li key={y.slug}>
-                  <SiteLink
-                    href={yatraHref(y.slug)}
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-mist focus-visible:bg-mist"
-                  >
-                    <img
-                      src={y.images[0]?.src.replace(/w=\d+/, 'w=160')}
-                      alt=""
-                      className="h-10 w-10 shrink-0 rounded-lg object-cover"
-                    />
-                    <span className="min-w-0">
-                      <span className="block truncate type-body-sm font-medium text-ink">{y.title}</span>
-                      <span className="block truncate type-caption text-ink-soft">
-                        {y.region} · {y.days} days
-                      </span>
-                    </span>
-                  </SiteLink>
-                </li>
-              ))}
+              {yatras.map((y) => {
+                const page = yatraPage(y.slug)
+                return (
+                  <li key={y.slug}>
+                    {page ? (
+                      <SiteLink
+                        href={page}
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-mist focus-visible:bg-mist"
+                      >
+                        <MenuRow y={y} />
+                      </SiteLink>
+                    ) : (
+                      <div className="flex items-center gap-3 p-2">
+                        <MenuRow y={y} />
+                      </div>
+                    )}
+                  </li>
+                )
+              })}
             </ul>
           </motion.div>
         )}
       </AnimatePresence>
     </li>
+  )
+}
+
+function MenuRow({ y }: { y: Yatra }) {
+  return (
+    <>
+      <img src={y.images[0]?.src.replace(/w=\d+/, 'w=160')} alt="" className="h-10 w-10 shrink-0 rounded-lg object-cover" />
+      <span className="min-w-0">
+        <span className="block truncate type-body-sm font-medium text-ink">{y.title}</span>
+        <span className="block truncate type-caption text-ink-soft">
+          {y.region} · {y.days} days
+        </span>
+      </span>
+    </>
+  )
+}
+
+/** a yatra in the phone sheet's list */
+function SheetRow({ y }: { y: Yatra }) {
+  return (
+    <>
+      <span className="type-body font-medium">{y.title}</span>
+      <span className="shrink-0 type-caption text-white/70">
+        {y.region} · {y.days}d
+      </span>
+    </>
   )
 }
 
@@ -124,6 +164,10 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
   const bloom = 'scale(2)'
 
   // every link starts rising only once the disc has covered it, on any phone or small tablet
+  const current = useCurrent()
+  // the page you're on carries a small white dot after its name
+  const dot = (on: boolean) => on && <span aria-hidden className="ml-3 inline-block h-2.5 w-2.5 rounded-full bg-white align-middle" />
+
   const rise = (i: number) => ({
     initial: { opacity: 0, y: 24 },
     animate: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.4 + i * 0.06, ease: [0.22, 1, 0.36, 1] as const } },
@@ -166,33 +210,48 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
         </div>
 
         <nav className="flex flex-1 flex-col pt-10 pb-10">
-          <motion.a {...rise(0)} href="/#yatras" onClick={onClose} className="font-display text-[44px] leading-none">
+          {/* a heading over the list, not a link */}
+          <motion.p {...rise(0)} className="font-display text-[44px] leading-none">
             Yatras
-          </motion.a>
+            {dot(current.yatras)}
+          </motion.p>
           <ul className="mt-5 space-y-1 border-l border-white/30 pl-4">
             {yatras.map((y, i) => (
               <motion.li key={y.slug} {...rise(i + 1)}>
-                <SiteLink href={yatraHref(y.slug)} onClick={onClose} className="flex items-baseline justify-between gap-3 py-2">
-                  <span className="type-body font-medium">{y.title}</span>
-                  <span className="shrink-0 type-caption text-white/70">
-                    {y.region} · {y.days}d
-                  </span>
-                </SiteLink>
+                {yatraPage(y.slug) ? (
+                  <SiteLink href={yatraPage(y.slug)!} onClick={onClose} className="flex items-baseline justify-between gap-3 py-2">
+                    <SheetRow y={y} />
+                  </SiteLink>
+                ) : (
+                  <div className="flex items-baseline justify-between gap-3 py-2">
+                    <SheetRow y={y} />
+                  </div>
+                )}
               </motion.li>
             ))}
           </ul>
 
-          <motion.a {...rise(yatras.length + 1)} href="/#journey" onClick={onClose} className="mt-10 font-display text-[44px] leading-none">
+          <MotionSiteLink
+            {...rise(yatras.length + 1)}
+            href="/why-pilgrimage"
+            onClick={onClose}
+            aria-current={current.why ? 'page' : undefined}
+            className="mt-10 font-display text-[44px] leading-none"
+          >
             Why pilgrimage
-          </motion.a>
+            {dot(current.why)}
+          </MotionSiteLink>
 
-          <motion.a {...rise(yatras.length + 2)} href="/#about" onClick={onClose} className="mt-6 font-display text-[44px] leading-none">
+          {/* no About page yet: shown, not linked */}
+          <motion.p {...rise(yatras.length + 2)} className="mt-6 font-display text-[44px] leading-none text-white/50">
             About
-          </motion.a>
+          </motion.p>
 
           <motion.a
             {...rise(yatras.length + 3)}
-            href="/#yatras"
+            href={ENQUIRE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={onClose}
             className="mt-auto self-start rounded-full bg-white px-5 py-2.5 type-button-sm text-saffron-ink"
           >
@@ -232,6 +291,7 @@ export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
   useMotionValueEvent(scrollY, 'change', (y) => setScrolled(y > 8))
   const [menuOpen, setMenuOpen] = useState(false)
+  const current = useCurrent()
 
   return (
     <>
@@ -252,22 +312,27 @@ export default function Nav() {
           </Link>
 
           <ul className="hidden items-center gap-2 md:flex">
-            <YatrasMenu />
+            <YatrasMenu current={current.yatras} />
             <li>
-              <a href="/#journey" className={`${pill} block`}>
+              <SiteLink
+                href="/why-pilgrimage"
+                aria-current={current.why ? 'page' : undefined}
+                className={`${pill} block ${current.why ? pillOn : ''}`}
+              >
                 Why pilgrimage
-              </a>
+              </SiteLink>
             </li>
             <li>
-              <a href="/#about" className={`${pill} block`}>
-                About
-              </a>
+              {/* no About page yet: shown, not linked */}
+              <span className="block cursor-default rounded-full px-3.5 py-1.5 type-button-sm text-ink-mute">About</span>
             </li>
           </ul>
 
           <div className="flex items-center gap-1.5">
             <a
-              href="/#yatras"
+              href={ENQUIRE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className={`rounded-full bg-ink px-4 py-1.5 type-button-sm text-white transition-[background-color,opacity] duration-200 hover:bg-ink-2 ${menuOpen ? 'pointer-events-none opacity-0' : ''}`}
             >
               Enquire

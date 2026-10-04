@@ -112,7 +112,8 @@ function Intro() {
         viewport={{ once: true, margin: '-15% 0px' }}
         transition={{ duration: 0.9, ease, delay: 0.4 }}
       >
-        A pilgrimage where the journey outward becomes a journey of inner exploration.
+        Isha Sacred Walks are primarily designed for a deep inner experience. Everything else, from meals and comfort to
+        medical care, is taken care of.
       </motion.p>
     </div>
   )

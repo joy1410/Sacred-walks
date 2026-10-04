@@ -7,6 +7,7 @@ import Nav from './components/Nav'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import KashiKrama from './pages/KashiKrama'
+import WhyPilgrimage from './pages/WhyPilgrimage'
 
 function ScrollReset() {
   const { pathname, hash } = useLocation()
@@ -40,6 +41,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/yatras/kashi-krama" element={<KashiKrama />} />
+        <Route path="/why-pilgrimage" element={<WhyPilgrimage />} />
         <Route path="*" element={<Home />} />
       </Routes>
       <Footer />

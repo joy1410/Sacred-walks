@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useLenis } from 'lenis/react'
-import { yatras } from '../../data/yatras'
+import { yatras, type YatraStatus } from '../../data/yatras'
 import { useIsMobile } from '../../lib/useIsMobile'
 import YatraCard from './YatraCard'
 
@@ -132,7 +132,7 @@ export default function YatraSection() {
                     aria-controls={`panel-${t.slug}`}
                     tabIndex={isActive ? 0 : -1}
                     onClick={() => select(i)}
-                    className="group/tab relative grow shrink-0 cursor-pointer rounded-full px-4 py-2.5 type-button-sm whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-saffron md:px-3"
+                    className="group/tab relative grow shrink-0 cursor-pointer rounded-full px-4 py-2.5 type-button-sm md:py-2 whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-saffron md:px-3"
                   >
                     {isActive && (
                       <motion.span
@@ -141,9 +141,10 @@ export default function YatraSection() {
                         transition={{ type: 'spring', stiffness: 420, damping: 38 }}
                       />
                     )}
-                    <span className={`relative transition-colors duration-300 ${isActive ? 'text-ink' : 'text-ink-soft group-hover/tab:text-ink'}`}>
+                    <span className={`relative block transition-colors duration-300 ${isActive ? 'text-ink' : 'text-ink-soft group-hover/tab:text-ink'}`}>
                       {t.tab}
                     </span>
+                    <TabStatus status={t.status} />
                   </button>
                 )
               })}
@@ -193,5 +194,25 @@ export default function YatraSection() {
         )}
       </div>
     </section>
+  )
+}
+
+/**
+ * The tab's second line: whether you can go, before you click. Open yatras
+ * name their departure month in saffron; the rest say when they're next.
+ * Hidden on phones, where the tabs stick under the nav and every card is
+ * stacked below with its own status pill.
+ */
+function TabStatus({ status }: { status: YatraStatus }) {
+  const label =
+    status.state === 'open'
+      ? `Open · ${status.departure.split(' ').slice(-2).join(' ')}`
+      : status.state === 'soon'
+        ? `Opens ${status.opens}`
+        : `Next in ${status.next}`
+  return (
+    <span className={`relative mt-0.5 hidden type-caption tabular-nums md:block ${status.state === 'open' ? 'text-saffron-ink' : 'text-ink-mute'}`}>
+      {label}
+    </span>
   )
 }

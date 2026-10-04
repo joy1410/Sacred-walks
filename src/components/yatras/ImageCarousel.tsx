@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, animate, motion, useInView, useMotionValue, useTransform, type PanInfo } from 'motion/react'
-import { yatraHref, type Yatra } from '../../data/yatras'
+import { yatraPage, type Yatra } from '../../data/yatras'
 import { IconChevronLeft, IconChevronRight, IconPause, IconPlay } from '../icons'
 
 const DURATION = 6 // seconds per slide
@@ -125,9 +125,9 @@ export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
     const p = press.current
     press.current = null
     if (!p || p.moved || Math.hypot(e.clientX - p.x, e.clientY - p.y) > TAP_SLOP || e.timeStamp - p.t > 500) return
-    // only yatras with their own page go anywhere; the rest already sit in the list they'd link to
-    const href = yatraHref(yatra.slug)
-    if (href.startsWith('/yatras/')) navigate(href)
+    // only yatras with their own page go anywhere
+    const page = yatraPage(yatra.slug)
+    if (page) navigate(page)
   }
 
   const onDragEnd = (_: unknown, info: PanInfo) => {

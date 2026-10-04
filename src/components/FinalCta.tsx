@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { motion, useScroll } from 'motion/react'
 import { u } from '../data/yatras'
+import { ENQUIRE_URL } from '../data/kashi'
 import { BlurText, after } from './hero/BlurIn'
 import { IconArrowRight } from './icons'
 import { useScrollRange } from '../lib/useScrollRange'
@@ -57,7 +58,9 @@ export default function FinalCta() {
                 <IconArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/view:translate-x-0.5" />
               </a>
               <motion.a
-                href="#"
+                href={ENQUIRE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 whileTap={{ scale: 0.98 }}
                 className="inline-flex items-center justify-center rounded-full bg-saffron px-7 py-3.5 type-button text-white transition-colors hover:bg-[#b93c1b]"
               >

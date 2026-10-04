@@ -2,27 +2,32 @@ import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
 import SiteLink from './SiteLink'
 import { IconFacebook, IconInstagram, IconX } from './icons'
+import { yatraPage } from '../data/yatras'
+import { REGISTER_URL } from '../data/kashi'
 
-const offerings = [
-  { label: 'Kailash Manasarovar', href: '/#yatras' },
-  { label: 'Himalayas', href: '/#yatras' },
-  { label: 'Kashi Krama', href: '/yatras/kashi-krama' },
-  { label: 'Southern Sojourn', href: '/#yatras' },
+/* a link with no destination yet (href null) is shown as plain text, never pointed somewhere else */
+type FooterLink = { label: string; href: string | null; external?: boolean }
+const offerings: FooterLink[] = [
+  { label: 'Kailash Manasarovar', href: yatraPage('kailash-manasarovar') },
+  { label: 'Himalayas', href: yatraPage('himalayan-yatra') },
+  { label: 'Kashi Krama', href: yatraPage('kashi-krama') },
+  { label: 'Southern Sojourn', href: yatraPage('southern-sojourn') },
 ]
-const quickLinks = [
-  { label: 'Why Pilgrimage', href: '/#journey' },
-  { label: 'About Us', href: '#' },
-  { label: 'Register', href: '#' },
-  { label: 'Contact Us', href: '#' },
+const quickLinks: FooterLink[] = [
+  { label: 'Why Pilgrimage', href: '/why-pilgrimage' },
+  { label: 'About Us', href: null },
+  { label: 'Register', href: REGISTER_URL, external: true },
+  { label: 'Contact Us', href: null },
 ]
 const offices = [
   { region: 'India', phone: '+91 8144123123', tel: '+918144123123', email: 'india.sacredwalks@sadhguru.org' },
   { region: 'USA', phone: '+1-931-218-6466', tel: '+19312186466', email: 'usa.sacredwalks@sadhguru.org' },
 ]
-const socials = [
-  { label: 'Isha Sacred Walks on X', href: '#', Icon: IconX },
-  { label: 'Isha Sacred Walks on Facebook', href: '#', Icon: IconFacebook },
-  { label: 'Isha Sacred Walks on Instagram', href: '#', Icon: IconInstagram },
+// profile URLs still to come; until then the icons are not links
+const socials: { label: string; href: string | null; Icon: typeof IconX }[] = [
+  { label: 'Isha Sacred Walks on X', href: null, Icon: IconX },
+  { label: 'Isha Sacred Walks on Facebook', href: null, Icon: IconFacebook },
+  { label: 'Isha Sacred Walks on Instagram', href: null, Icon: IconInstagram },
 ]
 
 function Column({ title, children, className }: { title: string; children: ReactNode; className?: string }) {
@@ -35,6 +40,17 @@ function Column({ title, children, className }: { title: string; children: React
 }
 
 const link = 'type-body-sm text-ink-2 transition-colors hover:text-saffron'
+
+function FooterItem({ l }: { l: FooterLink }) {
+  if (!l.href) return <span className="type-body-sm text-ink-mute">{l.label}</span>
+  if (l.external)
+    return (
+      <a href={l.href} target="_blank" rel="noopener noreferrer" className={link}>
+        {l.label}
+      </a>
+    )
+  return <SiteLink href={l.href} className={link}>{l.label}</SiteLink>
+}
 
 /**
  * The page comes to rest on warm paper. The ribbon lies across the top
@@ -73,13 +89,21 @@ export default function Footer() {
             <ul className="mt-7 flex gap-2.5">
               {socials.map(({ label, href, Icon }) => (
                 <li key={label}>
-                  <a
-                    href={href}
-                    aria-label={label}
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-saffron/20 bg-white/60 text-ink-2 transition-colors hover:border-saffron hover:bg-saffron hover:text-white"
-                  >
-                    <Icon className="h-[18px] w-[18px]" />
-                  </a>
+                  {href ? (
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={label}
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-saffron/20 bg-white/60 text-ink-2 transition-colors hover:border-saffron hover:bg-saffron hover:text-white"
+                    >
+                      <Icon className="h-[18px] w-[18px]" />
+                    </a>
+                  ) : (
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full border border-saffron/10 bg-white/40 text-ink-mute">
+                      <Icon className="h-[18px] w-[18px]" />
+                    </span>
+                  )}
                 </li>
               ))}
             </ul>
@@ -89,7 +113,7 @@ export default function Footer() {
             <ul className="space-y-3">
               {offerings.map((l) => (
                 <li key={l.label}>
-                  <SiteLink href={l.href} className={link}>{l.label}</SiteLink>
+                  <FooterItem l={l} />
                 </li>
               ))}
             </ul>
@@ -99,7 +123,7 @@ export default function Footer() {
             <ul className="space-y-3">
               {quickLinks.map((l) => (
                 <li key={l.label}>
-                  <a href={l.href} className={link}>{l.label}</a>
+                  <FooterItem l={l} />
                 </li>
               ))}
             </ul>
