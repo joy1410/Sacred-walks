@@ -99,7 +99,7 @@ export default function YatraSection() {
       {/* once the card hits its max height, the leftover space splits above and below */}
       <div className="mx-auto flex h-full max-w-[1180px] flex-col lg:justify-center">
         <h2 className="mb-4 type-h2 text-ink md:mb-5">
-          Choose your pilgrimage
+          Choose your yatra
         </h2>
 
         {/* segmented control, full width. On mobile it sticks under the nav (on solid mist, so

@@ -172,14 +172,16 @@ function StatusNote({ status }: { status: YatraStatus }) {
 function StatusAction({ status, slug }: { status: YatraStatus; slug: string }) {
   const label = status.state === 'open' ? 'Register' : status.state === 'soon' ? 'Notify me' : `Join ${status.next} waitlist`
   const page = yatraPage(slug)
-  // with a page: its dates, just under the hero, so the rest of the page still lies ahead
-  // (not #register at the foot, which would skip it). Without one: Isha's own registration or enquiry form
-  const external = { target: '_blank', rel: 'noopener noreferrer' }
+  // the two buttons never lead to the same place: "View yatra" is the page, the action is the form
+  // itself. The card already shows the date, and the form checks the Inner Engineering prerequisite,
+  // so someone who has decided registers in one tap; anyone unsure has the page beside it
   const viewButton =
     'flex flex-1 items-center justify-center gap-1.5 rounded-full border border-ink/15 bg-white px-2.5 py-3 type-button-sm md:px-4 md:py-3.5 md:type-button whitespace-nowrap text-ink'
-  const action = page
-    ? { href: `${page}#dates` }
-    : { href: status.state === 'open' ? REGISTER_URL : ENQUIRE_URL, ...external }
+  const action = {
+    href: status.state === 'open' ? REGISTER_URL : ENQUIRE_URL,
+    target: '_blank',
+    rel: 'noopener noreferrer',
+  }
 
   return (
     <div className="relative z-10 mt-2.5 flex gap-2 md:mt-3 md:gap-2.5">

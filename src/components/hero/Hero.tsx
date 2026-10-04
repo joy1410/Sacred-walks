@@ -1,9 +1,11 @@
-import { useLayoutEffect, useRef } from 'react'
-import { motion, useScroll, cubicBezier } from 'motion/react'
+import { useLayoutEffect, useRef, useState } from 'react'
+import { motion, useScroll, useMotionValueEvent, cubicBezier } from 'motion/react'
+import { useLenis } from 'lenis/react'
 import DivineWord from './DivineWord'
 import { BlurText, after } from './BlurIn'
 import { useScrollRange } from '../../lib/useScrollRange'
 import { blur, lite } from '../../lib/lite'
+import { IconArrowRight } from '../icons'
 
 const ease = [0.16, 1, 0.3, 1] as const
 const inOut = cubicBezier(0.65, 0, 0.35, 1)
@@ -50,6 +52,19 @@ export default function Hero() {
   // the illustration clears out almost immediately, so the film grows over white, not the art
   const artOpacity = useScrollRange(scrollYProgress, [0, 0.1], [1, 0], { clamp: true })
   const artScale = useScrollRange(scrollYProgress, [0, 0.1], [1, 1.04], { clamp: true })
+  // the way on arrives with the finished film: once the feeling has landed, not under the first line
+  const ctaOpacity = useScrollRange(scrollYProgress, [0.72, 0.9], [0, 1], { clamp: true })
+  const ctaY = useScrollRange(scrollYProgress, [0.72, 0.9], [12, 0], { clamp: true })
+  // reachable (click, tab) only once it can be seen
+  const [ctaOn, setCtaOn] = useState(false)
+  useMotionValueEvent(scrollYProgress, 'change', (v) => setCtaOn(v > 0.75))
+  const lenis = useLenis()
+
+  const toYatras = (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (lenis) lenis.scrollTo('#yatras')
+    else document.getElementById('yatras')?.scrollIntoView({ behavior: 'smooth' })
+  }
 
   useLayoutEffect(() => {
     const measure = () => {
@@ -171,6 +186,19 @@ export default function Hero() {
             animate={blur(0)}
             transition={{ duration: 1.6, ease, delay: T_OF }}
           />
+
+          <motion.a
+            href="#yatras"
+            onClick={toYatras}
+            tabIndex={ctaOn ? 0 : -1}
+            aria-hidden={!ctaOn}
+            style={{ opacity: ctaOpacity, y: ctaY }}
+            whileTap={{ scale: 0.98 }}
+            className={`group/cta absolute bottom-5 left-1/2 inline-flex -translate-x-1/2 items-center gap-2 rounded-full bg-white px-8 py-4 type-button whitespace-nowrap text-ink transition-colors duration-300 hover:text-saffron active:text-saffron md:gap-2.5 md:px-9 md:py-[18px] md:text-lg shadow-[0_8px_24px_-8px_rgba(0,0,0,0.35)] outline-none focus-visible:ring-2 focus-visible:ring-saffron focus-visible:ring-offset-2 md:bottom-7 lg:bottom-8 ${ctaOn ? '' : 'pointer-events-none'}`}
+          >
+            Explore the yatras
+            <IconArrowRight className="h-4 w-4 rotate-90 md:h-5 md:w-5 transition-transform duration-300 group-hover/cta:translate-y-0.5" />
+          </motion.a>
         </motion.div>
       </motion.div>
     </section>
