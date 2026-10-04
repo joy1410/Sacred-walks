@@ -202,7 +202,7 @@ export const preparation = {
   lede: 'Kashi Krama is not a trek, but it isn’t a seated tour either.',
   demands: [
     {
-      kicker: '3 am',
+      kicker: '3 am start',
       title: 'Some days begin in the dark',
       body: 'Mangala Arati at Kashi Vishwanath is held around 3 am, and the group gathers before the gates open. Evenings close with arati too.',
     },
@@ -212,18 +212,18 @@ export const preparation = {
       body: 'Nine temples in five days, each entered barefoot over stone floors, often after a queue.',
     },
     {
-      kicker: 'On foot',
+      kicker: 'Daily walking',
       title: 'Lanes, ghats and steps',
       body: 'The coach covers the longer distances. Between temples in the old city we walk narrow, crowded lanes and climb the ghat steps from the river.',
     },
     {
-      kicker: 'Cross-legged',
-      title: 'Long sittings on the floor',
-      body: 'Meditations, satsangs and the closing Guru Pooja are all done seated on the ground.',
+      kicker: 'Long sittings',
+      title: 'Cross-legged on the floor',
+      body: 'For meditations, satsangs and the closing Guru Pooja.',
     },
   ] satisfies Demand[],
   prerequisites: [
-    { title: 'Inner Engineering, completed', body: 'Including Shambhavi Mahamudra Kriya.' },
+    { title: 'Completion of Inner Engineering', body: 'Including Shambhavi Mahamudra Kriya.' },
     { title: 'Fit in body and mind', body: 'Able to sit cross-legged on the ground and walk without difficulty.' },
   ],
   rules: [

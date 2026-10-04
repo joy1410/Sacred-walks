@@ -125,7 +125,6 @@ export default function Itinerary() {
           label="Itinerary"
           id="itinerary-title"
           title="Five days in Kashi"
-          lede="From the deer park where the Buddha first spoke to the Guru Pooja that closes the yatra."
         />
 
         <div className="mt-10 grid gap-10 md:mt-16 lg:grid-cols-[1fr_1fr] lg:gap-16">
