@@ -20,6 +20,16 @@ const SUN_AT = [-0.12, -0.03, 0.3, 0.55, 0.85, 1.04, 1.12]
 const STOPS = [0, 0.09, 0.28, 0.46, 0.64, 0.82, 1]
 // lamps along the river, lit while the sun is down
 const LAMPS = [9, 15, 22, 30, 66, 74, 81, 89]
+// lens ghosts: k is how far along the line from the sun through the sky's
+// middle each sits (past 1 lands on the far side), with its size and tint
+const GHOSTS = [
+  { k: 0.55, size: 12, color: 'rgba(255,236,200,0.6)' },
+  { k: 1.25, size: 44, color: 'rgba(255,214,170,0.2)' },
+  { k: 1.6, size: 18, color: 'rgba(190,220,255,0.35)' },
+  { k: 1.9, size: 72, color: 'rgba(255,200,150,0.12)' },
+]
+// the sun's height in the arc's box, as a fraction from the top
+const SUN_Y = '(1 - sin(var(--s) * 180deg))'
 
 /**
  * Bonding with light: the rhythm most days share, told by the sun. Not a
@@ -62,9 +72,35 @@ function SunDay() {
   const glow = useScrollRange(
     sun,
     [-0.12, -0.07, -0.02, 0.04, 0.5, 0.9, 1.03, 1.12],
-    ['#2c2f73', '#4348a6', '#8a4f8c', '#cf4520', '#f2b65a', '#cd6727', '#3b3f8f', '#2c2f73'],
+    ['#2c2f73', '#4348a6', '#8a4f8c', '#e8622c', '#ffe7b8', '#f08a3e', '#3b3f8f', '#2c2f73'],
+  )
+  // the disc itself: low and red at the horizon, warm gold as it climbs, near
+  // white at the top of the arc, and back through gold to red as it sets
+  const sunColor = useScrollRange(
+    sun,
+    [-0.02, 0.04, 0.16, 0.5, 0.84, 0.96, 1.02],
+    ['#c8381c', '#ff6a2e', '#ffb867', '#fff8e8', '#ffc678', '#ff6a2e', '#c8381c'],
+  )
+  // the flare only shows while the sun is well up
+  const flare = useScrollRange(sun, [0.04, 0.2, 0.8, 0.96], [0, 1, 1, 0])
+  // the pale rim round the disc belongs to the high sun; low on the horizon it is all red
+  const rim = useScrollRange(sun, [0.25, 0.4, 0.6, 0.75], [0, 1, 1, 0])
+  const sunBloom = useTransform(
+    rim,
+    (f) =>
+      `0 0 6px 2px rgba(255,255,255,${(0.35 * f).toFixed(3)}), 0 0 22px 6px currentColor, 0 0 60px 18px color-mix(in srgb, currentColor 45%, transparent)`,
   )
   const wash = useTransform(glow, (c) => `radial-gradient(closest-side, ${c}, transparent)`)
+  // the sky itself: black at night, deep blue as the light comes, open blue by day,
+  // warm at the horizon around sunrise and sunset; the river below stays darker
+  const skyAt = [-0.12, -0.03, 0.04, 0.3, 0.55, 0.85, 1.0, 1.08, 1.12]
+  const skyTop = useScrollRange(sun, skyAt, ['#0a0a0b', '#14163a', '#2a3a78', '#2c66a8', '#2a6cb6', '#2f5f9e', '#262b66', '#121331', '#0a0a0b'])
+  const skyLow = useScrollRange(sun, skyAt, ['#0a0a0b', '#2e2752', '#c96a45', '#7fb0d6', '#93c0e2', '#d9a868', '#c45a36', '#2b2450', '#0a0a0b'])
+  const river = useScrollRange(sun, skyAt, ['#0a0a0b', '#0e0f22', '#1d1b30', '#14273c', '#152a42', '#1f2233', '#1a1428', '#0c0c18', '#0a0a0b'])
+  const sky = useTransform(
+    () =>
+      `linear-gradient(to bottom, ${skyTop.get()} 0%, ${skyLow.get()} calc(100% - 263px), ${river.get()} calc(100% - 262px), ${river.get()} 100%)`,
+  )
   const sunOpacity = useScrollRange(sun, [-0.06, 0, 1, 1.06], [0, 1, 1, 0])
   const lampsOpacity = useScrollRange(sun, [-0.12, -0.04, 0.03, 0.92, 1.02, 1.12], [1, 1, 0, 0, 1, 1])
   const [active, setActive] = useState(0)
@@ -80,13 +116,14 @@ function SunDay() {
         className="sticky top-[100px] flex h-[calc(100svh-100px)] flex-col overflow-hidden px-5 pt-12 pb-8"
         style={{ '--s': sun } as never}
       >
+        <motion.div className="absolute inset-0 -z-10" style={{ background: sky }} aria-hidden />
         <div className="mx-auto w-full max-w-[1180px]">{heading}</div>
 
         {/* the sky: arc, glow and sun share one box so CSS can place the sun on the arc */}
         <div className="relative mx-auto mt-6 min-h-0 w-full max-w-[1180px] flex-1">
           <div className="absolute inset-x-[4%] top-[6%] bottom-[230px]">
             <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full overflow-visible" aria-hidden>
-              <path d={ARC} fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth="1.2" strokeDasharray="2 6" vectorEffect="non-scaling-stroke" strokeLinecap="round" />
+              <path d={ARC} fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="1.2" strokeDasharray="2 6" vectorEffect="non-scaling-stroke" strokeLinecap="round" />
             </svg>
             {/* the trail behind the sun: the same arc, solid, uncovered left to right as it climbs */}
             <svg
@@ -96,24 +133,58 @@ function SunDay() {
               style={{ clipPath: 'inset(-20px calc((1 - clamp(0, var(--s), 1)) * 100%) -20px -20px)' }}
               aria-hidden
             >
-              <path d={ARC} fill="none" stroke="#e39a52" strokeWidth="1.6" vectorEffect="non-scaling-stroke" />
+              {/* the path keeps the colour the sun had at each point: red at the
+                  horizons, gold on the climb, pale at the top */}
+              <defs>
+                <linearGradient id="sun-trail" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="100" y2="0">
+                  <stop offset="0" stopColor="#ff6a2e" />
+                  <stop offset="0.18" stopColor="#ffb867" />
+                  <stop offset="0.5" stopColor="#fff3dc" />
+                  <stop offset="0.82" stopColor="#ffc678" />
+                  <stop offset="1" stopColor="#ff6a2e" />
+                </linearGradient>
+              </defs>
+              <path d={ARC} fill="none" stroke="url(#sun-trail)" strokeWidth="2" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
             </svg>
             {/* a zero-size anchor; left/top percentages refer to the arc's box */}
             <div
               className="absolute h-0 w-0"
-              style={{ left: 'calc(var(--s) * 100%)', top: 'calc((1 - sin(var(--s) * 180deg)) * 100%)' }}
+              style={{ left: 'calc(var(--s) * 100%)', top: `calc(${SUN_Y} * 100%)` }}
             >
               <motion.span
                 className="absolute top-1/2 left-1/2 block h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-45"
                 style={{ background: wash }}
                 aria-hidden
               />
+              {/* the disc, with a tight bright core and a wider bloom in its own colour */}
               <motion.span
-                className="absolute top-1/2 left-1/2 block h-7 w-7 -translate-x-1/2 -translate-y-1/2 rounded-full shadow-[0_0_40px_8px_rgba(242,182,90,0.55)]"
-                style={{ backgroundColor: glow, opacity: sunOpacity }}
+                className="absolute top-1/2 left-1/2 block h-7 w-7 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                style={{
+                  backgroundColor: sunColor,
+                  color: sunColor,
+                  opacity: sunOpacity,
+                  boxShadow: sunBloom,
+                }}
                 aria-hidden
               />
             </div>
+            {/* lens ghosts, strung on the line from the sun through the middle of the sky */}
+            <motion.div className="pointer-events-none absolute inset-0 overflow-hidden mix-blend-screen" style={{ opacity: flare }} aria-hidden>
+              {GHOSTS.map((g) => (
+                <span
+                  key={g.k}
+                  className="absolute block -translate-x-1/2 -translate-y-1/2 rounded-full"
+                  style={{
+                    left: `calc((var(--s) + (0.5 - var(--s)) * ${g.k}) * 100%)`,
+                    top: `calc((${SUN_Y} + (0.75 - ${SUN_Y}) * ${g.k}) * 100%)`,
+                    width: g.size,
+                    height: g.size,
+                    background: `radial-gradient(closest-side, ${g.color}, transparent)`,
+                    boxShadow: g.size > 30 ? `inset 0 0 0 1px ${g.color}` : undefined,
+                  }}
+                />
+              ))}
+            </motion.div>
           </div>
 
           {/* the river line the sun rises from and sets into */}
