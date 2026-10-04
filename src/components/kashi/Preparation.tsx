@@ -20,7 +20,7 @@ export default function Preparation() {
               <Rise delay={i * 0.08} className="h-full">
                 <p className="type-title-l text-saffron tabular-nums">{d.kicker}</p>
                 <h3 className="mt-4 type-label text-ink">{d.title}</h3>
-                <p className="mt-1.5 type-body-sm text-ink-soft">{d.body}</p>
+                <p className="mt-1.5 type-body text-ink-soft">{d.body}</p>
               </Rise>
             </li>
           ))}
@@ -50,8 +50,8 @@ function Card({ title, items }: { title: string; items: { title: string; body: s
       <ul className="mt-6 divide-y divide-black/[0.06]">
         {items.map((a) => (
           <li key={a.title} className="py-4 first:pt-0 last:pb-0">
-            <p className="type-label-sm text-ink">{a.title}</p>
-            <p className="mt-1 type-body-sm text-ink-soft">{a.body}</p>
+            <p className="type-label text-ink">{a.title}</p>
+            <p className="mt-1 type-body text-ink-soft">{a.body}</p>
           </li>
         ))}
       </ul>
@@ -101,27 +101,24 @@ function Packing() {
           <Tile key={g.title} title={g.title}>
             <ul className="space-y-2.5">
               {g.items.map((it) => (
-                <li key={it.item} className="flex gap-2.5 type-body-sm">
+                <li key={it} className="flex gap-2.5 type-body">
                   <span aria-hidden className="mt-[0.55em] h-[5px] w-[5px] shrink-0 rounded-full bg-saffron" />
-                  <span>
-                    <span className="font-medium text-ink">{it.item}</span>
-                    {it.why && <span className="block type-body-sm text-ink-soft">{it.why}</span>}
-                  </span>
+                  <span className="font-medium text-ink">{it}</span>
                 </li>
               ))}
             </ul>
           </Tile>
         ))}
         <Tile title="Medical kit">
-          <p className="type-body-sm text-ink-soft">Medicines for</p>
+          <p className="type-body text-ink-soft">Medicines for</p>
           <ul className="mt-2 flex flex-wrap gap-1.5">
             {medical.ailments.map((a) => (
-              <li key={a} className="rounded-full bg-mist px-3 py-1 type-body-sm font-medium text-ink-2">
+              <li key={a} className="rounded-full bg-mist px-3 py-1 type-body font-medium text-ink">
                 {a}
               </li>
             ))}
           </ul>
-          <p className="mt-3 type-body-sm text-ink-soft">{medical.note}</p>
+          <p className="mt-3 type-body text-ink-soft">{medical.note}</p>
         </Tile>
       </div>
     </div>

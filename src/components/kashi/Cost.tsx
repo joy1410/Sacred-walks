@@ -31,7 +31,7 @@ export default function Cost() {
                     <Icon className="h-6 w-6" />
                   </span>
                   <h3 className="mt-6 type-title-s text-ink md:mt-10">{h.title}</h3>
-                  <p className="mt-2 type-body-sm text-ink-soft">{h.body}</p>
+                  <p className="mt-2 type-body text-ink-soft">{h.body}</p>
                 </Rise>
               </li>
             )
@@ -42,18 +42,18 @@ export default function Cost() {
           <div className="rounded-[28px] border border-line-soft bg-white">
             <div className="grid gap-8 p-6 md:grid-cols-2 md:gap-12 md:p-9">
               <div>
-                <h3 className="type-label-sm text-ink">Also included</h3>
+                <h3 className="type-title-s text-ink">Also included</h3>
                 <ul className="mt-4 space-y-3">
                   {cost.included.map((c, i) => (
                     <motion.li
                       key={c}
-                      className="flex gap-3 type-body-sm text-ink-2"
+                      className="flex gap-3 type-body font-medium text-ink"
                       initial={{ opacity: 0, x: -8 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={inView}
                       transition={{ duration: 0.7, ease, delay: 0.2 + i * 0.05 }}
                     >
-                      <span className="mt-px grid h-5 w-5 shrink-0 place-items-center rounded-full bg-saffron text-white">
+                      <span className="mt-[3px] grid h-5 w-5 shrink-0 place-items-center rounded-full bg-saffron text-white">
                         <IconCheck className="h-3 w-3" />
                       </span>
                       {c}
@@ -62,11 +62,11 @@ export default function Cost() {
                 </ul>
               </div>
               <div>
-                <h3 className="type-label-sm text-ink">Not included</h3>
+                <h3 className="type-title-s text-ink">Not included</h3>
                 <ul className="mt-4 space-y-3">
                   {cost.excluded.map((c) => (
-                    <li key={c} className="flex gap-3 type-body-sm text-ink-soft">
-                      <span className="mt-px grid h-5 w-5 shrink-0 place-items-center rounded-full border border-line text-ink-mute">
+                    <li key={c} className="flex gap-3 type-body text-ink-soft">
+                      <span className="mt-[3px] grid h-5 w-5 shrink-0 place-items-center rounded-full border border-line text-ink-mute">
                         <IconPlus className="h-3 w-3 rotate-45" />
                       </span>
                       {c}
@@ -79,7 +79,7 @@ export default function Cost() {
             <div className="flex flex-col gap-5 border-t border-line-soft p-6 md:flex-row md:items-center md:justify-between md:px-9 md:py-7">
               <div>
                 <p className="type-label text-ink">The 2026 contribution is shared on enquiry</p>
-                <p className="mt-1 max-w-[520px] type-body-sm text-ink-soft">
+                <p className="mt-1 max-w-[520px] type-body text-ink-soft">
                   The team will send the amount, payment details and the registration form for your group.
                 </p>
               </div>

@@ -101,9 +101,12 @@ export default function DateCard({ d, dark = false, delay = 0 }: { d: Departure;
       viewport={inView}
     >
       <header className="px-1">
-        <h3 className="type-title-l tabular-nums">{d.short}</h3>
-        <p className={`mt-2 type-body-sm tabular-nums ${t.soft}`}>
-          {d.year} · {d.days} days · {d.language}
+        {/* the year belongs to the date, so it sits in the heading, shortened: 3 – 7 Dec ’26 */}
+        <h3 className="type-title-l tabular-nums">
+          {d.short} ’{String(d.year).slice(-2)}
+        </h3>
+        <p className="mt-2 type-body font-medium tabular-nums">
+          {d.days} days · {d.language}
         </p>
       </header>
 

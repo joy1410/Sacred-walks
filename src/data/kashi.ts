@@ -195,8 +195,7 @@ export const dayMoments: Moment[] = [
  *    dense fog on the river some mornings (weather-atlas.com, kashitaxi.in)
  */
 export type Demand = { kicker: string; title: string; body: string }
-export type PackItem = { item: string; why?: string }
-export type PackGroup = { title: string; items: PackItem[] }
+export type PackGroup = { title: string; items: string[] }
 
 export const preparation = {
   lede: 'Kashi Krama is not a trek, but it isn’t a seated tour either.',
@@ -235,22 +234,22 @@ export const preparation = {
     {
       title: 'To wear',
       items: [
-        { item: 'Footwear that slips on and off', why: 'It comes off at every gate' },
-        { item: 'Clothes that cover arms and legs', why: 'A kurta, saree or salwar kameez is ideal' },
-        { item: 'Warm shawl or jacket', why: 'Dawns are near 10°C, colder on the river' },
-        { item: 'Sunglasses or a sun hat', why: 'Afternoons warm into the low 20s' },
-        { item: 'Umbrella or raincoat' },
+        'Footwear that slips on and off',
+        'Kurta, saree or salwar kameez, covering arms and legs',
+        'Warm shawl or jacket for 10°C dawns',
+        'Sunglasses or a sun hat',
+        'Umbrella or raincoat',
       ],
     },
     {
       title: 'To carry',
       items: [
-        { item: 'Your ID' },
-        { item: 'Yoga mat', why: 'For meditations and satsangs' },
-        { item: 'Flashlight', why: 'For the pre-dawn starts' },
-        { item: 'Water bottle and snacks', why: 'Queues and coach rides run long' },
-        { item: 'Mosquito repellent', why: 'On the ghats at dusk' },
-        { item: 'Hand sanitizer and toiletries' },
+        'Your ID',
+        'Yoga mat',
+        'Flashlight',
+        'Water bottle and snacks for long queues',
+        'Mosquito repellent',
+        'Hand sanitizer and toiletries',
       ],
     },
   ] satisfies PackGroup[],
