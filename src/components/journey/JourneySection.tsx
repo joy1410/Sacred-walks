@@ -162,12 +162,9 @@ function BeatPanel({ beat, index, setActive }: { beat: Beat; index: number; setA
         animate={seen ? 'show' : 'hidden'}
         className="absolute inset-x-0 bottom-0 p-6 text-white md:p-10"
       >
-        <motion.span variants={item} className="block type-label-sm text-white/60 tabular-nums">
-          0{index + 1}
-        </motion.span>
         <motion.h3
           variants={item}
-          className="mt-2 max-w-[16ch] type-h3"
+          className="max-w-[16ch] type-h3"
         >
           {beat.title}
         </motion.h3>
@@ -197,9 +194,8 @@ function Rail({ active }: { active: number }) {
                 />
               </span>
               <span
-                className={`mt-2.5 flex gap-2 type-caption font-medium transition-colors duration-500 ${on ? 'text-ink' : 'text-ink-mute'}`}
+                className={`mt-2.5 block type-body-sm font-medium transition-colors duration-500 ${on ? 'text-ink' : 'text-ink-mute'}`}
               >
-                <span className="tabular-nums">0{i + 1}</span>
                 {b.short}
               </span>
             </li>
