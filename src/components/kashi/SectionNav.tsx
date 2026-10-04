@@ -16,7 +16,7 @@ const pageSections = [
 
 /**
  * The page's own bar, sticking under the global nav once the hero has gone.
- * The section crossing the middle of the screen owns the white pill (the
+ * The section crossing the middle of the screen owns the saffron pill (the
  * same sliding segment as the yatra tabs); a tap glides there.
  */
 export default function SectionNav() {
@@ -90,11 +90,11 @@ export default function SectionNav() {
                   {on && (
                     <motion.span
                       layoutId="kashi-section"
-                      className="absolute inset-0 rounded-full bg-mist-2"
+                      className="absolute inset-0 rounded-full bg-saffron"
                       transition={{ type: 'spring', stiffness: 420, damping: 38 }}
                     />
                   )}
-                  <span className={`relative transition-colors duration-300 ${on ? 'text-ink' : 'text-ink-soft hover:text-ink'}`}>
+                  <span className={`relative transition-colors duration-300 ${on ? 'text-white' : 'text-ink-soft hover:text-ink'}`}>
                     {s.label}
                   </span>
                 </a>

@@ -268,7 +268,7 @@ export default function Nav() {
           <div className="flex items-center gap-1.5">
             <a
               href="/#yatras"
-              className={`rounded-full bg-saffron px-4 py-1.5 type-button-sm text-white transition-[background-color,opacity] duration-200 hover:bg-saffron-ink ${menuOpen ? 'pointer-events-none opacity-0' : ''}`}
+              className={`rounded-full bg-ink px-4 py-1.5 type-button-sm text-white transition-[background-color,opacity] duration-200 hover:bg-ink-2 ${menuOpen ? 'pointer-events-none opacity-0' : ''}`}
             >
               Enquire
             </a>
