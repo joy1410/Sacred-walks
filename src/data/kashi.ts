@@ -10,7 +10,10 @@ import { u } from './yatras'
  *
  * Editorial, not on the official site (confirm before shipping):
  *  - day titles and the "why" headings (body copy beneath them is official)
- *  - the "day in the yatra" rhythm, which is generic by design
+ *  - the About Kashi lead ("A city built not for living, but for dissolving"),
+ *    after Sadhguru's framing of Kashi; the official lead is the "tower of light" line
+ *  - the "day in the yatra" rhythm, which is generic by design; confirm whether
+ *    mornings open with group sadhana or each person's own practice
  *  - the time-of-day labels on each day's route (read from the order and
  *    cues in the official day copy) and the Vindhyachal drive time
  *  - what Group S covers, and the "not included" list under Cost
@@ -39,9 +42,9 @@ export const kashi = {
 export const overview = {
   // split so the page can light one word
   lead: {
-    before: 'An intense tower of ',
-    accent: 'light',
-    after: '. The spiritual capital of a nation. Millennia of history, culture, mysticism and enlightenment steeped in its every corner.',
+    before: 'A city built not for living, but for ',
+    accent: 'dissolving',
+    after: '. Seekers have come here for thousands of years to go beyond themselves.',
   },
   body: [
     'Kashi, the birthplace of Kabir, Tulsidas’ favoured abode, and newly adorned with its temple corridor, is a city beyond words and a place beyond time. Kashi Krama is a unique opportunity to journey to this holiest of cities.',
@@ -175,9 +178,9 @@ export type Moment = { when: string; title: string; body: string }
 
 export const dayMoments: Moment[] = [
   { when: 'Before dawn', title: 'An early start', body: 'Some days begin in the dark, with arati at a temple while the city is still asleep.' },
-  { when: 'Morning', title: 'Into the sacred spaces', body: 'By coach to the day’s first places, then on foot through temple lanes and down to the ghats.' },
+  { when: 'Morning', title: 'Practice, then out', body: 'The day opens with your own practice. After breakfast, by coach to the day’s first places, then on foot through temple lanes and down to the ghats.' },
   { when: 'Midday', title: 'A meal together', body: 'Simple vegetarian food, and a little time to rest before the afternoon.' },
-  { when: 'Afternoon', title: 'Practice and more places', body: 'Meditations, chants or a satsang, alongside the rest of the day’s temples and ghats.' },
+  { when: 'Afternoon', title: 'More temples and ghats', body: 'The rest of the day’s places, with time to sit and meditate at some of them.' },
   { when: 'Evening', title: 'Lamps and arati', body: 'Most days close with an evening arati, on the river or in a temple, as the lamps are lit.' },
   { when: 'Night', title: 'An early night', body: 'Back to the hotel to rest. The next day may begin before dawn.' },
 ]
