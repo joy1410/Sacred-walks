@@ -23,6 +23,7 @@ function useCurrent() {
 
 /** Yatras menu: opens on hover, focus or click; only yatras with a page are links. */
 function YatrasMenu({ current }: { current: boolean }) {
+  const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
   const closeTimer = useRef<number | undefined>(undefined)
 
@@ -72,12 +73,18 @@ function YatrasMenu({ current }: { current: boolean }) {
             transition={{ duration: 0.18, ease: [0.25, 0.1, 0.25, 1] }}
             className="absolute left-1/2 top-full -translate-x-1/2 pt-2.5"
           >
-            <ul className="w-[300px] rounded-2xl border border-black/[0.06] bg-white/95 p-1.5 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.25)] backdrop-blur-xl">
+            {/* solid white: a see-through panel greyed over the dark yatra heroes and washed out the mist rows */}
+            <ul className="w-[300px] rounded-2xl border border-black/[0.06] bg-white p-1.5 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.25)]">
               {yatras.map((y) => {
                 const page = yatraPage(y.slug)
                 return (
                   <li key={y.slug}>
-                    {page ? (
+                    {page === pathname ? (
+                      // the yatra you're on: the other rows' hover state, held, and not a link back to itself
+                      <div aria-current="page" className="flex items-center gap-3 rounded-xl bg-mist p-2">
+                        <MenuRow y={y} />
+                      </div>
+                    ) : page ? (
                       <SiteLink
                         href={page}
                         onClick={() => setOpen(false)}
@@ -116,10 +123,14 @@ function MenuRow({ y }: { y: Yatra }) {
 }
 
 /** a yatra in the phone sheet's list */
-function SheetRow({ y }: { y: Yatra }) {
+function SheetRow({ y, on = false }: { y: Yatra; on?: boolean }) {
   return (
     <>
-      <span className="type-body font-medium">{y.title}</span>
+      <span className="type-body font-medium">
+        {y.title}
+        {/* the yatra you're on: the sheet's white dot, smaller */}
+        {on && <span aria-hidden className="ml-2 inline-block h-1.5 w-1.5 rounded-full bg-white align-middle" />}
+      </span>
       <span className="shrink-0 type-caption text-white/70">
         {y.region} · {y.days}d
       </span>
@@ -165,6 +176,7 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
 
   // every link starts rising only once the disc has covered it, on any phone or small tablet
   const current = useCurrent()
+  const { pathname } = useLocation()
   // the page you're on carries a small white dot after its name
   const dot = (on: boolean) => on && <span aria-hidden className="ml-3 inline-block h-2.5 w-2.5 rounded-full bg-white align-middle" />
 
@@ -218,7 +230,12 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
           <ul className="mt-5 space-y-1 border-l border-white/30 pl-4">
             {yatras.map((y, i) => (
               <motion.li key={y.slug} {...rise(i + 1)}>
-                {yatraPage(y.slug) ? (
+                {yatraPage(y.slug) === pathname ? (
+                  // the yatra you're on: marked with the dot, not a link back to itself
+                  <div aria-current="page" className="flex items-baseline justify-between gap-3 py-2">
+                    <SheetRow y={y} on />
+                  </div>
+                ) : yatraPage(y.slug) ? (
                   <SiteLink href={yatraPage(y.slug)!} onClick={onClose} className="flex items-baseline justify-between gap-3 py-2">
                     <SheetRow y={y} />
                   </SiteLink>
@@ -285,13 +302,20 @@ function BurgerIcon({ open }: { open: boolean }) {
   )
 }
 
-/** Apple-style global bar: thin, solid white with a hairline once you scroll (no backdrop blur: it re-blurred the drifting ambient light every frame). */
+/**
+ * Apple-style global bar: thin, solid white with a hairline once you scroll (no backdrop blur: it
+ * re-blurred the drifting ambient light every frame). On the homepage it starts clear, so the open
+ * illustrated hero and its haze run up to the top edge; the other pages open on a framed card, so
+ * there it is white from the start.
+ */
 export default function Nav() {
   const { scrollY } = useScroll()
   const [scrolled, setScrolled] = useState(false)
   useMotionValueEvent(scrollY, 'change', (y) => setScrolled(y > 8))
   const [menuOpen, setMenuOpen] = useState(false)
   const current = useCurrent()
+  const { pathname } = useLocation()
+  const clear = pathname === '/' && !scrolled
 
   return (
     <>
@@ -299,7 +323,7 @@ export default function Nav() {
         className={`fixed inset-x-0 top-0 border-b px-4 md:px-5 transition-colors duration-300 ${
           menuOpen
             ? 'z-[70] border-transparent bg-transparent' // floats over the sheet so the burger can become its close button
-            : `z-50 ${scrolled ? 'border-black/[0.08] bg-white' : 'border-transparent bg-white/0'}`
+            : `z-50 ${clear ? 'bg-white/0' : 'bg-white'} ${scrolled ? 'border-black/[0.08]' : 'border-transparent'}`
         }`}
       >
         <nav className="mx-auto flex h-12 max-w-[1180px] items-center justify-between">

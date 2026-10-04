@@ -62,7 +62,8 @@ function Hero() {
           height={1066}
           fetchPriority="high"
           decoding="async"
-          className="absolute inset-0 -z-10 h-full w-full object-cover"
+          // taller than the card and rising above it, so the scroll drift never shows a dark line along the top
+          className="absolute inset-x-0 -top-[22%] -z-10 h-[122%] w-full object-cover"
           initial={{ scale: 1.15, ...blur(14) }}
           animate={{ scale: 1, ...blur(0) }}
           transition={{ duration: 1.8, ease }}

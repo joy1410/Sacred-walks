@@ -13,7 +13,9 @@ function ScrollReset() {
   const { pathname, hash } = useLocation()
   const lenis = useLenis()
   useEffect(() => {
-    if (lenis) lenis.scrollTo(0, { immediate: true })
+    // force: a link in the phone menu changes page while the menu still has Lenis stopped
+    // (it restarts once the sheet has closed), and a stopped Lenis ignores scrollTo
+    if (lenis) lenis.scrollTo(0, { immediate: true, force: true })
     else window.scrollTo(0, 0)
     // arriving from another page at a section (/#yatras): go there once it has rendered
     if (!hash) return
@@ -22,7 +24,7 @@ function ScrollReset() {
       if (!el) return
       // yatra pages carry a section bar under the nav (48 + 52), less the section's own 16px gutter
       const offset = pathname.startsWith('/yatras/') ? -84 : 0
-      if (lenis) lenis.scrollTo(el, { immediate: true, offset })
+      if (lenis) lenis.scrollTo(el, { immediate: true, offset, force: true })
       else window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY + offset)
     }, 60)
     return () => window.clearTimeout(id)

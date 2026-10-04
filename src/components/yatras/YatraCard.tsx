@@ -172,12 +172,13 @@ function StatusNote({ status }: { status: YatraStatus }) {
 function StatusAction({ status, slug }: { status: YatraStatus; slug: string }) {
   const label = status.state === 'open' ? 'Register' : status.state === 'soon' ? 'Notify me' : `Join ${status.next} waitlist`
   const page = yatraPage(slug)
-  // with a page: its registration section. Without one: Isha's own registration or enquiry form
+  // with a page: its dates, just under the hero, so the rest of the page still lies ahead
+  // (not #register at the foot, which would skip it). Without one: Isha's own registration or enquiry form
   const external = { target: '_blank', rel: 'noopener noreferrer' }
   const viewButton =
     'flex flex-1 items-center justify-center gap-1.5 rounded-full border border-ink/15 bg-white px-2.5 py-3 type-button-sm md:px-4 md:py-3.5 md:type-button whitespace-nowrap text-ink'
   const action = page
-    ? { href: `${page}#register` }
+    ? { href: `${page}#dates` }
     : { href: status.state === 'open' ? REGISTER_URL : ENQUIRE_URL, ...external }
 
   return (

@@ -105,9 +105,6 @@ export default function DateCard({ d, dark = false, delay = 0 }: { d: Departure;
         <h3 className="type-title-l tabular-nums">
           {d.short} ’{String(d.year).slice(-2)}
         </h3>
-        <p className="mt-2 type-body font-medium tabular-nums">
-          {d.days} days · {d.language}
-        </p>
       </header>
 
       <fieldset className="mt-5 md:mt-6">

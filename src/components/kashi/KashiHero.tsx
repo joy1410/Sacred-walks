@@ -2,15 +2,17 @@ import { useRef } from 'react'
 import { motion, useScroll } from 'motion/react'
 import { useLenis } from 'lenis/react'
 import { kashi } from '../../data/kashi'
+import { yatras } from '../../data/yatras'
 import { BlurText, after } from '../hero/BlurIn'
 import DifficultyMeter from '../yatras/DifficultyMeter'
-import { IconArrowRight, IconPin } from '../icons'
+import { IconPin } from '../icons'
 import { useScrollRange } from '../../lib/useScrollRange'
 import { blur } from '../../lib/lite'
 import { ease, STICKY_OFFSET } from './shared'
 
 const T_TITLE = 0.25
 const T_AFTER = after(T_TITLE, kashi.title)
+const yatra = yatras.find((y) => y.slug === 'kashi-krama')!
 
 /**
  * Opens where the homepage hero ends: a framed film card (same inset and
@@ -45,7 +47,8 @@ export default function KashiHero() {
           height={1080}
           fetchPriority="high"
           decoding="async"
-          className="absolute inset-0 -z-10 h-full w-full object-cover object-[30%_50%]"
+          // 22% taller than the card, rising above it: the scroll drift (18% of its own height) never uncovers the card's night background as a dark line along the top
+          className="absolute inset-x-0 -top-[22%] -z-10 h-[122%] w-full object-cover object-[30%_50%]"
           initial={{ scale: 1.15, ...blur(14) }}
           animate={{ scale: 1, ...blur(0) }}
           transition={{ duration: 1.8, ease }}
@@ -96,18 +99,17 @@ export default function KashiHero() {
               transition={{ duration: 1, ease, delay: T_AFTER }}
             >
               <p className="type-lead-l text-white/90">{kashi.tagline}</p>
-              {/* the card's facts row, set in glass */}
-              <div className="mt-4 inline-flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl bg-white/12 px-4 py-2.5 type-label-sm whitespace-nowrap tabular-nums md:mt-5 md:gap-x-5 md:px-5 md:py-3 md:backdrop-blur-md">
-                <span>{kashi.days} days</span>
+              {/* the homepage card's facts row, read from the same entry so the two never disagree,
+                  set in glass. Season, not dates: departures can be several, and each is on the date card */}
+              <div className="mt-4 inline-flex items-center gap-x-4 rounded-2xl bg-white/12 px-4 py-2.5 type-label-sm whitespace-nowrap tabular-nums md:mt-5 md:gap-x-5 md:px-5 md:py-3 md:backdrop-blur-md">
+                <span>{yatra.days} days</span>
                 <span className="h-4 w-px bg-white/25" aria-hidden />
                 <span className="inline-flex items-center gap-1.5">
-                  <DifficultyMeter level={1} />
-                  Gentle
+                  <DifficultyMeter level={yatra.difficulty} />
+                  {yatra.difficultyLabel}
                 </span>
                 <span className="h-4 w-px bg-white/25" aria-hidden />
-                <span>{kashi.dates}</span>
-                <span className="hidden h-4 w-px bg-white/25 sm:block" aria-hidden />
-                <span className="hidden sm:inline">{kashi.language}</span>
+                <span>{yatra.seasonShort}</span>
               </div>
             </motion.div>
 
@@ -120,10 +122,9 @@ export default function KashiHero() {
               <button
                 type="button"
                 onClick={toSection('itinerary')}
-                className="group/view inline-flex flex-1 items-center justify-center gap-1.5 rounded-full bg-white px-6 py-3.5 type-button whitespace-nowrap text-ink transition-colors hover:bg-mist lg:flex-none"
+                className="inline-flex flex-1 items-center justify-center rounded-full bg-white px-6 py-3.5 type-button whitespace-nowrap text-ink transition-colors hover:bg-mist lg:flex-none"
               >
                 See the itinerary
-                <IconArrowRight className="h-4 w-4 rotate-90 transition-transform duration-300 group-hover/view:translate-y-0.5" />
               </button>
               {/* registering starts at the dates, where the prerequisite sits */}
               <motion.button

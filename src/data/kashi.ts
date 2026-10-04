@@ -29,9 +29,6 @@ export const kashi = {
   title: 'Kashi Krama',
   tagline: 'Bonding with light',
   region: 'Varanasi, Uttar Pradesh',
-  days: 5,
-  dates: '3 – 7 Dec 2026',
-  language: 'English',
   hero: { src: k('hero'), caption: 'A sannyasi on the ghats at first light' },
   quote: {
     text: 'The creation of Kashi is the most phenomenal effort in building structures of consciousness ever made on the planet. It is immensely elaborate and scientifically perfect.',
