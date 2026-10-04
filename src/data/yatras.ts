@@ -17,6 +17,8 @@ export type YatraStatus =
   | { state: 'soon'; opens: string; season: string }
   | { state: 'closed'; completed: string; next: string; opens?: string }
 
+export type HighlightIcon = 'parikrama' | 'lake' | 'sadhana' | 'temple' | 'gopuram' | 'diya' | 'boat' | 'trishul'
+
 export type Yatra = {
   slug: string
   tab: string
@@ -33,15 +35,14 @@ export type Yatra = {
   /** short form for the facts row */
   seasonShort: string
   status: YatraStatus
+  /** Sadhguru's words only, each checked against isha.sadhguru.org (source noted beside it) */
   quote: { text: string; by: string }
-  highlights: string[]
+  /** each line carries the icon that pictures it */
+  highlights: { text: string; icon: HighlightIcon }[]
   images: YatraImage[]
 }
 
 /*
- * NOTE: only the Kailash quote comes from the design draft.
- * The other quotes are editorial placeholders attributed to the programme,
- * so swap in verified Sadhguru quotes before shipping.
  * Open/closed status is confirmed; departure dates are placeholders until registration data is wired in.
  */
 /** yatras that have their own page so far; the rest point at the homepage list */
@@ -62,14 +63,15 @@ export const yatras: Yatra[] = [
     season: 'June – September',
     seasonShort: 'Jun – Sep',
     status: { state: 'closed', completed: '2026', next: '2027' },
+    // isha.sadhguru.org/en/wisdom/article/kailash-the-greatest-mystical-library
     quote: {
       text: 'Kailash is the greatest mystical library on the planet. Anything that one wishes to know about creation has been stored there.',
       by: 'Sadhguru',
     },
     highlights: [
-      'Three-day parikrama around Mount Kailash',
-      'Sunrise meditation on the shores of Manasarovar',
-      'Guided sadhana to prepare body and mind',
+      { text: 'Three-day parikrama around Mount Kailash', icon: 'parikrama' },
+      { text: 'Sunrise meditation on the shores of Manasarovar', icon: 'lake' },
+      { text: 'Guided sadhana to prepare body and mind', icon: 'sadhana' },
     ],
     images: [
       { src: u('1764753757089-ba31eb338384'), caption: 'South face at first light' },
@@ -92,14 +94,15 @@ export const yatras: Yatra[] = [
     season: 'May – June, Sept – Oct',
     seasonShort: 'May · Sep',
     status: { state: 'closed', completed: '2026', next: '2027' },
+    // from Sadhguru's poem "Himalaya": isha.sadhguru.org/en/sadhguru/mystic/himalayas
     quote: {
-      text: 'The mountains do not ask you to climb them. They ask you to become still enough to receive them.',
-      by: 'Isha Sacred Walks',
+      text: 'Even the rocks reach out to the heavens. No wonder beings seeking divine made you their abode.',
+      by: 'Sadhguru',
     },
     highlights: [
-      'Darshan at Kedarnath temple',
-      'Ganga aarti at Rishikesh',
-      'Meditations at ancient Himalayan sites',
+      { text: 'Darshan at Kedarnath temple', icon: 'temple' },
+      { text: 'Ganga aarti at Rishikesh', icon: 'diya' },
+      { text: 'Meditations at ancient Himalayan sites', icon: 'sadhana' },
     ],
     images: [
       { src: u('1612438214708-f428a707dd4e'), caption: 'Kedarnath, 3,583 m' },
@@ -122,14 +125,15 @@ export const yatras: Yatra[] = [
     season: 'October – March',
     seasonShort: 'Oct – Mar',
     status: { state: 'open', departure: '3 – 7 Dec 2026' },
+    // isha.sadhguru.org/mahashivratri/shiva/kashi-shiva-tower-of-light-vishwanath-manikarnika-ghat
     quote: {
-      text: 'Kashi is not just a city on the river. It is a doorway that has stood open for thousands of years.',
-      by: 'Isha Sacred Walks',
+      text: 'Kashi was built as an instrument in the form of a city, which brings a union between the “micro” and the “macro.”',
+      by: 'Sadhguru',
     },
     highlights: [
-      'Dawn boat ride along the 84 ghats',
-      'Ganga aarti at Dashashwamedh',
-      'Darshan at Kashi Vishwanath',
+      { text: 'Dawn boat ride along the 84 ghats', icon: 'boat' },
+      { text: 'Ganga aarti at Dashashwamedh', icon: 'diya' },
+      { text: 'Darshan at Kashi Vishwanath', icon: 'temple' },
     ],
     images: [
       { src: u('1561359313-0639aad49ca6'), caption: 'The ghats at morning' },
@@ -153,14 +157,15 @@ export const yatras: Yatra[] = [
     season: 'November – February',
     seasonShort: 'Nov – Feb',
     status: { state: 'open', departure: '6 – 13 Dec 2026' },
+    // isha.sadhguru.org/en/wisdom/quotes/date/january-08-2023
     quote: {
-      text: 'These temples were not built for worship alone. They were built as instruments to lift a human being.',
-      by: 'Isha Sacred Walks',
+      text: 'When you go to an Indian temple, it is to behold an energy form – Darshan. You want to take an imprint of the Divine within yourself.',
+      by: 'Sadhguru',
     },
     highlights: [
-      'Meenakshi temple, Madurai',
-      'Brihadeeswarar temple, Thanjavur',
-      'Adiyogi and the Velliangiri foothills',
+      { text: 'Meenakshi temple, Madurai', icon: 'gopuram' },
+      { text: 'Brihadeeswarar temple, Thanjavur', icon: 'temple' },
+      { text: 'Adiyogi and the Velliangiri foothills', icon: 'trishul' },
     ],
     images: [
       { src: u('1732883247945-896e63ee644a'), caption: 'Gopuram against the southern sky' },

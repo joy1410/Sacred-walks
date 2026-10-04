@@ -1,12 +1,31 @@
 import { motion, type Variants } from 'motion/react'
-import { yatraHref, type Yatra, type YatraStatus } from '../../data/yatras'
+import { yatraHref, type HighlightIcon, type Yatra, type YatraStatus } from '../../data/yatras'
 import SiteLink, { MotionSiteLink } from '../SiteLink'
 import ImageCarousel from './ImageCarousel'
 import DifficultyMeter from './DifficultyMeter'
-import { IconArrowRight, IconRoute, IconSadhana, IconSunrise } from '../icons'
+import {
+  IconArrowRight,
+  IconBoat,
+  IconDiya,
+  IconGopuram,
+  IconLake,
+  IconParikrama,
+  IconSadhana,
+  IconTemple,
+  IconTrishul,
+} from '../icons'
 
 const ease = [0.16, 1, 0.3, 1] as const
-const highlightIcons = [IconRoute, IconSunrise, IconSadhana]
+const highlightIcons: Record<HighlightIcon, typeof IconBoat> = {
+  parikrama: IconParikrama,
+  lake: IconLake,
+  sadhana: IconSadhana,
+  temple: IconTemple,
+  gopuram: IconGopuram,
+  diya: IconDiya,
+  boat: IconBoat,
+  trishul: IconTrishul,
+}
 
 const panel: Variants = {
   hidden: {},
@@ -69,12 +88,12 @@ export default function YatraCard({ yatra }: { yatra: Yatra }) {
         </motion.div>
 
         <motion.ul variants={item} className="mt-4 space-y-2.5 md:mt-6 md:space-y-3.5">
-          {yatra.highlights.map((h, i) => {
-            const Icon = highlightIcons[i % highlightIcons.length]
+          {yatra.highlights.map((h) => {
+            const Icon = highlightIcons[h.icon]
             return (
-              <li key={h} className="flex items-center gap-3.5">
+              <li key={h.text} className="flex items-center gap-3.5">
                 <Icon className="h-5 w-5 shrink-0 text-ink" />
-                <span className="text-[14px] leading-snug text-ink-2 md:text-[15px]">{h}</span>
+                <span className="text-[14px] leading-snug text-ink-2 md:text-[15px]">{h.text}</span>
               </li>
             )
           })}

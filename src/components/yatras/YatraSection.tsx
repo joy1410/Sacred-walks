@@ -132,7 +132,7 @@ export default function YatraSection() {
                     aria-controls={`panel-${t.slug}`}
                     tabIndex={isActive ? 0 : -1}
                     onClick={() => select(i)}
-                    className="relative grow shrink-0 rounded-full px-4 py-2.5 text-[14px] font-medium whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-saffron md:px-3 md:text-[15px]"
+                    className="group/tab relative grow shrink-0 cursor-pointer rounded-full px-4 py-2.5 text-[14px] font-medium whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-saffron md:px-3 md:text-[15px]"
                   >
                     {isActive && (
                       <motion.span
@@ -141,7 +141,7 @@ export default function YatraSection() {
                         transition={{ type: 'spring', stiffness: 420, damping: 38 }}
                       />
                     )}
-                    <span className={`relative transition-colors duration-300 ${isActive ? 'text-ink' : 'text-ink-soft hover:text-ink'}`}>
+                    <span className={`relative transition-colors duration-300 ${isActive ? 'text-ink' : 'text-ink-soft group-hover/tab:text-ink'}`}>
                       {t.tab}
                     </span>
                   </button>

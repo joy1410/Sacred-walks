@@ -87,7 +87,7 @@ function Quote() {
         transition={{ duration: 1.4, ease }}
       />
       <div className="relative">
-        <QuoteMark className="mx-auto mb-6 h-8 w-10 md:absolute md:-top-1 md:-left-12 md:mb-0 md:h-10 md:w-12" delay={0.1} />
+        <QuoteMark className="mx-auto mb-6 h-8 w-10 md:absolute md:-top-1 md:-left-12 md:mb-0 md:h-10 md:w-12" />
         <blockquote className="font-display text-[clamp(1.7rem,3vw,2.6rem)] leading-[1.14] font-medium text-balance text-ink-2">
           The creation of Kashi is the most phenomenal effort in building{' '}
           <span className="text-saffron">structures of consciousness</span> ever made on the planet.

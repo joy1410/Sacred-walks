@@ -140,7 +140,7 @@ export default function StoriesSection() {
       <div className="mx-auto flex w-full max-w-[1180px] flex-col lg:min-h-0 lg:flex-1 lg:justify-center">
         <div className="mb-6 flex items-end justify-between gap-6 md:mb-8">
           <h2 id="stories-title" className="font-display text-[clamp(2.4rem,4.4vw,4rem)] leading-[0.98] font-semibold text-ink">
-            <BlurText text="Stories from the journey" inView />
+            <BlurText text="In their own words" inView />
           </h2>
           <div className="hidden shrink-0 items-center gap-3 pb-1 md:flex">
             {controls}

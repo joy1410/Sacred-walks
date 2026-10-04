@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, animate, motion, useInView, useMotionValue, useTransform, type PanInfo } from 'motion/react'
-import type { Yatra } from '../../data/yatras'
+import { yatraHref, type Yatra } from '../../data/yatras'
 import { IconChevronLeft, IconChevronRight, IconPause, IconPlay } from '../icons'
 
 const DURATION = 6 // seconds per slide
@@ -98,6 +98,38 @@ export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pos, width])
 
+  // A tap opens the yatra, but only a real one: the finger went down and came
+  // up in (nearly) the same place, quickly, with no drag or scroll in between.
+  // motion's onTap fired after short swipes too, because the drag lock is
+  // already released when the tap gesture sees the pointer lift.
+  const press = useRef<{ x: number; y: number; t: number; moved: boolean } | null>(null)
+  const TAP_SLOP = 8 // px
+  // moves are watched on the window: the finger can wander off the track (onto the capsule) mid-swipe
+  const onPointerDown = (e: React.PointerEvent) => {
+    const p = { x: e.clientX, y: e.clientY, t: e.timeStamp, moved: false }
+    press.current = p
+    const move = (ev: PointerEvent) => {
+      if (Math.hypot(ev.clientX - p.x, ev.clientY - p.y) > TAP_SLOP) p.moved = true
+    }
+    const end = (ev: PointerEvent) => {
+      if (ev.type === 'pointercancel') p.moved = true // the browser took it for a scroll
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', end)
+      window.removeEventListener('pointercancel', end)
+    }
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', end)
+    window.addEventListener('pointercancel', end)
+  }
+  const onClick = (e: React.MouseEvent) => {
+    const p = press.current
+    press.current = null
+    if (!p || p.moved || Math.hypot(e.clientX - p.x, e.clientY - p.y) > TAP_SLOP || e.timeStamp - p.t > 500) return
+    // only yatras with their own page go anywhere; the rest already sit in the list they'd link to
+    const href = yatraHref(yatra.slug)
+    if (href.startsWith('/yatras/')) navigate(href)
+  }
+
   const onDragEnd = (_: unknown, info: PanInfo) => {
     setDragging(false)
     const swipe = info.offset.x + info.velocity.x * 0.2
@@ -143,9 +175,13 @@ export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
         dragConstraints={{ left: -(n + 1) * width, right: 0 }}
         dragElastic={0.12}
         dragMomentum={false}
-        onDragStart={() => setDragging(true)}
+        onDragStart={() => {
+          setDragging(true)
+          if (press.current) press.current.moved = true
+        }}
         onDragEnd={onDragEnd}
-        onTap={() => navigate(`/yatras/${yatra.slug}`)}
+        onPointerDown={onPointerDown}
+        onClick={onClick}
       >
         {[images[n - 1], ...images, images[0]].map((im, slot) => (
           <img
@@ -161,7 +197,7 @@ export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
         ))}
       </motion.div>
 
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-black/0 via-45% to-black/15" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/0 via-55% to-black/15" />
 
       {/* top: glass badges */}
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-4">

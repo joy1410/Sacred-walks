@@ -4,8 +4,8 @@ const ease = [0.16, 1, 0.3, 1] as const
 const inView = { once: true, margin: '-20% 0px' } as const
 
 /**
- * Static, compact quote. Only the ornaments move: the quote marks settle
- * in, then the signature fades in underneath.
+ * Static, compact quote. Only the lotus blooms and the signature fades in
+ * underneath; the words and the quote mark stay still.
  */
 export default function QuoteSection() {
   return (
@@ -13,7 +13,7 @@ export default function QuoteSection() {
       <figure className="relative mx-auto max-w-[720px] text-center">
         <Lotus />
         <div className="relative">
-          <QuoteMark className="mx-auto mb-6 h-8 w-10 md:absolute md:-top-1 md:-left-12 md:mb-0 md:h-10 md:w-12" delay={0.1} />
+          <QuoteMark className="mx-auto mb-6 h-8 w-10 md:absolute md:-top-1 md:-left-12 md:mb-0 md:h-10 md:w-12" />
 
           <blockquote className="font-display text-[clamp(1.8rem,3.4vw,2.85rem)] leading-[1.14] font-medium text-balance text-ink-2">
             The very idea behind a pilgrimage is fundamentally to <span className="text-saffron">subdue</span> the sense
@@ -30,22 +30,14 @@ export default function QuoteSection() {
 }
 
 /** The saffron mark that opens every Sadhguru quote; Kashi Krama's quote shares it. */
-export function QuoteMark({ className = '', delay = 0 }: { className?: string; delay?: number }) {
+export function QuoteMark({ className = '' }: { className?: string }) {
   return (
-    <motion.svg
-      viewBox="0 0 50 40"
-      className={`block text-saffron ${className}`}
-      aria-hidden
-      initial={{ opacity: 0, y: 10 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={inView}
-      transition={{ duration: 1, ease, delay }}
-    >
+    <svg viewBox="0 0 50 40" className={`block text-saffron ${className}`} aria-hidden>
       <path
         fill="currentColor"
         d="M0 40V23.6C0 10.4 6.6 2.4 19.2 0l2 4.6C14.4 7 11 11.6 10.6 18.4H20V40H0Zm28 0V23.6C28 10.4 34.6 2.4 47.2 0l2 4.6C42.4 7 39 11.6 38.6 18.4H48V40H28Z"
       />
-    </motion.svg>
+    </svg>
   )
 }
 

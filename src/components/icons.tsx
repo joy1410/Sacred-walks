@@ -27,15 +27,32 @@ export const IconPlay = (p: P) => (
 export const IconPause = (p: P) => (
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden {...p}><rect x="6.5" y="5" width="3.6" height="14" rx="1.2" /><rect x="13.9" y="5" width="3.6" height="14" rx="1.2" /></svg>
 )
-/** a winding path with a start and end point */
-export const IconRoute = (p: P) => (
-  <svg {...base} {...p}><circle cx="6" cy="19" r="2" /><circle cx="18" cy="5" r="2" /><path d="M8 19h7.5a3.5 3.5 0 0 0 0-7h-7a3.5 3.5 0 0 1 0-7H16" /></svg>
+/** a peak with a path circling its foot: the parikrama */
+export const IconParikrama = (p: P) => (
+  <svg {...base} {...p}><path d="M7.5 16 12 7.5l2.3 4 1.2-1.8L18 16" /><path d="M19.6 14.3c.9.6 1.4 1.3 1.4 2 0 2-4 3.7-9 3.7s-9-1.7-9-3.7c0-1.1 1.2-2.1 3.2-2.8" /><path d="m5.6 12.1 1.6 1.4-1.9.8" /></svg>
 )
 export const IconPin = (p: P) => (
   <svg {...base} {...p}><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z" /><circle cx="12" cy="10" r="2.3" /></svg>
 )
-export const IconSunrise = (p: P) => (
-  <svg {...base} {...p}><path d="M3 18h18M6.5 18a5.5 5.5 0 0 1 11 0M12 4v3M4.9 8.9l1.8 1.8M19.1 8.9l-1.8 1.8M8 21h8" /></svg>
+/** the sun rising over still water */
+export const IconLake = (p: P) => (
+  <svg {...base} {...p}><path d="M3 13h18M7 13a5 5 0 0 1 10 0M12 3.5v2.5M5.6 6.6 7.3 8.3M18.4 6.6l-1.7 1.7M4.5 16.5c1.25 0 1.25-.7 2.5-.7s1.25.7 2.5.7 1.25-.7 2.5-.7 1.25.7 2.5.7 1.25-.7 2.5-.7 1.25.7 2.5.7M8 20c1 0 1-.6 2-.6s1 .6 2 .6 1-.6 2-.6 1 .6 2 .6" /></svg>
+)
+/** a shikhara temple with its flag: Kedarnath, Vishwanath, Thanjavur */
+export const IconTemple = (p: P) => (
+  <svg {...base} {...p}><path d="M4 20.5h16M6.5 20.5V14h11v6.5M8 14c0-4 2.2-7 4-8.5 1.8 1.5 4 4.5 4 8.5M12 5.5v-3l2.5 1-2.5 1M10.5 20.5v-2.5a1.5 1.5 0 0 1 3 0v2.5" /></svg>
+)
+/** a tiered southern gateway tower */
+export const IconGopuram = (p: P) => (
+  <svg {...base} {...p}><path d="M4 20.5h16M5.5 20.5l1-4h11l1 4M7.5 16.5l1-4h7l1 4M9.2 12.5l.8-4h4l.8 4M10 8.5V6.5h4v2M12 6.5V3.5M11 20.5v-2h2v2" /></svg>
+)
+/** an oil lamp with its flame: the aarti */
+export const IconDiya = (p: P) => (
+  <svg {...base} {...p}><path d="M3.5 14h17c-.9 3.4-4.3 5.5-8.5 5.5S4.4 17.4 3.5 14ZM20.5 14l1-1.5M12 11.2c-1.6-.7-2.4-2.2-1.7-3.8.5-1.2 1.6-2 1.7-3.9 1.4 1 2.8 2.8 2.5 4.9-.2 1.4-1.1 2.4-2.5 2.8Z" /></svg>
+)
+/** Shiva's trident: Adiyogi */
+export const IconTrishul = (p: P) => (
+  <svg {...base} {...p}><path d="M12 2.5v19M6 4.5c0 3.4 2.5 5.5 6 5.5s6-2.1 6-5.5M6 4.5 4.8 6M18 4.5 19.2 6M10.5 2.5 12 1M13.5 2.5 12 1M10 13.5h4" /></svg>
 )
 /** seated meditator */
 export const IconSadhana = (p: P) => (
