@@ -44,7 +44,8 @@ export default function WhyPilgrimageTeaser() {
 
         <MotionSiteLink
           href="/why-pilgrimage"
-          className="group/why mt-10 inline-flex items-center justify-center gap-1.5 rounded-full border border-ink/15 bg-white px-7 py-3.5 type-button text-ink transition-colors hover:border-ink/40 hover:bg-mist"
+          // same pill as the hero film's CTA
+          className="group/why mt-10 inline-flex items-center justify-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-medium whitespace-nowrap text-ink shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_-12px_rgba(0,0,0,0.14)] transition-colors duration-300 outline-none hover:text-saffron focus-visible:ring-2 focus-visible:ring-saffron focus-visible:ring-offset-2 active:text-saffron md:gap-2 md:px-5 md:py-2.5 md:text-[15px]"
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           whileTap={{ scale: 0.98 }}
@@ -52,7 +53,7 @@ export default function WhyPilgrimageTeaser() {
           transition={{ duration: 0.9, ease, delay: 0.9 }}
         >
           Read the full article by Sadhguru
-          <IconArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/why:translate-x-0.5" />
+          <IconArrowRight className="h-3.5 w-3.5 md:h-4 md:w-4 transition-transform duration-300 group-hover/why:translate-x-0.5" />
         </MotionSiteLink>
       </div>
     </section>

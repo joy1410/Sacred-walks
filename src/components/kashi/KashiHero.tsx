@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+﻿import { useRef } from 'react'
 import { motion, useScroll } from 'motion/react'
 import { useLenis } from 'lenis/react'
 import { kashi } from '../../data/kashi'
@@ -17,7 +17,7 @@ const yatra = yatras.find((y) => y.slug === 'kashi-krama')!
 /**
  * Opens where the homepage hero ends: a framed film card (same inset and
  * radius) holding the ghats at first light. The photo arrives out of focus
- * at 1.15× and settles, as the homepage film does; on scroll it drifts
+ * at 1.15Ã— and settles, as the homepage film does; on scroll it drifts
  * down behind the frame while the words lift away.
  */
 export default function KashiHero() {
@@ -37,9 +37,9 @@ export default function KashiHero() {
     <section
       ref={ref}
       aria-labelledby="kashi-title"
-      className="px-4 pt-16 pb-4 md:px-[max(16px,2.5vw)] md:pb-[max(16px,2.5vw)]"
+      className="px-4 pt-16 pb-4 md:px-[max(16px,min(2.5vw,4.5svh))] md:pb-[max(16px,min(2.5vw,4.5svh))]"
     >
-      <div className="relative isolate flex h-[calc(100svh-80px)] min-h-[560px] flex-col justify-end overflow-hidden rounded-[24px] bg-night md:h-[calc(100svh-64px-max(16px,2.5vw))] md:min-h-[620px] md:rounded-[28px]">
+      <div className="relative isolate flex h-[calc(100svh-80px)] min-h-[560px] flex-col justify-end overflow-hidden rounded-[24px] bg-night md:h-[calc(100svh-64px-max(16px,min(2.5vw,4.5svh)))] md:min-h-[620px] md:rounded-[28px]">
         <motion.img
           src={kashi.hero.src}
           alt={kashi.hero.caption}

@@ -82,7 +82,7 @@ export default function YatraCard({ yatra }: { yatra: Yatra }) {
             sits centred in its gap */}
         <motion.div
           variants={item}
-          className="mt-4 flex items-center justify-between border-y border-line-soft px-1 py-2.5 type-label-sm md:mt-5 md:px-3 md:py-3 whitespace-nowrap text-ink tabular-nums"
+          className="mt-4 flex items-center justify-between border-y border-line-soft px-1 py-2.5 type-label-sm font-normal md:mt-5 md:px-3 md:py-3 whitespace-nowrap text-ink tabular-nums"
         >
           <span>{yatra.days} days</span>
           <span className="h-4 w-px bg-line-soft" aria-hidden />

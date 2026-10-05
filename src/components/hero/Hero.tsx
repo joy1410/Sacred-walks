@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { motion, useScroll, useMotionValueEvent, cubicBezier } from 'motion/react'
 import { useLenis } from 'lenis/react'
 import DivineWord from './DivineWord'
@@ -19,6 +19,9 @@ const T_PLACES = after(T_LINE1, LINE1)
 const T_OF = after(T_PLACES, 'places')
 const T_DIVINE = after(T_OF, 'of')
 const T_CONNECTION = after(T_DIVINE, 'divine')
+
+// ms of watching the settled film before the CTA appears
+const CTA_DELAY = 2200
 
 /**
  * Scroll-driven hero. The circle inside the headline is the film itself,
@@ -52,12 +55,26 @@ export default function Hero() {
   // the illustration clears out almost immediately, so the film grows over white, not the art
   const artOpacity = useScrollRange(scrollYProgress, [0, 0.1], [1, 0], { clamp: true })
   const artScale = useScrollRange(scrollYProgress, [0, 0.1], [1, 1.04], { clamp: true })
-  // the way on arrives with the finished film: once the feeling has landed, not under the first line
-  const ctaOpacity = useScrollRange(scrollYProgress, [0.72, 0.9], [0, 1], { clamp: true })
-  const ctaY = useScrollRange(scrollYProgress, [0.72, 0.9], [12, 0], { clamp: true })
-  // reachable (click, tab) only once it can be seen
+  // the way on waits for the film: once the card has settled, give the viewer a few
+  // moments of just watching before it appears. Scrolling back hides it and resets the wait.
   const [ctaOn, setCtaOn] = useState(false)
-  useMotionValueEvent(scrollYProgress, 'change', (v) => setCtaOn(v > 0.75))
+  const ctaTimer = useRef<number | undefined>(undefined)
+  const syncCta = (v: number) => {
+    if (v >= 0.9) {
+      if (ctaTimer.current === undefined) ctaTimer.current = window.setTimeout(() => setCtaOn(true), CTA_DELAY)
+    } else {
+      window.clearTimeout(ctaTimer.current)
+      ctaTimer.current = undefined
+      setCtaOn(false)
+    }
+  }
+  useMotionValueEvent(scrollYProgress, 'change', syncCta)
+  useEffect(() => {
+    // a reload can land past the film without any scroll event firing
+    syncCta(scrollYProgress.get())
+    return () => window.clearTimeout(ctaTimer.current)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   const lenis = useLenis()
 
   const toYatras = (e: React.MouseEvent) => {
@@ -116,7 +133,7 @@ export default function Hero() {
               />
             </picture>
 
-            <div className="relative mt-6 px-5 md:absolute md:left-[6%] md:top-[25%] md:mt-0 md:px-0">
+            <div className="relative mt-6 px-5 md:absolute md:left-[4%] md:top-[25%] md:mt-0 md:px-0">
             <h1 className="type-hero text-ink">
               {/* scroll choreography lives on the wrappers; the load-in blur lives on the letters */}
               <motion.span className="block whitespace-nowrap" style={{ y: line1Y, opacity: line1Opacity }}>
@@ -192,12 +209,14 @@ export default function Hero() {
             onClick={toYatras}
             tabIndex={ctaOn ? 0 : -1}
             aria-hidden={!ctaOn}
-            style={{ opacity: ctaOpacity, y: ctaY }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={ctaOn ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+            transition={{ duration: ctaOn ? 0.9 : 0.3, ease }}
             whileTap={{ scale: 0.98 }}
-            className={`group/cta absolute bottom-5 left-1/2 inline-flex -translate-x-1/2 items-center gap-2 rounded-full bg-white px-8 py-4 type-button whitespace-nowrap text-ink transition-colors duration-300 hover:text-saffron active:text-saffron md:gap-2.5 md:px-9 md:py-[18px] md:text-lg shadow-[0_8px_24px_-8px_rgba(0,0,0,0.35)] outline-none focus-visible:ring-2 focus-visible:ring-saffron focus-visible:ring-offset-2 md:bottom-7 lg:bottom-8 ${ctaOn ? '' : 'pointer-events-none'}`}
+            className={`group/cta absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-medium whitespace-nowrap text-ink transition-colors duration-300 hover:text-saffron active:text-saffron md:gap-2 md:px-5 md:py-2.5 md:text-[15px] shadow-[0_8px_24px_-8px_rgba(0,0,0,0.35)] outline-none focus-visible:ring-2 focus-visible:ring-saffron focus-visible:ring-offset-2 md:bottom-6 lg:bottom-7 ${ctaOn ? '' : 'pointer-events-none'}`}
           >
             Explore the yatras
-            <IconArrowRight className="h-4 w-4 rotate-90 md:h-5 md:w-5 transition-transform duration-300 group-hover/cta:translate-y-0.5" />
+            <IconArrowRight className="h-3.5 w-3.5 rotate-90 md:h-4 md:w-4 transition-transform duration-300 group-hover/cta:translate-y-0.5" />
           </motion.a>
         </motion.div>
       </motion.div>

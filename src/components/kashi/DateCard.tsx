@@ -16,7 +16,6 @@ function guessPool(pools: Pool[]): Pool['id'] {
   return pools.find((p) => p.id === (india ? 'india' : 'international'))?.id ?? pools[0].id
 }
 
-const few = (p: Pool) => p.seatsLeft <= 20
 
 /*
  * The answer is about the visitor, not the card: pick it in the dates
@@ -68,7 +67,6 @@ export default function DateCard({ d, dark = false, delay = 0 }: { d: Departure;
         dot: 'border-white/40',
         dotOn: 'border-white bg-white text-ink',
         bar: 'bg-white/80',
-        warn: 'text-[#ffb59c]',
         link: 'text-white hover:text-white/80',
         rule: 'border-white/15',
         icon: 'bg-white/15 text-white',
@@ -84,7 +82,6 @@ export default function DateCard({ d, dark = false, delay = 0 }: { d: Departure;
         dot: 'border-line',
         dotOn: 'border-saffron bg-saffron text-white',
         bar: 'bg-ink-2',
-        warn: 'text-saffron-ink',
         link: 'text-saffron-ink hover:text-saffron',
         rule: 'border-line-soft',
         icon: 'bg-saffron-soft text-saffron-ink',
@@ -139,9 +136,7 @@ export default function DateCard({ d, dark = false, delay = 0 }: { d: Departure;
                     <span>
                       <b className="font-semibold">{p.seatsLeft} seats left</b>
                       <span className={t.mute}> of {p.seats}</span>
-                    </span>
-                    {few(p) && <span className={`font-medium ${t.warn}`}>Filling fast</span>}
-                  </span>
+                    </span>                  </span>
                   <span className={`mt-2 block h-[4px] overflow-hidden rounded-full ${t.track}`} aria-hidden>
                     <motion.span
                       className={`block h-full origin-left rounded-full ${t.bar}`}

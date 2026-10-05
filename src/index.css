@@ -75,7 +75,8 @@
 /* display — Libre Caslon Condensed */
 @utility type-display-xl {
   font-family: var(--font-display);
-  font-size: clamp(4rem, 13vw, 10.5rem);
+  /* height-bound too, so a short laptop window doesn't fill with the title */
+  font-size: clamp(4rem, min(13vw, 20svh), 10.5rem);
   line-height: 0.92;
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -269,8 +270,9 @@ html.lenis body { height: auto; }
 }
 @media (min-width: 768px) {
   .hero-stage {
-    --fx: max(16px, 2.5vw);
-    --fb: max(16px, 2.5vw);
+    /* short laptop windows (Windows scaling) get a tighter frame; tall screens are unchanged */
+    --fx: max(16px, min(2.5vw, 4.5svh));
+    --fb: max(16px, min(2.5vw, 4.5svh));
     --fr: 28px;
     --H: calc(100svh - var(--ft) - var(--fb));
     --T: var(--ft);

@@ -33,7 +33,7 @@ const socials: { label: string; href: string | null; Icon: typeof IconX }[] = [
 function Column({ title, children, className }: { title: string; children: ReactNode; className?: string }) {
   return (
     <div className={className}>
-      <h3 className="type-display-s text-ink">{title}</h3>
+      <h3 className="type-label font-medium text-ink">{title}</h3>
       <div className="mt-5">{children}</div>
     </div>
   )
