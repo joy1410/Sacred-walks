@@ -20,8 +20,11 @@ const T_OF = after(T_PLACES, 'places')
 const T_DIVINE = after(T_OF, 'of')
 const T_CONNECTION = after(T_DIVINE, 'divine')
 
-// ms of watching the settled film before the CTA appears
+// ms of watching the settled film before the CTA appears; sooner on phones,
+// where it sits under the card rather than over the film
 const CTA_DELAY = 2200
+const CTA_DELAY_MOBILE = 1000
+const ctaDelay = () => (window.matchMedia('(min-width: 768px)').matches ? CTA_DELAY : CTA_DELAY_MOBILE)
 
 /**
  * Scroll-driven hero. The circle inside the headline is the film itself,
@@ -61,7 +64,7 @@ export default function Hero() {
   const ctaTimer = useRef<number | undefined>(undefined)
   const syncCta = (v: number) => {
     if (v >= 0.9) {
-      if (ctaTimer.current === undefined) ctaTimer.current = window.setTimeout(() => setCtaOn(true), CTA_DELAY)
+      if (ctaTimer.current === undefined) ctaTimer.current = window.setTimeout(() => setCtaOn(true), ctaDelay())
     } else {
       window.clearTimeout(ctaTimer.current)
       ctaTimer.current = undefined
@@ -203,8 +206,11 @@ export default function Hero() {
             animate={blur(0)}
             transition={{ duration: 1.6, ease, delay: T_OF }}
           />
+        </motion.div>
 
-          <motion.a
+        {/* outside the film so that on phones it can sit under the card; from md it sits
+            inside the card's bottom edge, over the film */}
+        <motion.a
             href="#yatras"
             onClick={toYatras}
             tabIndex={ctaOn ? 0 : -1}
@@ -213,12 +219,11 @@ export default function Hero() {
             animate={ctaOn ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
             transition={{ duration: ctaOn ? 0.9 : 0.3, ease }}
             whileTap={{ scale: 0.98 }}
-            className={`group/cta absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-medium whitespace-nowrap text-ink transition-colors duration-300 hover:text-saffron active:text-saffron md:gap-2 md:px-5 md:py-2.5 md:text-[15px] shadow-[0_8px_24px_-8px_rgba(0,0,0,0.35)] outline-none focus-visible:ring-2 focus-visible:ring-saffron focus-visible:ring-offset-2 md:bottom-6 lg:bottom-7 ${ctaOn ? '' : 'pointer-events-none'}`}
+            className={`group/cta absolute top-[calc(var(--T)+var(--H)+16px)] left-1/2 z-30 inline-flex -translate-x-1/2 items-center gap-2 rounded-full bg-white px-6 py-3 text-base font-medium whitespace-nowrap text-ink transition-colors duration-300 hover:text-saffron active:text-saffron md:top-auto md:bottom-[calc(var(--fb)+24px)] md:gap-2 md:px-5 md:py-2.5 md:text-[15px] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_-12px_rgba(0,0,0,0.14)] md:shadow-[0_8px_24px_-8px_rgba(0,0,0,0.35)] outline-none focus-visible:ring-2 focus-visible:ring-saffron focus-visible:ring-offset-2 lg:bottom-[calc(var(--fb)+28px)] ${ctaOn ? '' : 'pointer-events-none'}`}
           >
             Explore the yatras
-            <IconArrowRight className="h-3.5 w-3.5 rotate-90 md:h-4 md:w-4 transition-transform duration-300 group-hover/cta:translate-y-0.5" />
+            <IconArrowRight className="h-4 w-4 rotate-90 transition-transform duration-300 group-hover/cta:translate-y-0.5" />
           </motion.a>
-        </motion.div>
       </motion.div>
     </section>
   )

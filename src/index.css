@@ -263,8 +263,10 @@ html.lenis body { height: auto; }
   --fb: 16px;
   --ft: 64px;
   --fr: 24px;
-  --H: min(calc(100svh - var(--ft) - var(--fb)), calc((100vw - 2 * var(--fx)) * 1.5));
-  --T: max(var(--ft), calc((100svh - var(--H)) / 2));
+  /* room under the card for the CTA, which sits below the film on phones */
+  --cta: 68px;
+  --H: min(calc(100svh - var(--ft) - var(--fb) - var(--cta)), calc((100vw - 2 * var(--fx)) * 1.5));
+  --T: max(var(--ft), calc((100svh - var(--H) - var(--cta)) / 2));
   --gh: var(--mw);
   --ride: 0;
 }
