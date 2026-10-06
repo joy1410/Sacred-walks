@@ -30,6 +30,8 @@ function Slide({ src, alt, hidden, width }: { src: string; alt: string; hidden: 
         alt={alt}
         aria-hidden={hidden}
         draggable={false}
+        // waits its turn behind the hero film (PreloadQueue fetches it in page order)
+        loading="lazy"
         decoding="async"
         onLoad={onLoad}
         onError={onError}

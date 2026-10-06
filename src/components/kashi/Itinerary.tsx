@@ -134,6 +134,7 @@ export default function Itinerary() {
                     key={day.image.src}
                     src={day.image.src}
                     alt={day.image.caption}
+                    loading="lazy"
                     decoding="async"
                     className="absolute inset-0 h-full w-full object-cover"
                     initial={{ opacity: 0, scale: 1.08 }}
