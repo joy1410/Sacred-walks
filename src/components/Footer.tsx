@@ -23,11 +23,10 @@ const offices = [
   { region: 'India', phone: '+91 8144123123', tel: '+918144123123', email: 'india.sacredwalks@sadhguru.org' },
   { region: 'USA', phone: '+1-931-218-6466', tel: '+19312186466', email: 'usa.sacredwalks@sadhguru.org' },
 ]
-// profile URLs still to come; until then the icons are not links
 const socials: { label: string; href: string | null; Icon: typeof IconX }[] = [
-  { label: 'Isha Sacred Walks on X', href: null, Icon: IconX },
-  { label: 'Isha Sacred Walks on Facebook', href: null, Icon: IconFacebook },
-  { label: 'Isha Sacred Walks on Instagram', href: null, Icon: IconInstagram },
+  { label: 'Isha Sacred Walks on X', href: 'https://x.com/IshaSacredWalks', Icon: IconX },
+  { label: 'Isha Sacred Walks on Facebook', href: 'https://www.facebook.com/IshaSacredWalks/', Icon: IconFacebook },
+  { label: 'Isha Sacred Walks on Instagram', href: 'https://www.instagram.com/ishasacredwalks/', Icon: IconInstagram },
 ]
 
 function Column({ title, children, className }: { title: string; children: ReactNode; className?: string }) {
