@@ -252,10 +252,8 @@ function DeckCard({
         <div className="relative aspect-[4/3] overflow-hidden rounded-[24px] bg-mist-2 lg:aspect-auto lg:h-full">
           {story.image && (
             <img
-              {...photo(story.image.src, SIZES.stories)}
+              {...photo(story.image.src, { sizes: SIZES.stories })}
               alt={story.image.caption}
-              loading="lazy"
-              decoding="async"
               draggable={false}
               className="absolute inset-0 h-full w-full object-cover select-none"
             />

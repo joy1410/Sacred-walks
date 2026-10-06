@@ -3,6 +3,7 @@ import { motion, useScroll } from 'motion/react'
 import { departures } from '../../data/kashi'
 import { BlurText } from '../hero/BlurIn'
 import { useScrollRange } from '../../lib/useScrollRange'
+import { photo } from '../../lib/photo'
 import DateCard from './DateCard'
 import { ease, inView } from './shared'
 
@@ -22,11 +23,9 @@ export default function Registration() {
     <section id="register" ref={ref} aria-labelledby="register-title" className="p-4 md:p-[max(16px,2.5vw)]">
       <div className="relative overflow-hidden rounded-[24px] bg-night px-5 py-20 md:rounded-[28px] md:px-10 md:py-28">
         <motion.img
-          src="/images/kashi/ghat-fort.webp"
+          {...photo('/images/kashi/ghat-fort.webp')}
           alt=""
           aria-hidden
-          loading="lazy"
-          decoding="async"
           className="absolute inset-0 h-full w-full object-cover"
           style={{ scale }}
         />

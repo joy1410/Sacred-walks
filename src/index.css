@@ -410,21 +410,25 @@ html.lenis body { height: auto; }
 }
 
 /*
- * Stand-in for a photo still on its way: a soft band of light sweeps across
- * the dark frame. Sits under the photo, which fades up over it on load.
+ * A photo still on its way (photo() marks it data-photo; main.tsx adds
+ * data-loaded once it lands): a soft band of light sweeps across a neutral
+ * wash, painted as the image's own background, so the photo covers it the
+ * moment it arrives. Neutral, so it reads on dark frames and light pages alike.
  */
-.shimmer {
-  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.07) 50%, transparent 70%) no-repeat;
-  background-size: 250% 100%;
+img[data-photo]:not([data-loaded]) {
+  background:
+    linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.14) 50%, transparent 70%) no-repeat,
+    rgba(128, 128, 128, 0.16);
+  background-size: 250% 100%, auto;
   animation: shimmer-sweep 1.8s ease-in-out infinite;
 }
 @keyframes shimmer-sweep {
-  from { background-position: 120% 0; }
-  to   { background-position: -20% 0; }
+  from { background-position: 120% 0, 0 0; }
+  to   { background-position: -20% 0, 0 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .shimmer { animation: none; }
+  img[data-photo] { animation: none; }
   .text-saffron-grad { animation: none; }
   .ambient-cloud { animation: none; }
   .ambient-mote { display: none; }

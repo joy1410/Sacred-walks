@@ -5,6 +5,7 @@ import { ENQUIRE_URL } from '../data/kashi'
 import { BlurText, after } from './hero/BlurIn'
 import { IconArrowRight } from './icons'
 import { useScrollRange } from '../lib/useScrollRange'
+import { photo } from '../lib/photo'
 
 const ease = [0.16, 1, 0.3, 1] as const
 const inView = { once: true, margin: '-15% 0px' } as const
@@ -24,11 +25,9 @@ export default function FinalCta() {
     <section ref={ref} aria-labelledby="cta-title" className="p-4 md:p-[max(16px,2.5vw)]">
       <div className="relative flex min-h-[78svh] items-center justify-center overflow-hidden rounded-[24px] bg-night px-6 py-20 text-center md:rounded-[28px]">
         <motion.img
-          src={u('1764753757089-ba31eb338384', 2400)}
+          {...photo(u('1764753757089-ba31eb338384', 2400))}
           alt=""
           aria-hidden
-          loading="lazy"
-          decoding="async"
           className="absolute inset-0 h-full w-full object-cover"
           style={{ scale }}
         />

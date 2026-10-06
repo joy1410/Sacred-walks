@@ -3,36 +3,12 @@ import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, animate, motion, useInView, useMotionValue, useTransform, type PanInfo } from 'motion/react'
 import { yatraPage, type Yatra } from '../../data/yatras'
 import { IconChevronLeft, IconChevronRight, IconPause, IconPlay } from '../icons'
-import { useImageLoaded } from '../../lib/useImageLoaded'
 import { photo, SIZES } from '../../lib/photo'
 
 const DURATION = 6 // seconds per slide
 const ease = [0.16, 1, 0.3, 1] as const
 // one spring for autoplay, dots, arrows and swipe release: settles fast, no bounce
 const slide = { type: 'spring', stiffness: 260, damping: 34, mass: 0.9 } as const
-
-/** one photo on the track: shimmers until it lands, then fades up */
-function Slide({ src, alt, hidden, width }: { src: string; alt: string; hidden: boolean; width: number }) {
-  const { loaded, watch, onLoad, onError } = useImageLoaded()
-  return (
-    <div className="relative h-full shrink-0" style={{ width: width || '100%' }}>
-      {!loaded && <div aria-hidden className="shimmer absolute inset-0" />}
-      <img
-        ref={watch}
-        {...photo(src, SIZES.carousel)}
-        alt={alt}
-        aria-hidden={hidden}
-        draggable={false}
-        // waits its turn behind the hero film (PreloadQueue fetches it in page order)
-        loading="lazy"
-        decoding="async"
-        onLoad={onLoad}
-        onError={onError}
-        className={`h-full w-full object-cover select-none transition-opacity duration-700 ${loaded ? 'opacity-100' : 'opacity-0'}`}
-      />
-    </div>
-  )
-}
 
 /**
  * Airbnb gestures (hover arrows, glass badges) + Apple's carousel capsule
@@ -209,17 +185,20 @@ export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
         onClick={onClick}
       >
         {[images[n - 1], ...images, images[0]].map((im, slot) => (
-          <Slide
+          <img
             key={slot}
-            src={im.src}
+            {...photo(im.src, { sizes: SIZES.carousel })}
             alt={slot - 1 === index ? im.caption : ''}
-            hidden={slot - 1 !== index}
-            width={width}
+            aria-hidden={slot - 1 !== index}
+            draggable={false}
+            className="h-full shrink-0 object-cover select-none"
+            style={{ width: width || '100%' }}
           />
         ))}
       </motion.div>
 
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/0 via-55% to-black/15" />
+      {/* shades the photo behind the quote, so desktop only, like the quote */}
+      <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-t from-black/85 via-black/0 via-55% to-black/15 md:block" />
 
       {/* top: glass badges */}
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-4">
@@ -258,7 +237,7 @@ export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
         </figure>
 
         <div className="pointer-events-auto flex shrink-0 items-center gap-2">
-          <div className="flex h-9 items-center gap-2 rounded-full bg-white/15 px-3.5 md:backdrop-blur-xl" role="tablist" aria-label="Choose photograph">
+          <div className="flex h-9 items-center gap-2 rounded-full bg-black/30 px-3.5 md:bg-white/15 md:backdrop-blur-xl" role="tablist" aria-label="Choose photograph">
             {images.map((im, i) => {
               const active = i === index
               return (

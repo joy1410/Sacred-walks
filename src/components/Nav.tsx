@@ -6,6 +6,7 @@ import { yatraPage, yatras, type Yatra } from '../data/yatras'
 import { ENQUIRE_URL } from '../data/kashi'
 import SiteLink, { MotionSiteLink } from './SiteLink'
 import { IconChevronDown } from './icons'
+import { photo } from '../lib/photo'
 
 const pill =
   'rounded-full px-3.5 py-1.5 type-button-sm text-ink-2 transition-colors hover:bg-black/[0.06] hover:text-ink'
@@ -111,7 +112,7 @@ function YatrasMenu({ current }: { current: boolean }) {
 function MenuRow({ y }: { y: Yatra }) {
   return (
     <>
-      <img src={y.images[0]?.src.replace(/w=\d+/, 'w=160')} alt="" className="h-10 w-10 shrink-0 rounded-lg object-cover" />
+      <img {...photo(y.images[0].src.replace(/w=\d+/, 'w=160'))} alt="" className="h-10 w-10 shrink-0 rounded-lg object-cover" />
       <span className="min-w-0">
         <span className="block truncate type-body-sm font-medium text-ink">{y.title}</span>
         <span className="block truncate type-caption text-ink-soft">

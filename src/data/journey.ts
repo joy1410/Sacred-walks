@@ -22,7 +22,7 @@ export const beats: Beat[] = [
     short: 'Meditation',
     title: 'Meditation & satsangs',
     body: 'Guided practices and satsangs accompany the journey, bringing a dimension of inner exploration to every destination.',
-    image: { src: '/images/journey/satsang.webp', caption: 'Satsang in a temple mandapam' },
+    image: { src: '/images/kashi/satsang.webp', caption: 'Lost in a satsang' },
   },
   {
     short: 'Beyond usual',

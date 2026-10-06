@@ -6,16 +6,17 @@ const FILM_FALLBACK = 6000 // ms; a film that never reports ready shouldn't hold
 const BEHIND = 3 // a photo behind the scroll direction counts as this many times further away
 
 /**
- * Downloads the page's photos before the visitor reaches them. The hero film
- * goes first: the queue waits until the page has loaded and the film has
+ * Downloads the page's photos before the visitor reaches them. The first
+ * screen goes first: the queue waits until the page has loaded, its hero
+ * photos (fetchpriority="high") have arrived and the homepage film has
  * buffered enough to play through. Then, each time a lane frees up, it takes
  * the not-yet-loaded photo nearest the screen, favouring the direction the
  * visitor is scrolling, so someone who jumps down the page is served where
  * they are, not where the page begins.
  *
- * Every <img> on the page is a candidate, including ones kept unseen in a
- * hidden block for content not on show yet (the yatra tabs, the itinerary
- * days). Each is fetched with its own srcset and sizes, so the browser picks
+ * Every <img> on the page is a candidate, including <Upcoming> ones kept
+ * unseen for content not on show yet (the yatra tabs, the itinerary days).
+ * Each is fetched with its own srcset and sizes, so the browser picks
  * the same copy the page will ask for, then decoded, so it paints on its first
  * frame. Its requests go at low priority: a photo the visitor actually reaches
  * still jumps the queue. Skipped when the visitor has asked to save data.
@@ -122,9 +123,23 @@ export default function PreloadQueue() {
       cleanups.push(() => window.clearTimeout(id))
     }
 
+    // before that, the page's hero photos (fetchpriority="high") get the connection to themselves
+    const afterHeroes = () => {
+      const waiting = [...document.querySelectorAll<HTMLImageElement>('img[fetchpriority="high"]')].filter(
+        (el) => !el.complete,
+      )
+      let left = waiting.length
+      if (!left) return afterFilm()
+      const one = () => --left === 0 && afterFilm()
+      waiting.forEach((el) => {
+        after(el, 'load', one)
+        after(el, 'error', one)
+      })
+    }
+
     // on first arrival, let the page's own first screen load before anything else
-    if (document.readyState === 'complete') afterFilm()
-    else after(window, 'load', afterFilm)
+    if (document.readyState === 'complete') afterHeroes()
+    else after(window, 'load', afterHeroes)
 
     return () => {
       stopped = true

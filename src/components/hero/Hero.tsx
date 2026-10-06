@@ -6,6 +6,7 @@ import { BlurText, after } from './BlurIn'
 import { useScrollRange } from '../../lib/useScrollRange'
 import { blur, lite } from '../../lib/lite'
 import { IconArrowRight } from '../icons'
+import { homeHero } from '../../data/firstScreen'
 
 const ease = [0.16, 1, 0.3, 1] as const
 const inOut = cubicBezier(0.65, 0, 0.35, 1)
@@ -121,9 +122,9 @@ export default function Hero() {
           <div className="@container relative flex w-full flex-col md:block md:aspect-[2/1] md:w-[min(100vw,170svh,1440px)]">
             {/* portrait art on phones, the wide panorama from md up */}
             <picture className="contents">
-              <source media="(min-width: 768px)" srcSet="/images/hero.webp" />
+              <source media="(min-width: 768px)" srcSet={homeHero.artWide} />
               <motion.img
-                src="/images/hero_mobile.webp"
+                src={homeHero.art}
                 alt=""
                 aria-hidden="true"
                 // intrinsic size reserves the art's space before it loads; the headline
@@ -198,7 +199,7 @@ export default function Hero() {
             style={{ scale: videoScale }}
             // 720p cut on phones: a quarter of the bytes and far cheaper to decode
             src={lite ? '/media/hero-mobile.mp4' : '/media/hero.mp4'}
-            poster="/media/hero-poster.webp"
+            poster={homeHero.poster}
             autoPlay
             muted
             loop

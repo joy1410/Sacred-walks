@@ -5,6 +5,7 @@ import { IconArrowRight } from '../icons'
 import DifficultyMeter from './DifficultyMeter'
 import { StatusPill } from './YatraCard'
 import { ease, inView, SectionHeading } from '../kashi/shared'
+import { photo, SIZES } from '../../lib/photo'
 
 /**
  * Closes a yatra page before the footer: the other walks, so a reader for
@@ -62,11 +63,8 @@ function Card({ yatra }: { yatra: Yatra }) {
     >
       <div className="aspect-[4/3] overflow-hidden rounded-[22px] bg-mist">
         <img
-          // a third of the page wide: no need for the carousel's full-width photo
-          src={cover.src.replace(/w=\d+/, 'w=900')}
+          {...photo(cover.src, { sizes: SIZES.yatraCover })}
           alt={cover.caption}
-          loading="lazy"
-          decoding="async"
           className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover/card:scale-[1.04]"
         />
       </div>

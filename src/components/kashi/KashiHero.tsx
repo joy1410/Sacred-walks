@@ -8,6 +8,7 @@ import DifficultyMeter from '../yatras/DifficultyMeter'
 import { IconPin } from '../icons'
 import { useScrollRange } from '../../lib/useScrollRange'
 import { blur } from '../../lib/lite'
+import { photo } from '../../lib/photo'
 import { ease, STICKY_OFFSET } from './shared'
 
 const T_TITLE = 0.25
@@ -17,7 +18,7 @@ const yatra = yatras.find((y) => y.slug === 'kashi-krama')!
 /**
  * Opens where the homepage hero ends: a framed film card (same inset and
  * radius) holding the ghats at first light. The photo arrives out of focus
- * at 1.15Ã— and settles, as the homepage film does; on scroll it drifts
+ * at 1.15× and settles, as the homepage film does; on scroll it drifts
  * down behind the frame while the words lift away.
  */
 export default function KashiHero() {
@@ -41,12 +42,10 @@ export default function KashiHero() {
     >
       <div className="relative isolate flex h-[calc(100svh-80px)] min-h-[560px] flex-col justify-end overflow-hidden rounded-[24px] bg-night md:h-[calc(100svh-64px-max(16px,min(2.5vw,4.5svh)))] md:min-h-[620px] md:rounded-[28px]">
         <motion.img
-          src={kashi.hero.src}
+          {...photo(kashi.hero.src, { priority: true })}
           alt={kashi.hero.caption}
           width={1920}
           height={1080}
-          fetchPriority="high"
-          decoding="async"
           // 22% taller than the card, rising above it: the scroll drift (18% of its own height) never uncovers the card's night background as a dark line along the top
           className="absolute inset-x-0 -top-[22%] -z-10 h-[122%] w-full object-cover object-[30%_50%]"
           initial={{ scale: 1.15, ...blur(14) }}

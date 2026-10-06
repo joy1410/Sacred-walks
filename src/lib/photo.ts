@@ -1,9 +1,17 @@
 import widths from '../data/photo-widths.json'
 
 /**
- * srcset + sizes, so each screen downloads the smallest copy that is still
- * sharp on it. The site's own photos have -800 and -1200 copies beside them
- * (npm run photos makes them); Unsplash resizes on request.
+ * Every photograph on the site goes through photo(), so they all behave alike:
+ *  - srcset + sizes: each screen downloads the smallest copy that's still sharp
+ *    (our own photos have -800 and -1200 copies, made by npm run photos;
+ *    Unsplash resizes on request)
+ *  - lazy by default, so the browser leaves them to PreloadQueue, which
+ *    fetches them nearest-first behind the first screen
+ *  - priority: the first screen's photo, fetched at once and ahead of everything
+ *    (PreloadQueue waits for it; index.html starts it before the app has run)
+ *  - data-photo: shimmers until it has loaded (index.css; main.tsx marks it loaded)
+ *
+ *   <img {...photo(src, { sizes: SIZES.stories })} alt="…" className="…" />
  */
 const STEPS = [800, 1200] // keep in step with scripts/photo-sizes.mjs
 const known: Record<string, number> = widths
@@ -22,13 +30,25 @@ function srcSet(src: string) {
   ].join(', ')
 }
 
-/** spread onto an <img>: <img {...photo(src, SIZES.stories)} /> */
-export const photo = (src: string, sizes: string) => ({ src, srcSet: srcSet(src), sizes })
+export function photo(src: string, { sizes, priority }: { sizes?: string; priority?: boolean } = {}) {
+  return {
+    src,
+    // without sizes the browser assumes the photo fills the screen; better to send the full file
+    srcSet: sizes ? srcSet(src) : undefined,
+    sizes,
+    loading: priority ? ('eager' as const) : ('lazy' as const),
+    fetchPriority: priority ? ('high' as const) : undefined,
+    decoding: 'async' as const,
+    'data-photo': '',
+  }
+}
 
 /*
  * How wide each frame draws its photo. A landscape photo cropped into a tall
  * frame (object-cover) is drawn wider than the frame, at its height × 1.5 for
  * the 3:2 photos used here, so these say max(frame width, frame height × 1.5).
+ * Full-bleed photos (heroes, section backgrounds) pass no sizes: on a phone
+ * their tall crop needs the full file anyway.
  */
 export const SIZES = {
   // phones: 80vw × 4/5 frame → drawn 150vw. Desktop: min(64vw, 1040) × up to 640 tall
@@ -43,4 +63,6 @@ export const SIZES = {
   itineraryDay: 'calc((100vw - 64px) * 1.125)',
   // lg: the sticky frame, half the grid, up to 640 tall
   itineraryFrame: 'max(min(45vw, 560px), min(100vh - 160px, 640px) * 1.5)',
+  // 4:3 covers: 82vw cards on phones, three or four across from md
+  yatraCover: '(min-width: 768px) 430px, calc(82vw * 1.125)',
 }

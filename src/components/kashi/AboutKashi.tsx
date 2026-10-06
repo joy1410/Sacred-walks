@@ -121,10 +121,8 @@ function Tile({ reason, index, className }: { reason: Reason; index: number; cla
       {/* settles as it arrives, then answers hover with a slow lean in */}
       <motion.div className="absolute inset-0" variants={photo} custom={delay}>
         <img
-          {...photoSrc(reason.image.src, SIZES.kashiTile)}
+          {...photoSrc(reason.image.src, { sizes: SIZES.kashiTile })}
           alt={reason.image.caption}
-          loading="lazy"
-          decoding="async"
           className="h-full w-full object-cover transition-transform duration-[1.4s] ease-[var(--ease-out-expo)] group-hover/tile:scale-[1.05]"
         />
       </motion.div>

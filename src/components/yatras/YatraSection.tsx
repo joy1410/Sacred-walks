@@ -3,7 +3,8 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useLenis } from 'lenis/react'
 import { yatras, type YatraStatus } from '../../data/yatras'
 import { useIsMobile } from '../../lib/useIsMobile'
-import { photo, SIZES } from '../../lib/photo'
+import { SIZES } from '../../lib/photo'
+import Upcoming from '../Upcoming'
 import YatraCard from './YatraCard'
 
 const ease = [0.16, 1, 0.3, 1] as const
@@ -80,15 +81,8 @@ export default function YatraSection() {
     // heading + full-width segmented control + card fill exactly one screen on desktop
     // (top padding clears the 48px nav)
     <section id="yatras" data-opaque className="bg-mist px-4 pt-14 pb-6 md:px-5 md:pt-[60px] lg:h-svh lg:min-h-[680px]">
-      {/* desktop shows one yatra at a time: every yatra's photos wait here, unseen, for
-          PreloadQueue, so switching tabs never waits on a download (phones stack every card) */}
-      {!mobile && (
-        <div hidden>
-          {yatras.flatMap((t) => t.images).map((im) => (
-            <img key={im.src} {...photo(im.src, SIZES.carousel)} alt="" loading="lazy" />
-          ))}
-        </div>
-      )}
+      {/* desktop shows one yatra at a time, so switching tabs never waits on a download (phones stack every card) */}
+      {!mobile && <Upcoming srcs={yatras.flatMap((t) => t.images.map((im) => im.src))} sizes={SIZES.carousel} />}
       {/* once the card hits its max height, the leftover space splits above and below */}
       <div className="mx-auto flex h-full max-w-[1180px] flex-col lg:justify-center">
         <h2 className="mb-4 type-h2 text-ink md:mb-5">

@@ -7,6 +7,7 @@ import { ease, inView, Rise, SectionHeading } from '../components/kashi/shared'
 import OtherYatras from '../components/yatras/OtherYatras'
 import { useScrollRange } from '../lib/useScrollRange'
 import { blur } from '../lib/lite'
+import { photo } from '../lib/photo'
 
 const T_TITLE = 0.25
 const T_AFTER = after(T_TITLE, hero.title)
@@ -56,12 +57,10 @@ function Hero() {
     >
       <div className="relative isolate flex h-[calc(88svh-80px)] min-h-[520px] flex-col justify-end overflow-hidden rounded-[24px] bg-night md:h-[calc(88svh-64px-max(16px,2.5vw))] md:min-h-[580px] md:rounded-[28px]">
         <motion.img
-          src={hero.image.src}
+          {...photo(hero.image.src, { priority: true })}
           alt={hero.image.caption}
           width={1600}
           height={1066}
-          fetchPriority="high"
-          decoding="async"
           // taller than the card and rising above it, so the scroll drift never shows a dark line along the top
           className="absolute inset-x-0 -top-[22%] -z-10 h-[122%] w-full object-cover"
           initial={{ scale: 1.15, ...blur(14) }}
@@ -166,12 +165,10 @@ function Interlude() {
     <section ref={ref} className="p-4 md:p-[max(16px,2.5vw)]">
       <figure className="relative h-[56svh] min-h-[360px] overflow-hidden rounded-[24px] bg-night md:h-[72svh] md:rounded-[28px]">
         <motion.img
-          src={interlude.src}
+          {...photo(interlude.src)}
           alt={interlude.caption}
           width={1600}
           height={1066}
-          loading="lazy"
-          decoding="async"
           className="absolute inset-0 h-full w-full object-cover"
           style={{ scale }}
         />

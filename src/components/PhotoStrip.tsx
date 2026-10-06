@@ -12,6 +12,7 @@ import {
   useVelocity,
 } from 'motion/react'
 import { gallery, type Shot } from '../data/gallery'
+import { photo } from '../lib/photo'
 
 const ease = [0.16, 1, 0.3, 1] as const
 const SPEED = 38 // px per second at rest
@@ -132,10 +133,8 @@ function Tile({ shot, decorative = false }: { shot: Shot; decorative?: boolean }
       }`}
     >
       <img
-        src={shot.src}
+        {...photo(shot.src)}
         alt={decorative ? '' : shot.alt}
-        loading="lazy"
-        decoding="async"
         draggable={false}
         className="h-full w-full object-cover transition-transform duration-[1.2s] ease-[var(--ease-out-expo)] select-none group-hover/tile:scale-[1.05]"
       />
