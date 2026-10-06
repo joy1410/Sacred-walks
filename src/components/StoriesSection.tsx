@@ -3,6 +3,7 @@ import { animate, motion, useInView, useMotionValue, type PanInfo, type Variants
 import { stories, type Story } from '../data/journey'
 import { BlurText } from './hero/BlurIn'
 import { blur } from '../lib/lite'
+import { photo, SIZES } from '../lib/photo'
 import { IconChevronLeft, IconChevronRight } from './icons'
 
 const ease = [0.16, 1, 0.3, 1] as const
@@ -251,7 +252,7 @@ function DeckCard({
         <div className="relative aspect-[4/3] overflow-hidden rounded-[24px] bg-mist-2 lg:aspect-auto lg:h-full">
           {story.image && (
             <img
-              src={story.image.src}
+              {...photo(story.image.src, SIZES.stories)}
               alt={story.image.caption}
               loading="lazy"
               decoding="async"

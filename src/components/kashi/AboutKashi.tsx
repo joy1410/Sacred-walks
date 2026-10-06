@@ -1,6 +1,7 @@
 import { motion, type Variants } from 'motion/react'
 import { kashi, overview, reasons, type Reason } from '../../data/kashi'
 import { blur } from '../../lib/lite'
+import { photo as photoSrc, SIZES } from '../../lib/photo'
 import { QuoteMark } from '../QuoteSection'
 import { ease, inView, Rise, SectionHeading } from './shared'
 
@@ -120,7 +121,7 @@ function Tile({ reason, index, className }: { reason: Reason; index: number; cla
       {/* settles as it arrives, then answers hover with a slow lean in */}
       <motion.div className="absolute inset-0" variants={photo} custom={delay}>
         <img
-          src={reason.image.src}
+          {...photoSrc(reason.image.src, SIZES.kashiTile)}
           alt={reason.image.caption}
           loading="lazy"
           decoding="async"

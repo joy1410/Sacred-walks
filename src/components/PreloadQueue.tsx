@@ -1,21 +1,24 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 
-const LANES = 3 // photos in flight at once: keeps the order without idling the connection
+const LANES = 3 // photos in flight at once: enough to fill the connection, few enough to keep the order
 const FILM_FALLBACK = 6000 // ms; a film that never reports ready shouldn't hold the queue forever
+const BEHIND = 3 // a photo behind the scroll direction counts as this many times further away
 
 /**
- * Downloads every photo on the page in the order it appears, while the
- * visitor is still at the top. The hero film goes first: the queue waits
- * until the page has loaded and the film has buffered enough to play through,
- * then walks the page top to bottom, so by the time a section scrolls in its
- * photos are already in the cache.
+ * Downloads the page's photos before the visitor reaches them. The hero film
+ * goes first: the queue waits until the page has loaded and the film has
+ * buffered enough to play through. Then, each time a lane frees up, it takes
+ * the not-yet-loaded photo nearest the screen, favouring the direction the
+ * visitor is scrolling, so someone who jumps down the page is served where
+ * they are, not where the page begins.
  *
- * It picks up every <img> not yet loaded, plus the URLs in any element's
- * data-preload (photos that aren't in the page yet, such as the yatra tabs
- * not on show), in document order. Its own requests go at low priority, so a
- * photo the visitor actually scrolls to still jumps the queue. Skipped when the
- * visitor has asked to save data.
+ * Every <img> on the page is a candidate, including ones kept unseen in a
+ * hidden block for content not on show yet (the yatra tabs, the itinerary
+ * days). Each is fetched with its own srcset and sizes, so the browser picks
+ * the same copy the page will ask for, then decoded, so it paints on its first
+ * frame. Its requests go at low priority: a photo the visitor actually reaches
+ * still jumps the queue. Skipped when the visitor has asked to save data.
  */
 export default function PreloadQueue() {
   const { pathname } = useLocation()
@@ -25,48 +28,97 @@ export default function PreloadQueue() {
     if (conn?.saveData) return
 
     let stopped = false
+    let running = false
+    let inFlight = 0
+    const requested = new Set<string>()
     const cleanups: (() => void)[] = []
     const after = (target: EventTarget, event: string, then: () => void) => {
       target.addEventListener(event, then, { once: true })
       cleanups.push(() => target.removeEventListener(event, then))
     }
 
-    const run = () => {
-      if (stopped) return
-      const urls = [
-        ...new Set(
-          [...document.querySelectorAll<HTMLElement>('img, [data-preload]')].flatMap((el) =>
-            el instanceof HTMLImageElement
-              ? el.complete ? [] : [el.currentSrc || el.src]
-              : (el.dataset.preload ?? '').split(' '),
-          ),
-        ),
-      ].filter(Boolean)
+    // which way the visitor is heading
+    let lastY = window.scrollY
+    let down = true
+    const onScroll = () => {
+      const y = window.scrollY
+      if (y !== lastY) down = y > lastY
+      lastY = y
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    cleanups.push(() => window.removeEventListener('scroll', onScroll))
 
-      let i = 0
-      const next = () => {
-        if (stopped || i >= urls.length) return
-        const im = new Image()
-        im.fetchPriority = 'low'
-        im.decoding = 'async'
-        im.onload = im.onerror = next
-        im.src = urls[i++]
+    const keyOf = (el: HTMLImageElement) => `${el.getAttribute('src')}|${el.srcset}|${el.sizes}`
+
+    // a hidden image has no box of its own: measure the nearest ancestor that does
+    const box = (el: Element) => {
+      for (let e: Element | null = el; e; e = e.parentElement) {
+        const r = e.getBoundingClientRect()
+        if (r.width || r.height) return r
       }
-      for (let k = 0; k < LANES; k++) next()
+      return null
+    }
+
+    const distance = (el: HTMLImageElement) => {
+      const r = box(el)
+      if (!r) return Infinity
+      const vh = window.innerHeight
+      if (r.top > vh) return (r.top - vh) * (down ? 1 : BEHIND)
+      if (r.bottom < 0) return -r.bottom * (down ? BEHIND : 1)
+      return 0 // on screen (or beside it, in a sideways track): first
+    }
+
+    const nearest = () => {
+      let best: HTMLImageElement | null = null
+      let bestD = Infinity
+      for (const el of document.querySelectorAll('img')) {
+        if (el.complete || !el.getAttribute('src') || requested.has(keyOf(el))) continue
+        const d = distance(el)
+        if (d < bestD) [best, bestD] = [el, d]
+      }
+      return best
+    }
+
+    const next = () => {
+      if (stopped) return
+      const el = nearest()
+      if (!el) return
+      requested.add(keyOf(el))
+      inFlight++
+      const im = new Image()
+      im.fetchPriority = 'low'
+      im.decoding = 'async'
+      if (el.sizes) im.sizes = el.sizes
+      if (el.srcset) im.srcset = el.srcset
+      const done = () => {
+        inFlight--
+        next()
+      }
+      im.onload = () => void im.decode().catch(() => {}).finally(done)
+      im.onerror = done
+      im.src = el.getAttribute('src')!
+    }
+
+    const fill = () => {
+      while (!stopped && inFlight < LANES && nearest()) next()
+    }
+
+    const run = () => {
+      if (stopped || running) return
+      running = true
+      fill()
+      // photos that join the page later (a tab switch, a section mounting) join the queue
+      const mo = new MutationObserver(fill)
+      mo.observe(document.body, { childList: true, subtree: true })
+      cleanups.push(() => mo.disconnect())
     }
 
     // the film first: once it can play to the end without stalling, the photos follow
     const afterFilm = () => {
       const film = document.querySelector<HTMLVideoElement>('video[data-hero]')
       if (!film || film.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA) return run()
-      let started = false
-      const go = () => {
-        if (started) return
-        started = true
-        run()
-      }
-      after(film, 'canplaythrough', go)
-      const id = window.setTimeout(go, FILM_FALLBACK)
+      after(film, 'canplaythrough', run)
+      const id = window.setTimeout(run, FILM_FALLBACK)
       cleanups.push(() => window.clearTimeout(id))
     }
 

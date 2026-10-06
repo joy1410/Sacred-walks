@@ -58,9 +58,9 @@ export type Reason = {
 
 export const reasons: Reason[] = [
   {
-    title: 'A tower of light',
+    title: 'Temples that endured',
     // isha.sadhguru.org/en/wisdom/article/kashi
-    body: 'The word “Kashi” means to be luminous: a tower of light.',
+    body: 'Some 3,000 shrines still stand here, what remains after centuries of invasions.',
     image: { src: k('temple-spires'), caption: 'Temple shikharas above the ghats' },
   },
   {

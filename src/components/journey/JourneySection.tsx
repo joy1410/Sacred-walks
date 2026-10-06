@@ -6,6 +6,7 @@ import { useScrollRange } from '../../lib/useScrollRange'
 import { blur } from '../../lib/lite'
 import { useIsMobile } from '../../lib/useIsMobile'
 import { useImageLoaded } from '../../lib/useImageLoaded'
+import { photo, SIZES } from '../../lib/photo'
 
 const ease = [0.16, 1, 0.3, 1] as const
 
@@ -149,7 +150,7 @@ function BeatPanel({ beat, index, near, setActive }: { beat: Beat; index: number
       {/* the photo drifts against the track, so it reads as a window rather than a slide */}
       <motion.img
         ref={watch}
-        src={beat.image.src}
+        {...photo(beat.image.src, SIZES.journey)}
         alt={beat.image.caption}
         loading={near ? 'eager' : 'lazy'}
         decoding="async"

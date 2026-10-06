@@ -4,20 +4,13 @@ import { AnimatePresence, animate, motion, useInView, useMotionValue, useTransfo
 import { yatraPage, type Yatra } from '../../data/yatras'
 import { IconChevronLeft, IconChevronRight, IconPause, IconPlay } from '../icons'
 import { useImageLoaded } from '../../lib/useImageLoaded'
+import { photo, SIZES } from '../../lib/photo'
 
 const DURATION = 6 // seconds per slide
 const ease = [0.16, 1, 0.3, 1] as const
 // one spring for autoplay, dots, arrows and swipe release: settles fast, no bounce
 const slide = { type: 'spring', stiffness: 260, damping: 34, mass: 0.9 } as const
 
-/**
- * Airbnb gestures (hover arrows, glass badges) + Apple's carousel capsule
- * (dots where the active one stretches into a timer, with play/pause).
- *
- * Photos sit side by side on one track that is translated as a whole: every
- * image stays mounted (no remount, no decode on change), and the same track
- * is dragged for swipe, so a gesture hands off to the spring with its velocity.
- */
 /** one photo on the track: shimmers until it lands, then fades up */
 function Slide({ src, alt, hidden, width }: { src: string; alt: string; hidden: boolean; width: number }) {
   const { loaded, watch, onLoad, onError } = useImageLoaded()
@@ -26,7 +19,7 @@ function Slide({ src, alt, hidden, width }: { src: string; alt: string; hidden: 
       {!loaded && <div aria-hidden className="shimmer absolute inset-0" />}
       <img
         ref={watch}
-        src={src}
+        {...photo(src, SIZES.carousel)}
         alt={alt}
         aria-hidden={hidden}
         draggable={false}
@@ -41,6 +34,14 @@ function Slide({ src, alt, hidden, width }: { src: string; alt: string; hidden: 
   )
 }
 
+/**
+ * Airbnb gestures (hover arrows, glass badges) + Apple's carousel capsule
+ * (dots where the active one stretches into a timer, with play/pause).
+ *
+ * Photos sit side by side on one track that is translated as a whole: every
+ * image stays mounted (no remount, no decode on change), and the same track
+ * is dragged for swipe, so a gesture hands off to the spring with its velocity.
+ */
 export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
   const { images, quote } = yatra
   const navigate = useNavigate()

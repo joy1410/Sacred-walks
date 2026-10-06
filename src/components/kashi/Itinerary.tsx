@@ -3,6 +3,7 @@ import { AnimatePresence, motion, useInView, useMotionValue, useMotionValueEvent
 import { useLenis } from 'lenis/react'
 import { itinerary, type Day, type Stop } from '../../data/kashi'
 import { blur } from '../../lib/lite'
+import { photo, SIZES } from '../../lib/photo'
 import { ease, inView, SectionHeading } from './shared'
 
 /**
@@ -125,14 +126,18 @@ export default function Itinerary() {
         <div className="mt-10 grid gap-10 md:mt-16 lg:grid-cols-[1fr_1fr] lg:gap-16">
           {!mobile && (
             <div>
-              {/* the frame holds one day's photo at a time: list every day's for PreloadQueue,
-                  so each new day's picture is already here when the reader scrolls to it */}
-              <div hidden data-preload={itinerary.map((d) => d.image.src).join(' ')} />
+              {/* the frame holds one day's photo at a time: every day's waits here, unseen, for
+                  PreloadQueue, so each new day's picture is ready when the reader scrolls to it */}
+              <div hidden>
+                {itinerary.map((d) => (
+                  <img key={d.day} {...photo(d.image.src, SIZES.itineraryFrame)} alt="" loading="lazy" />
+                ))}
+              </div>
               <div className="sticky top-[calc(50px+50svh-min(100svh-160px,640px)/2)] h-[min(calc(100svh-160px),640px)] overflow-hidden rounded-[28px] bg-night">
                 <AnimatePresence initial={false}>
                   <motion.img
                     key={day.image.src}
-                    src={day.image.src}
+                    {...photo(day.image.src, SIZES.itineraryFrame)}
                     alt={day.image.caption}
                     loading="lazy"
                     decoding="async"
@@ -252,7 +257,7 @@ function DayItem({
       >
         {mobile && (
           <div className="relative mb-5 aspect-[4/3] overflow-hidden rounded-[22px] bg-night">
-            <img src={day.image.src} alt={day.image.caption} loading="lazy" decoding="async" className="h-full w-full object-cover" />
+            <img {...photo(day.image.src, SIZES.itineraryDay)} alt={day.image.caption} loading="lazy" decoding="async" className="h-full w-full object-cover" />
             <span className="absolute right-3 bottom-3 rounded-full bg-black/30 px-2.5 py-1 type-caption text-white/90">
               {day.image.caption}
             </span>
