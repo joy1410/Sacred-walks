@@ -409,7 +409,22 @@ html.lenis body { height: auto; }
   .ambient-mote { display: none; }
 }
 
+/*
+ * Stand-in for a photo still on its way: a soft band of light sweeps across
+ * the dark frame. Sits under the photo, which fades up over it on load.
+ */
+.shimmer {
+  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.07) 50%, transparent 70%) no-repeat;
+  background-size: 250% 100%;
+  animation: shimmer-sweep 1.8s ease-in-out infinite;
+}
+@keyframes shimmer-sweep {
+  from { background-position: 120% 0; }
+  to   { background-position: -20% 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .shimmer { animation: none; }
   .text-saffron-grad { animation: none; }
   .ambient-cloud { animation: none; }
   .ambient-mote { display: none; }

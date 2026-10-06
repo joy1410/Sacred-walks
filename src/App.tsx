@@ -5,6 +5,7 @@ import { MotionConfig } from 'motion/react'
 import AmbientLight from './components/AmbientLight'
 import Nav from './components/Nav'
 import Footer from './components/Footer'
+import PreloadQueue from './components/PreloadQueue'
 import Home from './pages/Home'
 import KashiKrama from './pages/KashiKrama'
 import WhyPilgrimage from './pages/WhyPilgrimage'
@@ -47,6 +48,7 @@ export default function App() {
         <Route path="*" element={<Home />} />
       </Routes>
       <Footer />
+      <PreloadQueue />
     </MotionConfig>
   )
 }

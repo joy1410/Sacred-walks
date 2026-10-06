@@ -25,23 +25,6 @@ export default function YatraSection() {
   // while a tap is scrolling the page, the cards passing by must not move the pill
   const jumping = useRef(false)
 
-  // warm every yatra's photos once the page is idle, so switching tabs never
-  // waits on a download or decode mid-transition
-  useEffect(() => {
-    if (mobile) return // all cards are on the page already
-    const warm = () =>
-      yatras.forEach((t) =>
-        t.images.forEach(({ src }) => {
-          const im = new Image()
-          im.decoding = 'async'
-          im.src = src
-        }),
-      )
-    // Safari has no requestIdleCallback; a short timeout does the same job there
-    const idle = typeof window.requestIdleCallback === 'function'
-    const id = idle ? window.requestIdleCallback(warm) : setTimeout(warm, 1200)
-    return () => (idle ? window.cancelIdleCallback(id as number) : clearTimeout(id))
-  }, [mobile])
 
   // mobile: the card crossing the middle of the screen owns the pill
   useEffect(() => {
@@ -96,6 +79,9 @@ export default function YatraSection() {
     // heading + full-width segmented control + card fill exactly one screen on desktop
     // (top padding clears the 48px nav)
     <section id="yatras" data-opaque className="bg-mist px-4 pt-14 pb-6 md:px-5 md:pt-[60px] lg:h-svh lg:min-h-[680px]">
+      {/* desktop shows one yatra at a time: list every yatra's photos for PreloadQueue, in its
+          place in the page, so switching tabs never waits on a download (phones stack every card) */}
+      {!mobile && <div hidden data-preload={yatras.flatMap((t) => t.images.map((im) => im.src)).join(' ')} />}
       {/* once the card hits its max height, the leftover space splits above and below */}
       <div className="mx-auto flex h-full max-w-[1180px] flex-col lg:justify-center">
         <h2 className="mb-4 type-h2 text-ink md:mb-5">

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, animate, motion, useInView, useMotionValue, useTransform, type PanInfo } from 'motion/react'
 import { yatraPage, type Yatra } from '../../data/yatras'
 import { IconChevronLeft, IconChevronRight, IconPause, IconPlay } from '../icons'
+import { useImageLoaded } from '../../lib/useImageLoaded'
 
 const DURATION = 6 // seconds per slide
 const ease = [0.16, 1, 0.3, 1] as const
@@ -17,6 +18,27 @@ const slide = { type: 'spring', stiffness: 260, damping: 34, mass: 0.9 } as cons
  * image stays mounted (no remount, no decode on change), and the same track
  * is dragged for swipe, so a gesture hands off to the spring with its velocity.
  */
+/** one photo on the track: shimmers until it lands, then fades up */
+function Slide({ src, alt, hidden, width }: { src: string; alt: string; hidden: boolean; width: number }) {
+  const { loaded, watch, onLoad, onError } = useImageLoaded()
+  return (
+    <div className="relative h-full shrink-0" style={{ width: width || '100%' }}>
+      {!loaded && <div aria-hidden className="shimmer absolute inset-0" />}
+      <img
+        ref={watch}
+        src={src}
+        alt={alt}
+        aria-hidden={hidden}
+        draggable={false}
+        decoding="async"
+        onLoad={onLoad}
+        onError={onError}
+        className={`h-full w-full object-cover select-none transition-opacity duration-700 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+      />
+    </div>
+  )
+}
+
 export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
   const { images, quote } = yatra
   const navigate = useNavigate()
@@ -184,15 +206,12 @@ export default function ImageCarousel({ yatra }: { yatra: Yatra }) {
         onClick={onClick}
       >
         {[images[n - 1], ...images, images[0]].map((im, slot) => (
-          <img
+          <Slide
             key={slot}
             src={im.src}
             alt={slot - 1 === index ? im.caption : ''}
-            aria-hidden={slot - 1 !== index}
-            draggable={false}
-            decoding="async"
-            className="h-full shrink-0 object-cover select-none"
-            style={{ width: width || '100%' }}
+            hidden={slot - 1 !== index}
+            width={width}
           />
         ))}
       </motion.div>

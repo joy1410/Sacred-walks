@@ -63,7 +63,7 @@ function Card({ yatra }: { yatra: Yatra }) {
       <div className="aspect-[4/3] overflow-hidden rounded-[22px] bg-mist">
         <img
           // a third of the page wide: no need for the carousel's full-width photo
-          src={cover.src.replace('w=1800', 'w=900')}
+          src={cover.src.replace(/w=\d+/, 'w=900')}
           alt={cover.caption}
           loading="lazy"
           decoding="async"

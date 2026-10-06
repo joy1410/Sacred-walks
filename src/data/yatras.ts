@@ -1,4 +1,5 @@
-export const u = (id: string, w = 1800) =>
+// 1400 wide covers the largest frame these fill (the yatra carousel, ~715px) on a 2x screen
+export const u = (id: string, w = 1400) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`
 
 export type Difficulty = 1 | 2 | 3

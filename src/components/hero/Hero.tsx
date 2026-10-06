@@ -192,6 +192,8 @@ export default function Hero() {
           }}
         >
           <motion.video
+            // PreloadQueue waits on this film before fetching the rest of the page's photos
+            data-hero
             className="h-full w-full object-cover"
             style={{ scale: videoScale }}
             // 720p cut on phones: a quarter of the bytes and far cheaper to decode

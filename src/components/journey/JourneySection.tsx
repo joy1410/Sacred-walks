@@ -5,6 +5,7 @@ import { BlurText } from '../hero/BlurIn'
 import { useScrollRange } from '../../lib/useScrollRange'
 import { blur } from '../../lib/lite'
 import { useIsMobile } from '../../lib/useIsMobile'
+import { useImageLoaded } from '../../lib/useImageLoaded'
 
 const ease = [0.16, 1, 0.3, 1] as const
 
@@ -25,7 +26,7 @@ const item: Variants = {
  * centre, its neighbours peeking in equally on both sides (10vw gutters on
  * the row let the first and last cards centre too); text set low over the photo.
  *
- * Like the hero, Motion drives one 0→1 CSS variable (--p) and the geometry
+ * Like the hero, Motion drives one 0â†’1 CSS variable (--p) and the geometry
  * is plain CSS; --ride switches the horizontal travel off below md.
  */
 export default function JourneySection() {
@@ -36,6 +37,10 @@ export default function JourneySection() {
   // the intro holds at the left while the first panel slides over it, fading as it goes
   const fade = useScrollRange(scrollYProgress, [0.04, 0.13], [1, 0])
   const [active, setActive] = useState(-1)
+  // PreloadQueue usually has these cached long before; if the visitor outruns it,
+  // fetch all five once the section is a screen and a half away, not card by card
+  // as the track slides each into view (the later cards start far off to the right)
+  const near = useInView(sectionRef, { once: true, margin: '150% 0px' })
 
   return (
     <section
@@ -66,7 +71,7 @@ export default function JourneySection() {
           >
             <IntroSpacer setActive={setActive} />
             {beats.map((b, i) => (
-              <BeatPanel key={b.short} beat={b} index={i} setActive={setActive} />
+              <BeatPanel key={b.short} beat={b} index={i} near={near} setActive={setActive} />
             ))}
           </div>
         </div>
@@ -119,8 +124,9 @@ function Intro() {
   )
 }
 
-function BeatPanel({ beat, index, setActive }: { beat: Beat; index: number; setActive: SetActive }) {
+function BeatPanel({ beat, index, near, setActive }: { beat: Beat; index: number; near: boolean; setActive: SetActive }) {
   const ref = useCentred(index, setActive)
+  const { loaded, watch, onLoad, onError } = useImageLoaded()
   const seen = useInView(ref, { once: true, amount: 0.45 })
   // mobile entrance: the row rises and settles while each photo eases back,
   // the same settle as the hero film and the closing card. The wide side
@@ -138,13 +144,18 @@ function BeatPanel({ beat, index, setActive }: { beat: Beat; index: number; setA
       transition={{ duration: 1.1, ease, delay: stacked ? Math.min(index, 2) * 0.08 : 0 }}
       className="relative aspect-[4/5] w-[80vw] shrink-0 snap-center overflow-hidden rounded-[28px] bg-night md:aspect-auto md:h-full md:max-h-[640px] md:w-[min(64vw,1040px)] md:self-center"
     >
+      {/* shimmers until the photo lands, then the photo fades up over it */}
+      {!loaded && <div aria-hidden className="shimmer absolute inset-0" />}
       {/* the photo drifts against the track, so it reads as a window rather than a slide */}
       <motion.img
+        ref={watch}
         src={beat.image.src}
         alt={beat.image.caption}
-        loading="lazy"
+        loading={near ? 'eager' : 'lazy'}
         decoding="async"
-        className="absolute inset-0 h-full w-full object-cover"
+        onLoad={onLoad}
+        onError={onError}
+        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${loaded ? 'opacity-100' : 'opacity-0'}`}
         initial={{ scale: stacked ? 1.28 : 1.12 }}
         animate={enter ? { scale: 1.12 } : undefined}
         transition={{ duration: 1.6, ease }}
