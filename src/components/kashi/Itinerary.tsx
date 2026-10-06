@@ -125,6 +125,9 @@ export default function Itinerary() {
         <div className="mt-10 grid gap-10 md:mt-16 lg:grid-cols-[1fr_1fr] lg:gap-16">
           {!mobile && (
             <div>
+              {/* the frame holds one day's photo at a time: list every day's for PreloadQueue,
+                  so each new day's picture is already here when the reader scrolls to it */}
+              <div hidden data-preload={itinerary.map((d) => d.image.src).join(' ')} />
               <div className="sticky top-[calc(50px+50svh-min(100svh-160px,640px)/2)] h-[min(calc(100svh-160px),640px)] overflow-hidden rounded-[28px] bg-night">
                 <AnimatePresence initial={false}>
                   <motion.img
